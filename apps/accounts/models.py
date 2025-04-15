@@ -6,7 +6,7 @@ from django.utils import timezone
 
 
 #for managing the users
-class CustomUserManager():
+class CustomUserManager(BaseUserManager):
 
     def create_user(self,mobile_number, email="",name="",family="",active_code=None,gender=None,password=None):
         if not mobile_number:
@@ -67,23 +67,24 @@ class CustomUserManager():
 
 # برای این که بتوانیم ارث بری کنیم باید در پارامتر های کلا یا  تابع استفاده شود 
 class CustomUser(AbstractUser, PermissionsMixin):
-
-
+    first_name = None
+    last_name = None
+    username = None  # Remove the username field #Its not in mehdi abbasi code
     mobile_number=models.CharField(max_length=11,unique=True)
     email=models.EmailField(max_length=100,blank=False)
     name = models.CharField(max_length=100,blank=True)
     family= models.CharField(max_length=100,blank=True)
-    GENDER_CHOICES=(('True','مرد'),('Female','زن'))
-    gender= models.CharField(max_length=50, blank=True,choices=GENDER_CHOICES,default=True,null=True,blank=True)
+    GENDER_CHOICES=(('True','مرد'),('False','زن'))
+    gender= models.CharField(max_length=50,choices=GENDER_CHOICES,default=True,null=True,blank=True)
     register_date= models.DateField(default=timezone.now)
     is_active=models.BooleanField(default=False)
     active_code = models.CharField(max_length=100,null=True,blank=True)
     is_admin = models.BooleanField(default=False)
 
 
-
-    USERNAME_FIELD = "mobile_number"
-    REQUIRED_FIELDS = ["email","name","family"]
+    FIRSTNAME_FIELD='name'
+    USERNAME_FIELD = 'mobile_number'
+    REQUIRED_FIELDS = ['email','name','family']
 
     objects =CustomUserManager()
 
