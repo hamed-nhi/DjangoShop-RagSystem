@@ -11,17 +11,15 @@ class CustomUserAdmin(UserAdmin):
     list_display = ('mobile_number', 'email', 'name', 'family', 'gender', 'is_active', 'is_admin')  # Fixed typo here
     list_filter = ('is_active', 'is_admin', 'family')
 
-
-    # fieldsets = (
-    #     (None, {"fields": ('mobile_number', 'password')}),
-    #     ('Personal Info', {'fields': ('email', 'name', 'family', 'gender', 'active_code')}),
-    #     ('Permissions', {'fields': ('is_active', 'is_admin')}),  # Fixed typo here
-    # )
+ 
+    #  این فیلد ست یعنی از پنل ادمین بتونم این موارد دسترسی داشته باشم و تغییرات ایجاد کنم
     fieldsets = (
+  
         (None, {"fields": ('mobile_number', 'password')}),
         ('Personal Info', {'fields': ('email', 'name', 'family', 'gender', 'active_code')}),
-        ('Permissions', {'fields': ('is_active', 'is_admin', 'groups', 'user_permissions')}),
+        ('Permissions', {'fields': ('is_active', 'is_admin','is_superuser', 'groups', 'user_permissions')}),
     )
+
 
     add_fieldsets = (
         (None, {
@@ -39,7 +37,7 @@ class CustomUserAdmin(UserAdmin):
 
     search_fields = ('mobile_number',)
     ordering = ('mobile_number',)
-    filter_horizontal = ()
+    filter_horizontal = ('groups', 'user_permissions')
 
 
 admin.site.register(CustomUser, CustomUserAdmin)

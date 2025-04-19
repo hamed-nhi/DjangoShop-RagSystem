@@ -1,0 +1,21 @@
+
+{% extends "main_app/main_template.html" %}
+
+{% block title %}
+Registeration
+{% endblock title %}
+
+
+{% block content %}
+    
+<form action="" method="post">
+
+    {% csrf_token %}
+    {{form.as_p}}
+
+
+    <input type="submit" value="ثبت نام">
+</form>
+
+ 
+{% endblock content %}

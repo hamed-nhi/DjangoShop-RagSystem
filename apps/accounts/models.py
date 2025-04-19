@@ -7,7 +7,7 @@ from django.utils import timezone
 
 #for managing the users
 class CustomUserManager(BaseUserManager):
-
+    # این تابع برای کاربران معمولی است که باید بگونه از طریق این بتونن وارد بشن نه از طریق دیگه ای  
     def create_user(self,mobile_number, email="",name="",family="",active_code=None,gender=None,password=None):
         if not mobile_number:
             raise ValueError("شماره موبایل را وراد کنید ")
@@ -42,7 +42,8 @@ class CustomUserManager(BaseUserManager):
 # email="",name="",family="" اگه کاربر عادی صدا بازنه اینو خالی میفرسته ولی سوپر یوزر باشه باید پر بشه 
 #چرا چون میخواهیم فرم هایی که جلوی کاربر گذاشته میشه زیاد شلوغ نباشه
   
-  
+#   این تابع همان اضافه کردن ادمین از طریق کامند های دستوری می باشد که  بصورت زیر است 
+# py manage.py createsuperuser
     def create_superuser(self,mobile_number, email,name,family,password=None,active_code=None,gender=None):
         user= self.create_user(
 
@@ -56,6 +57,7 @@ class CustomUserManager(BaseUserManager):
         )
         user.is_active=True
         user.is_admin=True
+        user.is_superuser=True
         user.save(using=self._db)
         return user
 
@@ -66,9 +68,10 @@ class CustomUserManager(BaseUserManager):
 
 
 # برای این که بتوانیم ارث بری کنیم باید در پارامتر های کلا یا  تابع استفاده شود 
+#مدل اصلی کا برای ثبت نام کاربران میباشد 
 class CustomUser(AbstractUser, PermissionsMixin):
     first_name = None
-    last_name = None
+    last_name = None 
     username = None  # Remove the username field #Its not in mehdi abbasi code
     mobile_number=models.CharField(max_length=11,unique=True)
     email=models.EmailField(max_length=100,blank=False)
@@ -94,19 +97,19 @@ class CustomUser(AbstractUser, PermissionsMixin):
 
 
     #این دو تابع برای اینه که ما هیچ محدودیتی از نظر سطح دسترسی نداریم
-    def has_perms(self, perm_list, obj=None):
-        """
-        Return True if the user has each of the specified permissions. If
-        object is passed, check if the user has all required perms for it.
-        """
-        return True
+    # def has_perms(self, perm_list, obj=None):
+    #     """
+    #     Return True if the user has each of the specified permissions. If
+    #     object is passed, check if the user has all required perms for it.
+    #     """
+    #     return True
     
-    def has_module_perms(self, app_label):
-        """
-        Return True if the user has any permissions in the given app label.
-        Use similar logic as has_perm(), above.
-        """
-        return True
+    # def has_module_perms(self, app_label):
+    #     """
+    #     Return True if the user has any permissions in the given app label.
+    #     Use similar logic as has_perm(), above.
+    #     """
+    #     return True
     # ادمین بودن و نبودن رو چک میکنه 
     @property
     def is_staff(self):
