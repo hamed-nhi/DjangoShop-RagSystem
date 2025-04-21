@@ -29,7 +29,7 @@ class RegisterUserView(View):
             )
             utils.send_sms(data['mobile_number'],f'کد فعال سازی حساب شما {active_code} می باشد ')
             #یه سری اطلاعات را بصورت ارایه در سشن نگهداری میکنیم که در حین ثبت نام از انها استفاده کنیم
-            request.ssesion['user_ssesion']={
+            request.session['user_session']={
                 'active_code':str(active_code),
                 'mobile_number':data['mobile_number']
             }
@@ -39,7 +39,7 @@ class RegisterUserView(View):
         messages.error(request,'خطا در ثبت نام','error')
 
 
-class VerifyResgiterCodeView():
+class VerifyResgiterCodeView(View):
     def get(self,request,*args, **kwargs):
         form = VerifyResgiterForm
         return render(request,"accounts_app/verify_register_code.html",{"form":form})
@@ -49,10 +49,19 @@ class VerifyResgiterCodeView():
         if form.is_valid():
             data=form.cleaned_data
             #همان سشن که در حین ثبت نام ذخیره کردیم در این جا استفاده میکنیم
-            user_ssesion=request.ssesion['user_ssesion']
-            if data['active_code'] == user_ssesion['active_code']:
+            user_session=request.session['user_session']
+            if data['active_code'] == user_session['active_code']:
                 #اگر اکتیو کد درست بودند انگاه میریم یوزر رو پیدا میکنیم
-                user= CustomUser.objects.get(mobile_number=user_ssesion['mobile_number'])
+                user= CustomUser.objects.get(mobile_number=user_session['mobile_number'])
                 user.is_active =True
+                user.active_code=utils.create_random_code(5)
                 user.save()
                 messages.success(request,'ثبت نام با موفقیت انجام شد ','success')
+                return redirect('main:index')
+            else:
+                messages.error(request,'کد فعال سازی ارد شده اشتباه است','danger')
+                return render(request,"accounts_app/verify_register_code.html",{"form":form})
+        messages.error(request,'اطلاعات وارد شده نادرست است','danger')
+        return render(request,'accounts_app/verify_register_code.html',{"form":form})
+
+
