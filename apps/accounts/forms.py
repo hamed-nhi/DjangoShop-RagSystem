@@ -60,13 +60,18 @@ class UserChangeForm(forms.ModelForm):
 
 
 class RegisterUserForm(ModelForm):
-    password1=forms.CharField(label="Password",widget=forms.PasswordInput)
-    password2=forms.CharField(label="Re-Password",widget=forms.PasswordInput)
+    password1=forms.CharField(label="رمز عبور",widget=forms.PasswordInput(attrs={'class':'form-control','placeholder':' رمز عبور را وارد کنید'},))
+    password2=forms.CharField(label="تکرار رمز عبور",widget=forms.PasswordInput(attrs={'class':'form-control','placeholder':' تکرار رمز عبور را وارد کنید'},))
     class Meta:
         model=CustomUser
         #فقط این فیلد هارو نیاز داریم نیاز نیست همه شود بری بیاری
         # اگر این فیلد ست رو نذاریم همه اش رو میره میاره 
         fields=['mobile_number',] # i delete the password filed because its come with def (clean_password)
+        widgets={
+            'mobile_number':forms.TextInput(attrs={'class':'form-control','placeholder':'شماره موبایل را وارد کنید'},)
+        }
+
+
 
         def clean_password2(self):
             pass1=self.cleaned_data['password1']
@@ -85,6 +90,7 @@ class RegisterUserForm(ModelForm):
 
 
 class VerifyResgiterForm(forms.Form):
-    active_code =forms.CharField(label="کد فعال سازی",
+    active_code =forms.CharField(label="",
                                  error_messages={"required":"این فیلد نمیتواند خالی باشد"},
-                                 )
+                                 widget=forms.TextInput(attrs={'class':'form-control','placeholder':' کد ارسال شده را وارد کنید'},)
+       ) 

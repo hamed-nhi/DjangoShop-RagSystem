@@ -73,7 +73,7 @@ class CustomUser(AbstractUser, PermissionsMixin):
     first_name = None
     last_name = None 
     username = None  # Remove the username field #Its not in mehdi abbasi code
-    mobile_number=models.CharField(max_length=11,unique=True)
+    mobile_number=models.CharField(max_length=11,unique=True, verbose_name='شماره موبایل')
     email=models.EmailField(max_length=100,blank=False)
     name = models.CharField(max_length=100,blank=True)
     family= models.CharField(max_length=100,blank=True)
