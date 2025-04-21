@@ -13,6 +13,7 @@ class UserCreationForm(forms.ModelForm):
         fields =['mobile_number','email','name','family','gender']
        
 
+#-----------------------------------------------------------
 
     def clean_password2(self):
         pass1=self.cleaned_data['password1']
@@ -21,12 +22,14 @@ class UserCreationForm(forms.ModelForm):
             raise ValidationError('رمز عبور ها مغایرت دارند ')
         return pass2
 
+#-----------------------------------------------------------
 
     def clean_mobile_number(self):
         mobile_number = self.cleaned_data.get('mobile_number')
         if CustomUser.objects.filter(mobile_number=mobile_number).exists():
             raise ValidationError("This mobile number is already in use.")
         return mobile_number
+#-----------------------------------------------------------
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
@@ -55,10 +58,9 @@ class UserChangeForm(forms.ModelForm):
     class Meta:
         model=CustomUser
         fields =['mobile_number','email','name','family','gender','is_active','is_admin','password']
-#|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 # برای ثبت نام کاربران میباشد 
 
-
+#|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 class RegisterUserForm(ModelForm):
     password1=forms.CharField(label="رمز عبور",widget=forms.PasswordInput(attrs={'class':'form-control','placeholder':' رمز عبور را وارد کنید'},))
     password2=forms.CharField(label="تکرار رمز عبور",widget=forms.PasswordInput(attrs={'class':'form-control','placeholder':' تکرار رمز عبور را وارد کنید'},))
@@ -72,7 +74,7 @@ class RegisterUserForm(ModelForm):
         }
 
 
-
+#-----------------------------------------------------------
         def clean_password2(self):
             pass1=self.cleaned_data['password1']
             pass2=self.cleaned_data['password2']
@@ -80,6 +82,7 @@ class RegisterUserForm(ModelForm):
                 raise ValidationError('رمز عبور ها مغایرت دارند ')
             return pass2
 
+#-----------------------------------------------------------
 
         def clean_mobile_number(self):
             mobile_number = self.cleaned_data.get('mobile_number')
@@ -88,9 +91,22 @@ class RegisterUserForm(ModelForm):
             return mobile_number
 
 
-
+#-----------------------------------------------------------
 class VerifyResgiterForm(forms.Form):
     active_code =forms.CharField(label="",
                                  error_messages={"required":"این فیلد نمیتواند خالی باشد"},
                                  widget=forms.TextInput(attrs={'class':'form-control','placeholder':' کد ارسال شده را وارد کنید'},)
        ) 
+    
+#-----------------------------------------------------------
+
+
+class LoginUserForm(forms.Form):
+    mobile_number=forms.CharField(label="شماره موبایل",
+                                 error_messages={"required":"این فیلد نمیتواند خالی باشد"},
+                                 widget=forms.TextInput(attrs={'class':'form-control','placeholder':'شماره موبایل را وارد کنید'},)
+       )  
+    password=forms.CharField(label="رمز عبور",
+                                 error_messages={"required":"این فیلد نمیتواند خالی باشد"},
+                                 widget=forms.PasswordInput(attrs={'class':'form-control','placeholder':'رمز عبور را وارد کنید'},)
+       )  
