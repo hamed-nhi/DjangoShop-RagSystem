@@ -1,6 +1,6 @@
 from django.shortcuts import render ,redirect
 from django.views import View
-from .forms import RegisterUserForm,VerifyResgiterForm,LoginUserForm
+from .forms import RegisterUserForm,VerifyResgiterForm,LoginUserForm,ChangePasswordForm,RememberPasswordForm
 from .models import CustomUser
 import utils
 from django.contrib import messages
@@ -43,7 +43,8 @@ class RegisterUserView(View):
             #یه سری اطلاعات را بصورت ارایه در سشن نگهداری میکنیم که در حین ثبت نام از انها استفاده کنیم
             request.session['user_session']={
                 'active_code':str(active_code),
-                'mobile_number':data['mobile_number']
+                'mobile_number':data['mobile_number'],
+                'remember_password': False,
             }
             messages.success(request,'اطلاعات شما ثبت شد و کد فعال سازی ارسال شد ','success')
             return redirect('accounts:verify')
@@ -72,11 +73,15 @@ class VerifyResgiterCodeView(View):
             if data['active_code'] == user_session['active_code']:
                 #اگر اکتیو کد درست بودند انگاه میریم یوزر رو پیدا میکنیم
                 user= CustomUser.objects.get(mobile_number=user_session['mobile_number'])
-                user.is_active =True
-                user.active_code=utils.create_random_code(5)
-                user.save()
-                messages.success(request,'ثبت نام با موفقیت انجام شد ','success')
-                return redirect('main:index')
+                if user_session['remember_password']==False: # یعنی داره ثبت نام میکنه 
+                    #پس عملیات ثبت نام انجام میشه
+                    user.is_active =True
+                    user.active_code=utils.create_random_code(5)
+                    user.save()
+                    messages.success(request,'ثبت نام با موفقیت انجام شد ','success')
+                    return redirect('main:index')
+                else: #یعنی از صفحه فراموشی رمز عبور امده
+                    return redirect('accounts:change_password')
             else:
                 messages.error(request,'کد فعال سازی ارد شده اشتباه است','danger')
                 return render(request,"accounts_app/verify_register_code.html",{"form":form})
@@ -152,3 +157,64 @@ class UserPanelView(LoginRequiredMixin,View):
     url_temp_name = "accounts_app/userpanel.html"
     def get(self,request,*args, **kwargs):
         return render(request,self.url_temp_name)
+    
+
+#|||||||||||||||||||||||||||||||||||||||||||||\
+
+
+class ChangePasswordView(View):
+    url_temp_name = "accounts_app/change_password.html"
+
+    def get(self,request,*args, **kwargs):
+        form = ChangePasswordForm()
+        return render(request,self.url_temp_name,{"form":form})
+    
+
+
+    #کاربر وقتی دکمه سابیمت رو میزنه و یه سری اطلاعات رو باهاش میفرسته ما میایم و واسش متد پست رو مینویسیم
+    def post(self,request,*args, **kwargs):
+        form= ChangePasswordForm(request.POST) #اطلاعات رو از این طریق دریافت میکنیم
+        if form.is_valid():
+            data = form.cleaned_data
+            user_session = request.session['user_session']
+            user= CustomUser.objects.get(mobile_number = user_session['mobile_number'])
+            user.set_password(data['password1'])
+            user.active_code=utils.create_random_code(5)
+            user.save()
+            messages.success(request,'رمز عبور شما با موفقیت تغییر کرد', 'success')
+            return redirect('accounts:login')
+        else:
+            messages.error(request,'اطلاعات وارد شده معتبر نمی باشد', 'danger')
+            return render(request,self.url_temp_name,{"form":form})
+
+
+
+#|||||||||||||||||||||||||||||||||||||||||||||\
+class RememberPasswordView(View):
+    url_temp_name = "accounts_app/remember_password.html"
+
+    def get(self,request,*args, **kwargs):
+        form = RememberPasswordForm()
+        return render(request,self.url_temp_name,{"form":form})
+    
+
+    def post(self,request,*args, **kwargs):
+        form=RememberPasswordForm(request.POST)
+        if form.is_valid():
+            try:
+                data=form.cleaned_data
+                user=CustomUser.objects.get(mobile_number=data['mobile_number'])
+                active_code=utils.create_random_code(5)
+                user.active_code = active_code
+                user.save()
+                utils.send_sms(data['mobile_number'],f'کد تایید شماره موبایل شما {active_code} می باشد ')
+                request.session['user_session']={
+                    'active_code':str(active_code),
+                    'mobile_number':data['mobile_number'],
+                    'remember_password': True,
+                }
+                messages.success(request,'جهت تغییر رمز عبور خود کد دریافتی را ارسال کنید','success')
+                return redirect('accounts:verify')
+            except:
+                messages.error(request,'شماره موبایل وارد شده موجود نمی باشد','danger')
+                return render(request,self.url_temp_name,{"form":form})

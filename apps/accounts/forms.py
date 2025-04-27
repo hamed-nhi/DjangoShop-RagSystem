@@ -110,3 +110,30 @@ class LoginUserForm(forms.Form):
                                  error_messages={"required":"این فیلد نمیتواند خالی باشد"},
                                  widget=forms.PasswordInput(attrs={'class':'form-control','placeholder':'رمز عبور را وارد کنید'},)
        )  
+    
+#-----------------------------------------------------------
+
+class ChangePasswordForm(forms.Form):
+    password1=forms.CharField(label="رمز عبور",
+                                error_messages={"required":"این فیلد نمیتواند خالی باشد"},
+                                widget=forms.PasswordInput(attrs={'class':'form-control','placeholder':'رمز عبور را وارد کنید'},)
+       )
+    password2=forms.CharField(label="تکرار رمز عبور",
+                                error_messages={"required":"این فیلد نمیتواند خالی باشد"},
+                                widget=forms.PasswordInput(attrs={'class':'form-control','placeholder':'تکرار رمز عبور را وارد کنید'},)
+       )
+    
+    def clean_password2(self):
+        pass1=self.cleaned_data['password1']
+        pass2=self.cleaned_data['password2']
+        if pass1 and pass2 and pass1 !=pass2:
+            raise ValidationError('رمز عبور ها مغایرت دارند ')
+        return pass2
+    
+#-----------------------------------------------------------
+
+class RememberPasswordForm(forms.Form):
+    mobile_number=forms.CharField(label="شماره موبایل ",
+                                error_messages={"required":"این فیلد نمیتواند خالی باشد"},
+                                widget=forms.TextInput(attrs={'class':'form-control','placeholder':' شماره موبایل خود را وارد کنید'},)
+       )

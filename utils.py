@@ -12,13 +12,14 @@ def create_random_code(count):
 # ارسال اس ام اس رو پیاده میکنیم چون در امثر جا ها نیاز داریم بهتره اینجا بنویسم و بعدا در جای دیگری استفاده کنیم
  
 def send_sms(mobile_number,message):
-    try:   
-        api = KavenegarAPI('746166595063714E6F4334744766466A69336D6372735952384C6254564E46326B764F6D384E646A6A33593D')
-        params = { 'sender' : '2000660110', 'receptor': 'mobile_number', 'message' :'message' }
-        response = api.sms_send(params)
-        return response
-    except APIException as error:
-        print(f'error1:{error}')
-    except HTTPException as error:
-        print(f'error2:{error}')
+    # try:   
+    #     api = KavenegarAPI('746166595063714E6F4334744766466A69336D6372735952384C6254564E46326B764F6D384E646A6A33593D')
+    #     params = { 'sender' : '2000660110', 'receptor': 'mobile_number', 'message' :'message' }
+    #     response = api.sms_send(params)
+    #     return response
+    # except APIException as error:
+    #     print(f'error1:{error}')
+    # except HTTPException as error:
+    #     print(f'error2:{error}')
+    pass
 

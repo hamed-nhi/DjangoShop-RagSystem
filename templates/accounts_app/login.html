@@ -41,7 +41,9 @@
                                 <form action="" method="post">
                                     {% csrf_token %}
                                     {{form.as_p}}
-                            
+                                        <div>
+                                            <a href="{% url "accounts:remember_password" %}">فراموشی رمز عبور </a>
+                                        </div>
                                     <button type="submit" class="btn btn-primary mt-4">ورود</button>
                                 </form>
                         </div>
