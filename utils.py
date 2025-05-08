@@ -1,4 +1,4 @@
-from kavenegar import *
+# from kavenegar import *
 #فایل هایی که تقریبا همیشه مورد نیازمونه رو تو اینجا نگهداری میکنه
 #  و هر جایی خواستیم ازشون استفاده کنیم از اینجا برمیداریم
 
@@ -22,4 +22,20 @@ def send_sms(mobile_number,message):
     # except HTTPException as error:
     #     print(f'error2:{error}')
     pass
+
+#--------------------------------------------------------------------
+
+import os
+# from uuid import uuid4
+from uuid import uuid4
+
+class FileUpload:
+    def __init__(self,dir,prefix):
+        self.dir = dir
+        self.prefix=prefix
+
+    def upload_to(self,instance,filename):
+        filename, ext = os.path.splitext(filename)
+        return f'{self.dir}/{self.prefix}/{uuid4()}{ext}'
+
 

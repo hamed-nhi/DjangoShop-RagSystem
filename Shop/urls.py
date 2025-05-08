@@ -21,7 +21,10 @@ from django.conf import settings
 urlpatterns = [
     path('admin/',admin.site.urls),
     path(''         ,include("apps.main.urls", namespace='main')),
-    path('accounts/',include("apps.accounts.urls",namespace="accounts"))
+    path('accounts/',include("apps.accounts.urls",namespace="accounts")),
+    path('products/',include("apps.products.urls",namespace="products")),
+
+    
 
 
 

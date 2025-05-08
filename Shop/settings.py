@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'apps.main.apps.MainConfig',
     'apps.accounts.apps.AccountsConfig',
+    'apps.products.apps.ProductsConfig',
 ]
 
 MIDDLEWARE = [
@@ -71,26 +72,46 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'Shop.wsgi.application'
+#
+#
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'mssql',  # Use the SQL Server backend for Django
+#         'NAME': 'EShopDB',  # Replace with your database name
+#         'USER': '',         # Leave empty if using Trusted_Connection (Windows Authentication)
+#         'PASSWORD': '',     # Leave empty if using Trusted_Connection
+#         'HOST': 'DESKTOP-IO02SIE',  # Replace with your server name
+#         'PORT': '',         # Leave empty to use the default port
+#         'OPTIONS': {
+#             'driver': 'ODBC Driver 17 for SQL Server',  # Specify the ODBC driver
+#             'trusted_connection': 'yes',               # Use Windows Authentication
+#             'encrypt': 'no',                           # Disable encryption (if not required)
+#         },
+#     }
+# }
 
 
 DATABASES = {
     'default': {
-        'ENGINE': 'mssql',  # Use the SQL Server backend for Django
-        'NAME': 'EShopDB',  # Replace with your database name
-        'USER': '',         # Leave empty if using Trusted_Connection (Windows Authentication)
-        'PASSWORD': '',     # Leave empty if using Trusted_Connection
-        'HOST': 'DESKTOP-IO02SIE',  # Replace with your server name
-        'PORT': '',         # Leave empty to use the default port
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',       # Your main database name
+        'USER': 'postgres',
+        'PASSWORD': '123',
+        'HOST': 'localhost',
+        'PORT': '5432',
         'OPTIONS': {
-            'driver': 'ODBC Driver 17 for SQL Server',  # Specify the ODBC driver
-            'trusted_connection': 'yes',               # Use Windows Authentication
-            'encrypt': 'no',                           # Disable encryption (if not required)
+            'options': '-c search_path=EShop_DB_P',  # This sets the schema
+            'connect_timeout': 5,
         },
     }
 }
 
+
+
+
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
