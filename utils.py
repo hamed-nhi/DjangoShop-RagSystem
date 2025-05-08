@@ -1,4 +1,11 @@
 # from kavenegar import *
+
+
+import os
+# from uuid import uuid4
+from uuid import uuid4
+
+
 #فایل هایی که تقریبا همیشه مورد نیازمونه رو تو اینجا نگهداری میکنه
 #  و هر جایی خواستیم ازشون استفاده کنیم از اینجا برمیداریم
 
@@ -25,9 +32,7 @@ def send_sms(mobile_number,message):
 
 #--------------------------------------------------------------------
 
-import os
-# from uuid import uuid4
-from uuid import uuid4
+
 
 class FileUpload:
     def __init__(self,dir,prefix):

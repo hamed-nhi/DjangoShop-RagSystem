@@ -1,10 +1,8 @@
 from django.db import models
 from email.mime import image
-# from utils import FileUpload
-import  utils
 
-from Shop.utils import FileUpload
 
+from ...utils import FileUpload
 
 def upload_brand_image(instance,filename):
     return f'images/brand/{filename}'
