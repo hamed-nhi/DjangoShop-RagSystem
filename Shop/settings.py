@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'apps.main.apps.MainConfig',
     'apps.accounts.apps.AccountsConfig',
     'apps.products.apps.ProductsConfig',
+    'django_admin_listfilter_dropdown',
 ]
 
 MIDDLEWARE = [

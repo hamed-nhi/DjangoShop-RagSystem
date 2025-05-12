@@ -33,20 +33,14 @@ class ProductGroup(models.Model):
     image_name=models.ImageField(upload_to=file_upload.upload_to,verbose_name='تصویر گروه کالا')
     description = models.TextField(blank=True,null=True,verbose_name='توضیحات گروه کالا')
     is_active=models.BooleanField(default=True,blank=True,verbose_name='وضعیت فعال/غیرفعال')
-    group_parent=models.ForeignKey('ProductGroup',
-                                   on_delete=models.CASCADE,
-                                   verbose_name='والد گروه کالا',
-                                    blank=True,
-                                    null=True,
-                                    related_name="groups",
-                                    )
+    group_parent=models.ForeignKey('ProductGroup',on_delete=models.CASCADE,verbose_name='والد گروه کالا',  blank=True, null=True, related_name="groups")                              
     slug = models.SlugField(max_length=200,null=True)
     register_date=models.DateTimeField(auto_now_add=True,verbose_name="تاریخ درج")
     published_date = models.DateTimeField(default=timezone.now,verbose_name='تاریخ انتشار')
     update_date=models.DateTimeField(auto_now=True,verbose_name='تاریخ آخرین بروز رسانی')
 
 
-    def __self__(self):
+    def __str__(self):
         return self.group_title
 
     class Meta:
