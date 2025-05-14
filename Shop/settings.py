@@ -42,7 +42,13 @@ INSTALLED_APPS = [
     'apps.accounts.apps.AccountsConfig',
     'apps.products.apps.ProductsConfig',
     'django_admin_listfilter_dropdown',
+    'ckeditor',
+    'ckeditor_uploader',
 ]
+
+
+SILENCED_SYSTEM_CHECKS = ['ckeditor.W001']
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -153,7 +159,90 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 MEDIA_URL ="/media/"
 MEDIA_ROOT= os.path.join(BASE_DIR,"media")
 
-#nkbweiggifbwei
+
+######################################################
+#با دو مور بالایی امکان ذخیره موارد در حافظه بوجود میاید
+CKEDITOR_UPLOAD_PATH ='images/ckeditor/upload_files/'
+CKEDITOR_ALLOW_NONIMAGE_FILES=False
+CKEDITOR_STORAGE_BACKEND = 'django.core.files.storage.FileSystemStorage'
+# CKEDITOR_CONFIG ={
+#         'default': {
+#             'toolbar': 'Custom',
+#             'toolbar_Custom': [
+#                 ['Bold', 'Italic', 'Underline'],
+#                 ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'],
+#                 ['Link', 'Unlink'],
+#                 ['RemoveFormat', 'Source']
+#             ]
+#         },
+    
+#         'special':
+#         {
+#             'toolbar':'Special','height':500,
+#             'toolbar': 'full',
+#             'toolbar_Special':
+#                 [ 
+#                     ['Bold','Link','Unlink','Image'],
+#                     ['CodeSnippet'],
+#                 ], 'extraPlugins': ','.join(['çodesnippet','clipboard', ])
+
+                
+#         },
+        
+#         'special_an':
+#         {
+#             'toolbar':'Special','height':500,
+#             'toolbar_Special':
+#                 [ 
+#                     ['Bold'],
+#                     ['CodeSnippet'],
+#                 ], 'extraPlugins': ','.join(['çodesnippet', ])
+
+#         }
+#     }
+######################################################
+CKEDITOR_CONFIGS = {
+    'default': {
+        'skin': 'moono-lisa',
+        'toolbar_Basic': [
+            ['Source', '-', 'Bold', 'Italic']
+        ],
+        'toolbar_Full': [
+            {'name': 'document', 'items': ['Source', '-', 'Save', 'Preview', 'Print']},
+            {'name': 'clipboard', 'items': ['Cut', 'Copy', 'Paste', '-', 'Undo', 'Redo']},
+            {'name': 'editing', 'items': ['Find', 'Replace', '-', 'SelectAll']},
+            {'name': 'styles', 'items': ['Format', 'Font', 'FontSize']},
+            {'name': 'basicstyles', 'items': ['Bold', 'Italic', 'Underline', 'Strike', '-', 'RemoveFormat']},
+            {'name': 'colors', 'items': ['TextColor', 'BGColor']},
+            {'name': 'paragraph', 'items': [
+                'NumberedList', 'BulletedList', '-', 
+                'Outdent', 'Indent', '-', 
+                'Blockquote', '-', 
+                'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock',
+                '-', 'BidiLtr', 'BidiRtl'
+            ]},
+            {'name': 'insert', 'items': ['Image', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar']},
+            {'name': 'links', 'items': ['Link', 'Unlink', 'Anchor']},
+            {'name': 'tools', 'items': ['Maximize']},
+        ],
+        'toolbar': 'Full',
+        'height': 300,
+        'width': '100%',
+        'extraPlugins': ','.join([
+            'uploadimage',  # آپلود تصویر
+            'autogrow',     # تغییر ارتفاع خودکار
+            'justify',      # ترازبندی
+            'bidi',         # پشتیبانی از متن راست‌به‌چپ و چپ‌به‌راست
+        ]),
+        'removePlugins': 'resize',
+        'autoGrow_minHeight': 300,
+        'autoGrow_maxHeight': 600,
+        'allowedContent': True,
+        'language': 'fa',
+    }
+}
+
+######################################################
 
 
 

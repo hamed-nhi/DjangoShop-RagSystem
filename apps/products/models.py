@@ -2,7 +2,12 @@ from django.db import models
 from email.mime import image
 from django.utils import timezone
 from utils import FileUpload
-# from ...utils import FileUpload
+# from ckeditor.fields import RichTextField
+from ckeditor_uploader.fields import RichTextUploadingField
+
+
+
+
 
 def upload_brand_image(instance,filename):
     return f'images/brand/{filename}'
@@ -67,10 +72,14 @@ class Feature(models.Model):
         
 class Product(models.Model):
     product_name = models.CharField(max_length=550,verbose_name='نام کالا')
-    description = models.TextField(blank=True,null=True, verbose_name='توضیحات کالا')
+    # description = models.TextField(blank=True,null=True, verbose_name='توضیحات کالا')
+    # description = RichTextUploadingField(blank=True,null=True, verbose_name='توضیحات کالا', config_name='special')
+    description = RichTextUploadingField(blank=True,null=True, verbose_name='توضیحات کالا', config_name='default')
     file_upload = FileUpload('images','product')
     image_name=models.ImageField(upload_to=file_upload.upload_to,verbose_name='تصویر کالا')
     price =models.PositiveIntegerField(default=0,verbose_name='قیمت کالا')
+    #related_name هر وقت به یک کلید خارجی می دهیم یعنی عملا این فیلد ریلیتد گروپ رو میبریم اضافه میکنیم به خود مدل 
+    #یعنی وقتی prodcut group میاد به product وصل بشه --> (این فیلد هم بهشون اضافه میشه(به گروه که میخواهد وصل بشه به گروه دیگه اضافه میشه))
     product_group=models.ManyToManyField(ProductGroup,verbose_name='گروه کالا',related_name='products_of_groups')
     brand= models.ForeignKey(Brand,verbose_name='برند کالا',on_delete=models.CASCADE,null=True,related_name='brands')
     is_active=models.BooleanField(default=True,blank=True,verbose_name='وضعیت فعال/غیرفعال')
