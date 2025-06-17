@@ -1,0 +1,59 @@
+{% load humanize %}
+{% if type == 1 %}  
+<div class="product-card" style="width: 200px !important; margin-left: 12px;">
+    <div class="product-card__image">
+        <a href="{{product.get_absolute_url}}"><img src="{{ media_url }}{{ product.image_name }}" alt=""/></a>
+    </div>
+    <div class="product-card__info">
+        <div class="product-card__name">
+            <a href="{{product.get_absolute_url}}"> {{ product.product_name }}</a>
+        </div>
+    </div>
+    <div class="product-card__actions">
+        <div class="product-card__prices">{{ product.price|intcomma }} تومان</div>
+        <div class="product-card__buttons">
+            <button class="btn btn-primary product-card__addtocart" type="button">افزودن به سبد</button>
+            <button class="btn btn-light btn-svg-icon btn-svg-icon--fake-svg product-card__wishlist" type="button">
+                <i class="fa fa-heart"></i>
+                <span class="fake-svg-icon fake-svg-icon--wishlist-16"></span>
+            </button>
+            <button class="btn btn-light btn-svg-icon btn-svg-icon--fake-svg product-card__wishlist" type="button"> 
+                <i class="fa fa-shopping-cart"></i>
+                <span class="fake-svg-icon fake-svg-icon--wishlist-16"></span>                 
+            </button>
+        </div>
+    </div>
+</div>
+ 
+{% elif type == 2 %}
+<div class="product-card" style="width: 200px !important; margin-left: 12px;">
+    <div class="product-card__image">
+        <a href="{{product.get_absolute_url}}"><img src="{{ media_url }}{{ product.image_name }}" alt=""/></a>
+    </div>
+    <div class="new-badge">
+        جدید
+    </div>
+    <div class="product-card__info">
+        <div class="product-card__name">
+            <a href="{{product.get_absolute_url}}"> {{ product.product_name }}</a>
+        </div>
+    </div>
+    <div class="product-card__actions">
+        <div class="product-card__prices">{{ product.price|intcomma }} تومان</div>
+        <div class="product-card__buttons">
+            <button class="btn btn-primary product-card__addtocart" type="button">افزودن به سبد</button>
+            <button class="btn btn-light btn-svg-icon btn-svg-icon--fake-svg product-card__wishlist" type="button">
+                <i class="fa fa-heart"></i>
+                <span class="fake-svg-icon fake-svg-icon--wishlist-16"></span>
+            </button>
+            <button class="btn btn-light btn-svg-icon btn-svg-icon--fake-svg product-card__wishlist" type="button"> 
+                <i class="fa fa-shopping-cart"></i>
+                <span class="fake-svg-icon fake-svg-icon--wishlist-16"></span>                 
+            </button>
+        </div>
+    </div>
+</div>
+ 
+{% endif %}
+
+    

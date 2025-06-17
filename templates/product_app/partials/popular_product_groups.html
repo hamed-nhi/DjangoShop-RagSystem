@@ -1,0 +1,31 @@
+ <div class="block block--highlighted block-categories block-categories--layout--compact">
+        <div class="container">
+            <div class="block-header">
+                <h3 class="block-header__title">دسته های محبوب</h3>
+                <div class="block-header__divider"></div>
+            </div>
+            <div class="block-categories__list">
+                {% for group in product_groups %}
+                <div class="block-categories__item category-card category-card--layout--compact">
+                    <div class="category-card__body">
+                        <div class="category-card__image">
+                            <a href="">
+                                <img src="{{media_url}}{{group.image_name}}" alt="">
+                            </a>
+                        </div>
+                        <div class="category-card__content">
+                            <div class="category-card__name"><a href="">{{group.group_title}}</a></div>
+                            <div class="category-card__products">{{group.products_of_groups.all|length}}</div>
+                            {% comment %} brand
+                            <div class="category-card__name"><a href="">{{product.brand}}</a></div>
+                            <div class="category-card__products">{{product.products_of_groups.all|length}}</div> {% endcomment %}
+
+                          
+                        </div>
+                    </div> 
+                </div>
+                {% endfor %}
+                <a href="#">همه</a>
+            </div>
+        </div>
+    </div> 

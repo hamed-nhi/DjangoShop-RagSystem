@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Brand,ProductGroup,Product,ProductFeature,Feature
+from .models import Brand,ProductGroup,Product,ProductFeature,Feature,ProductGallary
 from django.db.models.aggregates import Count
 from django.http import HttpResponse
 from django.core import serializers
@@ -120,7 +120,11 @@ def active_product(modeladmin,request,queryset):
     
 class ProductFeatureInlineAdmin(admin.TabularInline):
     model = ProductFeature
-    extra=5
+    extra=3
+    
+class ProductGallaryInlineAdmin(admin.TabularInline):
+    model = ProductGallary
+    extra=3
     
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
@@ -129,7 +133,7 @@ class ProductAdmin(admin.ModelAdmin):
     search_fields = ('product_name',)
     ordering = ('update_date','product_name',)
     actions =[de_active_product,active_product, ]
-    inlines=[ProductFeatureInlineAdmin, ]
+    inlines=[ProductFeatureInlineAdmin,ProductGallaryInlineAdmin ]
     list_editable =['is_active']
 
     de_active_product.short_description='غیرفعال کردن  کالاهای انتخاب شده'

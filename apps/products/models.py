@@ -4,8 +4,8 @@ from django.utils import timezone
 from utils import FileUpload
 # from ckeditor.fields import RichTextField
 from ckeditor_uploader.fields import RichTextUploadingField
-
-
+# from django.core.urlresolvers import reverse 
+from django.urls import reverse
 
 
 
@@ -74,6 +74,7 @@ class Product(models.Model):
     product_name = models.CharField(max_length=550,verbose_name='نام کالا')
     # description = models.TextField(blank=True,null=True, verbose_name='توضیحات کالا')
     # description = RichTextUploadingField(blank=True,null=True, verbose_name='توضیحات کالا', config_name='special')
+    summery_description=models.TextField(default="",null=True,blank=True)
     description = RichTextUploadingField(blank=True,null=True, verbose_name='توضیحات کالا', config_name='default')
     file_upload = FileUpload('images','product')
     image_name=models.ImageField(upload_to=file_upload.upload_to,verbose_name='تصویر کالا')
@@ -95,6 +96,16 @@ class Product(models.Model):
         return self.product_name
     
     
+    #new Fun after setting Fetch Data{برای هر محصول یک ضفحه مجزا میخواهیم ست کنیم که نیاز داریم slug  رو اینجا یکاری باهاش بکنیم}
+    #هر زمان مدلی بود که نیاز داشتید مدام به اون دسترسی پیدا کنید  توضیح میشه که همچین تابعی برایش بنویسم
+    ###############################################
+    def get_absolute_url(self):
+        return reverse('products:product_details', kwargs={'slug': self.slug})
+    
+    
+    
+    ###############################################
+    
     class Meta:
         verbose_name='کالا'
         verbose_name_plural=' کالا ها'
@@ -108,7 +119,7 @@ class Product(models.Model):
 #product  اضافه میکنیم
 
 class ProductFeature(models.Model):
-    product = models.ForeignKey(Product,on_delete=models.CASCADE,verbose_name='کالا')
+    product = models.ForeignKey(Product,on_delete=models.CASCADE,verbose_name='کالا', related_name='product_features')
     feature = models.ForeignKey(Feature, on_delete=models.CASCADE,verbose_name='ویژگی')
     value = models.CharField(max_length=200,verbose_name='مقدار ویژگی کالا')
         
@@ -124,7 +135,7 @@ class ProductFeature(models.Model):
 
 
 class ProductGallary(models.Model):
-    product = models.ForeignKey(Product,on_delete=models.CASCADE, verbose_name='کالا')
+    product = models.ForeignKey(Product,on_delete=models.CASCADE, verbose_name='کالا', related_name='gallery_images')
     file_upload = FileUpload('images','product_gallery')
     image_name=models.ImageField(upload_to=file_upload.upload_to,verbose_name='تصویر کالا')
     

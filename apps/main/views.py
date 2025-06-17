@@ -12,3 +12,11 @@ def media_admin(request):
 
 def index (request):
     return render(request, "main_app/index.html")
+
+
+# def test_view(request):
+#     context={
+#         'name':'Hamed',
+#         'family':'Nahali',
+#     }
+#     return render(request,'main_app/test.html',context)

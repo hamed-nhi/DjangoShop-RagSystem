@@ -442,9 +442,9 @@ textarea.form-control.is-invalid,
 		font-size: 14.5px;
 	}
 }
-.input-radio-label__list span{
+/* .input-radio-label__list span{
 	line-height: 22px;
-}
+} */
 .product__quantity{
 	width: 105px;
 }

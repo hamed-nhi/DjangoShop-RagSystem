@@ -170,7 +170,8 @@ h6 {
 }
 .site__footer {
 	-ms-flex-negative: 0;
-	flex-shrink: 0
+	flex-shrink: 0;
+	background-color: #d3d1d1;
 }
 .account-nav ul {
 	list-style: none;
@@ -1285,7 +1286,8 @@ select.form-control-lg:valid {
 	display: flex;
 	-ms-flex-wrap: wrap;
 	flex-wrap: wrap;
-	margin: -3px
+	margin: -3px;
+	justify-content: left;
 }
 .input-radio-label__list input {
 	position: absolute;
@@ -1304,7 +1306,7 @@ select.form-control-lg:valid {
 .input-radio-label__list span {
 	cursor: pointer;
 	display: block;
-	height: 32px;
+	/* height: 42px; */
 	padding: .3125rem 1rem;
 	border-radius: 2px;
 	background: #f0f0f0;
@@ -9531,4 +9533,11 @@ screen and (-ms-high-contrast:active) {
 .lg-outer .lg-thumb-item.active,
 .lg-outer .lg-thumb-item:hover{
 	border-color: #ee4156;
+}
+
+.product-flexbox {
+    display: flex !important;
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
 }

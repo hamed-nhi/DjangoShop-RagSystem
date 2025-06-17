@@ -8,9 +8,6 @@
         
         {% block title %}{% endblock title %}
     </title>
-
-
-
     <link rel="icon" type="image/png" href="{% static "images/favicon.png" %}">
 	<!-- css -->
 	<link rel="stylesheet" href="{% static "vendor/bootstrap-4.5.3/css/bootstrap.min.css" %}">
@@ -31,10 +28,7 @@
 <body>
 	{% include "partials/header.html" %}
 	{% include "partials/messages.html" %}
-    {% block content %}
-    
-    
-    {% endblock content %}
+    {% block content %}{% endblock content %}
 	{% include "partials/footer.html" %}
 
 
