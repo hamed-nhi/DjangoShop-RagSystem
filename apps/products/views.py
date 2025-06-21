@@ -40,8 +40,10 @@ class ProductDeatailView(View):
         product=get_object_or_404(Product,slug=slug)
         if product.is_active:
             return render(request,"product_app/product_detail.html",{'product':product})
-        
-#Related Products
+ 
+ 
+#این رو باید بگونه ای تغییر بدیم که لپتاپ ها مشابه تو اون رنج قیمت نشون داده بشن        
+#محصولات مرتبط
 def get_related_products(request,*args, **kwargs):
     current_product=get_object_or_404(Product,slug=kwargs['slug'])
     related_products=[]
@@ -49,9 +51,20 @@ def get_related_products(request,*args, **kwargs):
         related_products.extend(Product.objects.filter(Q(is_active=True) & Q(product_group=group) & ~Q(id=current_product.id))[:5]) 
     return render(request,"product_app/partials/related_products.html",{'related_products':related_products})
     
-    
+# این رو باید بگونه تغییر بدیم که گروه تبدیل به برند بشه   
 #لیست  کلیه گروه های محصولات 
 class ProductGroupsView(View):
     def get(self,request):
-        product_groups=ProductGroup.objects.filter(Q(is_active=True))
-        return render (request,"product_app/product_groups.html")
+        product_groups=ProductGroup.objects.filter(Q(is_active=True)).annotate(count=Count('products_of_groups')).order_by('-count')
+        return render (request,"product_app/product_groups.html",{'product_groups':product_groups})
+    
+    
+    
+    
+# این رو باید بگونه تغییر بدیم که گروه تبدیل به برند بشه       
+#لیست  محصولات هر گروه محصولات
+class ProductsByGroupView(View):
+    def get_products_group(self,request,*args, **kwargs):
+        current_group=get_object_or_404(ProductGroup,slug=kwargs['slug'])
+        products = Product.objects.filter(Q(is_active=True) & Q(product_group=current_group))
+        return render (request,"product_app/products.html",{'products':products,'current_group':current_group })

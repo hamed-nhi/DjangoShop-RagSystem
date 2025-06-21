@@ -1,9 +1,7 @@
-{% extends "partials/main_template.html" %}
+{% extends "main_template.html" %}
 {% load render_partial %}
+{% load humanize %}
 {% block title %}فروشگاه آیکو{% endblock title %}
-
-
-
 {% block content %}
 
 <!-- site__body -->
@@ -189,7 +187,7 @@
                     <!-- .product__sidebar -->
                     <div class="product__sidebar">
                         <div class="product__availability">موجودی: <span class="text-success">موجود در انبار</span></div>
-                        <div class="product__prices">{{product.price}}تومان </div>
+                        <div class="product__prices">{{product.price|intcomma }}تومان </div>
                         <!-- .product__options -->
                         <form class="product__options">
                             <!-- <div class="form-group product__option">
@@ -430,99 +428,7 @@
     <!-- .block-products-carousel -->
 
 {%render_partial 'products:related_products' slug=product.slug%}
-    {% comment %} <div class="block block-products-carousel" data-layout="grid-5">
-        <div class="container">
-            <div class="block-header">
-                <h3 class="block-header__title">محصولات مرتبط</h3>
-                <div class="block-header__divider"></div>
-                <div class="block-header__arrows-list">
-                    <button class="block-header__arrow block-header__arrow--left" type="button">
-                        <svg width="7px" height="11px">
-                            <use xlink:href="images/sprite.svg#arrow-rounded-left-7x11"></use>
-                        </svg>
-                    </button>
-                    <button class="block-header__arrow block-header__arrow--right" type="button">
-                        <svg width="7px" height="11px">
-                            <use xlink:href="images/sprite.svg#arrow-rounded-right-7x11"></use>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-            <div class="block-products-carousel__slider">
-                <div class="block-products-carousel__preloader"></div>
-                <div class="owl-carousel">
-                    <div class="block-products-carousel__column">
-                        <div class="block-products-carousel__cell">
-                            <div class="product-card">
-                                <div class="product-card__badges-list">
-                                    <div class="product-card__badge product-card__badge--new">جدید</div>
-                                </div>
-                                <div class="product-card__image">
-                                    <a href="product.html">
-                                        <img src="https://picsum.photos/700/700" alt="">
-                                    </a>
-                                </div>
-                                <div class="product-card__info">
-                                    <div class="product-card__name"><a href="product.html">اره برقی برندیکس مدل 300 وات</a></div>
-                                </div>
-                                <div class="product-card__actions">
-                                    <div class="product-card__availability">موجودی: <span class="text-success">موجود در انبار</span></div>
-                                    <div class="product-card__prices">749,000 تومان</div>
-                                    <div class="product-card__buttons">
-                                        <button class="btn btn-primary product-card__addtocart" type="button">
-                                            افزودن به سبد
-                                        </button>
-                                        <button	class="btn btn-light btn-svg-icon btn-svg-icon--fake-svg product-card__wishlist"  type="button">
-                                            <i class="fa fa-heart"></i>
-                                            <span class="fake-svg-icon fake-svg-icon--wishlist-16"></span>
-                                        </button>
-                                        <button	class="btn btn-light btn-svg-icon btn-svg-icon--fake-svg product-card__wishlist"  type="button">
-                                            <i class="fa fa-shopping-cart"></i>
-                                            <span class="fake-svg-icon fake-svg-icon--wishlist-16"></span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="block-products-carousel__column">
-                        <div class="block-products-carousel__cell">
-                            <div class="product-card">
-                                <div class="product-card__badges-list">
-                                    <div class="product-card__badge product-card__badge--new">جدید</div>
-                                </div>
-                                <div class="product-card__image">
-                                    <a href="product.html">
-                                        <img src="https://picsum.photos/700/700" alt="">
-                                    </a>
-                                </div>
-                                <div class="product-card__info">
-                                    <div class="product-card__name"><a href="product.html">اره برقی سشیسشیشیشس مدل 300 وات</a></div>
-                                </div>
-                                <div class="product-card__actions">
-                                    <div class="product-card__availability">موجودی: <span class="text-success">موجود در انبار</span></div>
-                                    <div class="product-card__prices">749,000 تومان</div>
-                                    <div class="product-card__buttons">
-                                        <button class="btn btn-primary product-card__addtocart" type="button">
-                                            افزودن به سبد
-                                        </button>
-                                        <button	class="btn btn-light btn-svg-icon btn-svg-icon--fake-svg product-card__wishlist"  type="button">
-                                            <i class="fa fa-heart"></i>
-                                            <span class="fake-svg-icon fake-svg-icon--wishlist-16"></span>
-                                        </button>
-                                        <button	class="btn btn-light btn-svg-icon btn-svg-icon--fake-svg product-card__wishlist"  type="button">
-                                            <i class="fa fa-shopping-cart"></i>
-                                            <span class="fake-svg-icon fake-svg-icon--wishlist-16"></span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div> {% endcomment %}
+   
     <!-- .block-products-carousel / end -->
 </div>
 <!-- site__body / end -->
