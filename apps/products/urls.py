@@ -12,11 +12,7 @@ urlpatterns = [
     path('related_products/<slug:slug>/',views.get_related_products,name='related_products'),
     path('product_groups/',views.ProductGroupsView.as_view(),name='product_groups'),
     path('products_of_group/<slug:slug>/',views.ProductsByGroupView.as_view(),name='products_of_group'),
-    
-    
-    
-    
-    
+
 
 ]
 

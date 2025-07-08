@@ -1,14 +1,4 @@
 
-{% for product in products %}
-	
-
-<h1>product.product_name</h1>
-{% endfor %}
-	
-
-
-
-{% comment %} 
 {% extends "partials/main_template.html" %}
 {% load render_partial %}
 {% load humanize %}
@@ -451,7 +441,7 @@
 										
 										
 										{% for product in products %}
-                                            {% include 'partials/products/product_box.html' with type=3 %}
+											{% include 'partials/products/product_box.html' with type=3 %}
                                         {% endfor %}
 
 
@@ -488,4 +478,4 @@
 		</div>
 		<!-- site__body / end -->
 
-{% endblock content %} {% endcomment %}
+{% endblock content %}

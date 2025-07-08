@@ -109,37 +109,50 @@ class Product(models.Model):
     class Meta:
         verbose_name='کالا'
         verbose_name_plural=' کالا ها'
+ 
+ 
+ 
+#------------------------------------------------
+class FeatureValue(models.Model):
+    value_title = models.CharField(max_length=100,verbose_name='عنوان مقدار')
+    feature = models.ForeignKey(Feature,on_delete=models.CASCADE,blank=True,null=True,verbose_name='ویژگی ', related_name='feature_values')
     
+    
+    def __str__(self):
+        return f"{self.id} {self.value_title}"
+    
+    class Meta:
+        verbose_name="مقدار ویژگی"
+        verbose_name_plural='مقادیر ویژگی ها'
+     
 #--------------------------------------------------------------
-
 # جدول که از حاصل ارتباط چند به چند بوجود میاید بصورت اتوماتیک 
 # ولی در اینجا خودمان دستی ایجاد میکنیم چون میخواهیم در ان چیزی دیگری هم اضافه کنم
 
 # ولی یک مشکلی که داریم چون این جدول بصورت اتوماتیک ایجاد نشده بعدا شناخته نخواهد شد برای همین یک فیلد به مدل #
 #product  اضافه میکنیم
-
 class ProductFeature(models.Model):
     product = models.ForeignKey(Product,on_delete=models.CASCADE,verbose_name='کالا', related_name='product_features')
     feature = models.ForeignKey(Feature, on_delete=models.CASCADE,verbose_name='ویژگی')
     value = models.CharField(max_length=200,verbose_name='مقدار ویژگی کالا')
-        
+    #Or give the  '+'
+    filter_value = models.ForeignKey(FeatureValue,null=True,blank=True,on_delete=models.CASCADE,verbose_name='مقدار ویژگی برای فیلتر', related_name='product_features')
     def __str__(self):
-        return f"{self.product} - {self.feature} : {self.value}"
+        return f"{self.product} - {self.feature}: {self.value}"
     
     class Meta:
         verbose_name='ویژگی محصول'
         verbose_name_plural='ویژگی های محصول'
     
-    
 #--------------------------------------------------------------
-
-
 class ProductGallary(models.Model):
     product = models.ForeignKey(Product,on_delete=models.CASCADE, verbose_name='کالا', related_name='gallery_images')
     file_upload = FileUpload('images','product_gallery')
     image_name=models.ImageField(upload_to=file_upload.upload_to,verbose_name='تصویر کالا')
     
-    
     class Meta:
         verbose_name = 'تصویر'
         verbose_name_plural='تصاویر'
+        
+#--------------------------------------------------------------
+        

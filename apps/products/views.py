@@ -64,7 +64,7 @@ class ProductGroupsView(View):
 # این رو باید بگونه تغییر بدیم که گروه تبدیل به برند بشه       
 #لیست  محصولات هر گروه محصولات
 class ProductsByGroupView(View):
-    def get_products_group(self,request,*args, **kwargs):
+    def get(self,request,*args, **kwargs):
         current_group=get_object_or_404(ProductGroup,slug=kwargs['slug'])
         products = Product.objects.filter(Q(is_active=True) & Q(product_group=current_group))
         return render (request,"product_app/products.html",{'products':products,'current_group':current_group })

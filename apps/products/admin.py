@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Brand,ProductGroup,Product,ProductFeature,Feature,ProductGallary
+from .models import Brand, FeatureValue,ProductGroup,Product,ProductFeature,Feature,ProductGallary
 from django.db.models.aggregates import Count
 from django.http import HttpResponse
 from django.core import serializers
@@ -151,29 +151,43 @@ class ProductAdmin(admin.ModelAdmin):
             kwargs["queryset"]=ProductGroup.objects.filter(~Q(group_parent=None)) #عملا ما نمیخواهیم گروه های اصلی در باکس برگردانده شوند 
         return super().formfield_for_manytomany(db_field ,request, **kwargs)
     
-    
-    
-    # fieldsets=(
-    #     ('اطلاعات محصول',{'fields':(
-    #         'product_name',
-    #         'ímage_name',
-    #         'price',
-    #         ('product_group','brand','is_active',),
-    #         'desceription',
-    #         'slug'
-    #         )}),
-    #     ('تاریخ و زمان', {'fields':(
-    #                   ('published_date',),
-    #         )})    
-    # )
-    
 
+# @admin.register(Feature)
+# class FeatureAdmin(admin.ModelAdmin):
+#     list_display = ('feature_name',)
+#     list_filter = ('feature_name',) 
+#     search_fields = ('feature_name',)
+#     ordering = ('feature_name',)
+
+
+#--------------------------------------------------------------
+class FeatureValueInLine(admin.TabularInline):
+    model=FeatureValue
+    extra=3
+    
+    
 @admin.register(Feature)
 class FeatureAdmin(admin.ModelAdmin):
-    list_display = ('feature_name',)
-    list_filter = ('feature_name',) 
-    search_fields = ('feature_name',)
-    ordering = ('feature_name',)
-
-
-#video 21
+    list_display=('feature_name','display_groups','display_feature_values')
+    list_filter=('feature_name',)
+    search_fields=('feature_name',)
+    ordering=['feature_name',]
+    inlines=[FeatureValueInLine,]
+    
+    def formfield_for_manytomany(self, db_field, request, **kwargs):
+        if db_field.name == "product_group":
+            kwargs["queryset"] = ProductGroup.objects.filter(~Q(group_parent=None))
+        return super().formfield_for_manytomany(db_field, request, **kwargs)
+    
+    def display_groups(self,obj):
+        return ', '.join([group.group_title for group in obj.product_group.all()])
+    
+    
+    def display_feature_values(self,obj):
+        return ', '.join([feature_value.value_title for feature_value in obj.feature_values.all()])
+    
+    display_groups.short_description='گروه های دارای این ویژگی'
+    display_feature_values.short_description='مقادیر ممکن برای این وِیژگی'
+    
+    
+    
