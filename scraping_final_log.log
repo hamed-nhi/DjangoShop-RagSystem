@@ -1,0 +1,25 @@
+2025-07-14 06:36:42,256 - INFO - ================== NEW SESSION STARTED ==================
+2025-07-14 06:36:42,256 - INFO - Initializing Firefox driver...
+2025-07-14 06:36:42,257 - INFO - ====== WebDriver manager ======
+2025-07-14 06:36:45,538 - INFO - Get LATEST geckodriver version for 140.0 firefox
+2025-07-14 06:36:46,291 - INFO - Get LATEST geckodriver version for 140.0 firefox
+2025-07-14 06:36:47,009 - INFO - Driver [C:\Users\hamed\.wdm\drivers\geckodriver\win64\v0.36.0\geckodriver.exe] found in cache
+2025-07-14 06:36:55,017 - INFO - \u2714 Firefox driver initialized successfully.
+2025-07-14 06:36:55,503 - INFO - Found 5 products to process. Starting main loop...
+2025-07-14 06:36:55,510 - INFO - (1/5) Searching for: "Asus Vivobook 16X K3605ZC-MBN541WS"
+2025-07-14 06:36:59,955 - INFO -   -- Attempting to scrape: https://duckduckgo.com/l/?uddg=https%3A%2F%2Fwww.techadvisor.com%2Farticle%2F2031199%2Fasus%2Dvivobook%2D16x%2Dreview.html&rut=b9235bc42bad438beec79b2a980cb910043091c5b81d9899aae39267d7ba0bf1
+2025-07-14 06:37:01,633 - WARNING -   - Page title '' not relevant. Trying next link...
+2025-07-14 06:37:01,634 - INFO -   -- Attempting to scrape: https://duckduckgo.com/l/?uddg=https%3A%2F%2Fwww.reddit.com%2Fr%2FASUS%2Fcomments%2F17pitbl%2Fdid_anyone_buy_it_please_add_pros_and_cons_asus%2F&rut=18f98422b7cb0fad2aea36d4ed6a9595a3a512772a526e8a3011d8ffba0b2f3a
+2025-07-14 06:37:07,163 - ERROR -   - UNEXPECTED ERROR for product ID 506. Type: WebDriverException, Skipping.
+2025-07-14 06:37:07,164 - INFO - (2/5) Searching for: "Asus VivoBook 14 2023 X1404ZA-NK321WS"
+2025-07-14 06:37:09,353 - INFO -   -- Attempting to scrape: https://duckduckgo.com/l/?uddg=https%3A%2F%2Flaptopdecision.com%2Freview%2Fasus%2Dvivobook%2D14%2Dx1404&rut=5e229c4d47c53dd7eddb31ae68eef6e411ec5b12bbcdd7574254fd1990362c3d
+2025-07-14 06:37:50,830 - INFO -   \u2714 Suitable content found and validated.
+2025-07-14 06:37:50,831 - INFO -   - Translating content...
+2025-07-14 06:38:02,319 - ERROR -   - UNEXPECTED ERROR for product ID 565. Type: ConnectionError, Skipping.
+2025-07-14 06:38:02,319 - INFO - (3/5) Searching for: "Acer Nitro 5 AN515-58 NH.QFHSI.008"
+2025-07-14 06:38:02,321 - ERROR -   - UNEXPECTED ERROR for product ID 593. Type: ProtocolError, Skipping.
+2025-07-14 06:38:02,321 - INFO - (4/5) Searching for: "MSI Creator Pro M16 B13VI-1273IN"
+2025-07-14 06:38:04,376 - ERROR -   - UNEXPECTED ERROR for product ID 609. Type: WebDriverException, Skipping.
+2025-07-14 06:38:04,376 - INFO - (5/5) Searching for: "HP Victus 15-fb0133AX"
+2025-07-14 06:38:04,379 - ERROR -   - UNEXPECTED ERROR for product ID 774. Type: InvalidSessionIdException, Skipping.
+2025-07-14 06:38:06,431 - INFO - ================== SESSION FINISHED ==================

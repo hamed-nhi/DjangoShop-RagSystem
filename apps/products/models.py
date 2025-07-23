@@ -1,3 +1,4 @@
+import math
 from django.db import models
 from email.mime import image
 from django.utils import timezone
@@ -96,6 +97,20 @@ class Product(models.Model):
         return self.product_name
     
     
+    # @property
+    # def charm_price(self):
+    #     if self.price < 100000:
+    #         return math.floor(self.price / 1000) * 1000
+    #     return math.floor(self.price / 10000) * 10000
+    @property
+    def charm_price(self):
+        if self.price < 100000:
+            rounded_up = math.ceil(self.price / 10000) * 10000
+            return rounded_up - 100
+        else:
+            rounded_up = math.ceil(self.price / 100000) * 100000
+            return rounded_up - 1000
+    
     #new Fun after setting Fetch Data{برای هر محصول یک ضفحه مجزا میخواهیم ست کنیم که نیاز داریم slug  رو اینجا یکاری باهاش بکنیم}
     #هر زمان مدلی بود که نیاز داشتید مدام به اون دسترسی پیدا کنید  توضیح میشه که همچین تابعی برایش بنویسم
     ###############################################
@@ -114,7 +129,7 @@ class Product(models.Model):
  
 #------------------------------------------------
 class FeatureValue(models.Model):
-    value_title = models.CharField(max_length=100,verbose_name='عنوان مقدار')
+    value_title = models.CharField(max_length=200,verbose_name='عنوان مقدار')
     feature = models.ForeignKey(Feature,on_delete=models.CASCADE,blank=True,null=True,verbose_name='ویژگی ', related_name='feature_values')
     
     

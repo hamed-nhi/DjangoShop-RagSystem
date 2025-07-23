@@ -283,14 +283,25 @@
                                 <h4 class="spec__section-title">مشخصات کامل</h4>
                                 {% comment %} <div class="spec__row"> {% endcomment %}
                                     {% comment %} ##################### {% endcomment %}
-
+{% comment %} 
                                       {% for feature in product.product_features.all %}
                                         <div class="spec__row">    
                                     <div class="spec__name">{{feature.feature}}</div>
                                     <div class="spec__value">{{feature.value}} </div>
                                         </div>
                                         {% endfor %}
-                        
+                        <h4 class="spec__section-title">مشخصات کامل</h4> {% endcomment %}
+{% comment %} بخش فارسی شده 
+ {# حلقه جدید باید روی specifications باشد #}{% endcomment %}
+{% for spec in specifications %}
+    <div class="spec__row">
+        {# به جای feature.feature از spec.name استفاده کنید #}
+        <div class="spec__name">{{ spec.name }}</div>
+        
+        {# به جای feature.value از spec.value استفاده کنید #}
+        <div class="spec__value">{{ spec.value }}</div>
+    </div>
+{% endfor %} 
                                  
                                 {% comment %} </div> {% endcomment %}
 

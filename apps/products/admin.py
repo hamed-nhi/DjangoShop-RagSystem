@@ -116,24 +116,32 @@ def active_product(modeladmin,request,queryset):
     message=f' تعداد {res} کالا  فعال شد'
     modeladmin.message_user(request,message)
     
-    
-    
-class ProductFeatureInlineAdmin(admin.TabularInline):
-    model = ProductFeature
-    extra=3
-    
-class ProductGallaryInlineAdmin(admin.TabularInline):
+#=========================================================
+class ProductFeatureInline(admin.TabularInline):
+        model = ProductFeature
+        extra= 22
+        
+        class Media:
+            css ={
+                'all':('css/admin_style.css',)
+            }
+            js= (
+                'https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js',
+                'js/admin_script.js',
+            )
+#=========================================================
+class ProductGallaryInline(admin.TabularInline):
     model = ProductGallary
     extra=3
-    
+#=========================================================
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('product_name','display_product_groups','price','brand','is_active','update_date','slug', )
-    list_filter = ('brand','product_name',)
-    search_fields = ('product_name',)
+    list_filter = (('brand__brand_title',DropdownFilter),('product_group__group_title',DropdownFilter),)
+    search_fields = ('product_name',)   
     ordering = ('update_date','product_name',)
-    actions =[de_active_product,active_product, ]
-    inlines=[ProductFeatureInlineAdmin,ProductGallaryInlineAdmin ]
+    actions =[de_active_product,active_product]
+    inlines=[ProductFeatureInline,ProductGallaryInline ]
     list_editable =['is_active']
 
     de_active_product.short_description='غیرفعال کردن  کالاهای انتخاب شده'
@@ -151,15 +159,22 @@ class ProductAdmin(admin.ModelAdmin):
             kwargs["queryset"]=ProductGroup.objects.filter(~Q(group_parent=None)) #عملا ما نمیخواهیم گروه های اصلی در باکس برگردانده شوند 
         return super().formfield_for_manytomany(db_field ,request, **kwargs)
     
-
-# @admin.register(Feature)
-# class FeatureAdmin(admin.ModelAdmin):
-#     list_display = ('feature_name',)
-#     list_filter = ('feature_name',) 
-#     search_fields = ('feature_name',)
-#     ordering = ('feature_name',)
-
-
+    fieldsets = (
+        ('اطلاعات محصول', {
+            "fields": (
+                'product_name',
+                'image_name',
+                'price',
+                ('product_group','brand','is_active',),
+                'summery_description',
+                'description',
+                'slug')}),
+        ('تاریخ و زمان', {'fields':(
+            ('published_date',),
+        )})
+               
+    )
+    
 #--------------------------------------------------------------
 class FeatureValueInLine(admin.TabularInline):
     model=FeatureValue
@@ -190,4 +205,17 @@ class FeatureAdmin(admin.ModelAdmin):
     display_feature_values.short_description='مقادیر ممکن برای این وِیژگی'
     
     
+#--------------------------------------------------------------
+@admin.register(FeatureValue)
+class FeatureValueAdmin(admin.ModelAdmin):
+    list_display=('value_title','feature',  )
+    
+    fieldsets = (
+        (None, {
+            "fields": (
+                'feature',
+                'value_title',
+            ),
+        }),
+    )
     

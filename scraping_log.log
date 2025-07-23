@@ -1,0 +1,25 @@
+2025-07-09 04:02:09,099 - INFO - ========== Starting new scraping session ==========
+2025-07-09 04:02:09,100 - INFO - Initializing new Chrome driver instance from local path...
+2025-07-09 04:02:11,439 - INFO - Chrome driver initialized successfully.
+2025-07-09 04:02:11,585 - INFO - Found 970 products to process. Starting main loop...
+2025-07-09 04:02:11,772 - INFO - (1/970) Searching for: "Asus Vivobook 16X K3605ZC-MBN541WS Laptop"
+2025-07-09 04:02:15,987 - INFO - -- Scraping content from: https://duckduckgo.com/l/?uddg=https%3A%2F%2Fwww.techadvisor.com%2Farticle%2F2031199%2Fasus%2Dvivobook%2D16x%2Dreview.html&rut=8bd5ed74459cfa7cf7ce7db4953be11de665cef62f7e73fe13edb08c776e5c28
+2025-07-09 04:02:17,086 - INFO - ruthless removal did not work. 
+2025-07-09 04:02:17,087 - INFO - -- Scraping content from: https://duckduckgo.com/l/?uddg=https%3A%2F%2Fwww.expertreviews.co.uk%2Ftechnology%2Flaptops%2Fasus%2Dvivobook%2D16x%2Dk3605%2Dreview&rut=20d1112919a8a392780273cc9b822ddff8b2237d9ca8a6e22aa6a8f44114a489
+2025-07-09 04:02:58,062 - INFO -     \u2714 Suitable content found.
+2025-07-09 04:02:58,062 - INFO -     - Translating content to Persian...
+2025-07-09 04:03:05,748 - WARNING - Retrying (Retry(total=0, connect=None, read=False, redirect=None, status=None)) after connection broken by 'MustDowngradeError('The server yielded its support for HTTP/3.0 through the Alt-Svc header while unable to do so. To remediate that issue, either disable HTTP/3.0 or reach out to the server admin.')': /_/TranslateWebserverUi/data/batchexecute
+2025-07-09 04:03:07,615 - ERROR - An unexpected error occurred for product ID 506. Type: TranslatorError, Message: The length of `query_text` exceeds the limit.
+2025-07-09 04:03:07,616 - INFO - (2/970) Searching for: "Lenovo IdeaPad Slim 5 16IRL8 82XF003GIN Laptop"
+2025-07-09 04:03:13,581 - INFO - -- Scraping content from: https://duckduckgo.com/l/?uddg=https%3A%2F%2Flaptopmedia.com%2Freview%2Flenovo%2Dideapad%2Dslim%2D5%2D16%2D2023%2Dreview%2Da%2Dbetter%2Dslightly%2Dmore%2Dexpensive%2Dversion%2Dof%2Dthe%2Dideapad%2Dslim%2D3%2F&rut=5a8c4d0b73317d1f2af5c138d197c046a9554621f5b1628902cda6377c49f09b
+2025-07-09 04:03:24,736 - INFO - -- Scraping content from: https://duckduckgo.com/l/?uddg=https%3A%2F%2Fwww.consumerreports.org%2Felectronics%2Dcomputers%2Flaptops%2Dchromebooks%2Flenovo%2Dideapad%2Dslim%2D5%2D16irl8%2Fm409782%2F&rut=ed2d02b0084caf50306b2e454391ef827ae8b7517f4b0611d48de186ab1976f0
+2025-07-09 04:03:48,818 - INFO - ruthless removal did not work. 
+2025-07-09 04:03:48,820 - INFO - -- Scraping content from: https://duckduckgo.com/l/?uddg=https%3A%2F%2Fnanoreview.net%2Fen%2Flaptop%2Flenovo%2Dideapad%2Dslim%2D5%2D16&rut=be942df23c26ac7e42f0ef99b3468b07badb39786b1946a9920a57f7c9653edb
+2025-07-09 04:03:52,397 - WARNING -     - No usable content found from search results. Skipping.
+2025-07-09 04:03:52,398 - INFO - (3/970) Searching for: "Asus VivoBook 14 2023 X1404ZA-NK321WS Laptop"
+2025-07-09 04:04:01,115 - INFO - -- Scraping content from: https://duckduckgo.com/l/?uddg=https%3A%2F%2Flaptopdecision.com%2Freview%2Fasus%2Dvivobook%2D14%2Dx1404&rut=fcd6cb4af5d6e01e0053c162e6fa9e885109fb8c59574f4fddda3a89f2315f93
+2025-07-09 04:05:00,601 - INFO -     \u2714 Suitable content found.
+2025-07-09 04:05:00,602 - INFO -     - Translating content to Persian...
+2025-07-09 04:05:00,896 - ERROR - An unexpected error occurred for product ID 565. Type: TranslatorError, Message: The length of `query_text` exceeds the limit.
+2025-07-09 04:05:00,897 - INFO - (4/970) Searching for: "Acer Nitro 5 AN515-58 NH.QFHSI.008 Laptop"
+2025-07-09 04:05:05,355 - INFO - -- Scraping content from: https://duckduckgo.com/l/?uddg=https%3A%2F%2Flaptopdecision.com%2Freview%2FAcer%2DNitro%2D5%2DAN515%2D58&rut=f18b47bc6f106321b451ffbbb251dc4d39f06453ae253b6f2d577495a2ce183c
