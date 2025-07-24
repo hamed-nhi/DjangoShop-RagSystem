@@ -83,7 +83,7 @@ class Product(models.Model):
     #related_name هر وقت به یک کلید خارجی می دهیم یعنی عملا این فیلد ریلیتد گروپ رو میبریم اضافه میکنیم به خود مدل 
     #یعنی وقتی prodcut group میاد به product وصل بشه --> (این فیلد هم بهشون اضافه میشه(به گروه که میخواهد وصل بشه به گروه دیگه اضافه میشه))
     product_group=models.ManyToManyField(ProductGroup,verbose_name='گروه کالا',related_name='products_of_groups')
-    brand= models.ForeignKey(Brand,verbose_name='برند کالا',on_delete=models.CASCADE,null=True,related_name='brands')
+    brand= models.ForeignKey(Brand,verbose_name='برند کالا',on_delete=models.CASCADE,null=True,related_name='product_of_brands')
     is_active=models.BooleanField(default=True,blank=True,verbose_name='وضعیت فعال/غیرفعال')
     slug = models.SlugField(max_length=200,null=True)
     register_date=models.DateTimeField(auto_now_add=True,verbose_name="تاریخ درج")
@@ -151,7 +151,9 @@ class ProductFeature(models.Model):
     feature = models.ForeignKey(Feature, on_delete=models.CASCADE,verbose_name='ویژگی')
     value = models.CharField(max_length=200,verbose_name='مقدار ویژگی کالا')
     #Or give the  '+'
-    filter_value = models.ForeignKey(FeatureValue,null=True,blank=True,on_delete=models.CASCADE,verbose_name='مقدار ویژگی برای فیلتر', related_name='product_features')
+    # filter_value = models.ForeignKey(FeatureValue,null=True,blank=True,on_delete=models.CASCADE,verbose_name='مقدار ویژگی برای فیلتر', related_name='product_features')
+    filter_value =  models.ForeignKey(FeatureValue,null=True,blank=True,on_delete=models.CASCADE,verbose_name='مقدار ویژگی فیلتر',related_name='filter_feature_value')
+
     def __str__(self):
         return f"{self.product} - {self.feature}: {self.value}"
     

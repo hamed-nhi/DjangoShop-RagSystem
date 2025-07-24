@@ -13,16 +13,19 @@
                 <div class="block-categories__item category-card category-card--layout--compact">
                     <div class="category-card__body">
                         <div class="category-card__image">
-                            <a href="">
+                           {% comment %} <a href="">  {% endcomment %}
+                         <a href="{% url 'products:products_of_group' slug=group.slug %}">
+
                                 <img src="{{media_url}}{{group.image_name}}" alt="">
                             </a>
                         </div>
                         <div class="category-card__content">
-                            <div class="category-card__name"><a href="">{{group.group_title}}</a></div>
-                            <div class="category-card__products">{{group.products_of_groups.all|length}}</div>
-                            {% comment %} brand
-                            <div class="category-card__name"><a href="">{{product.brand}}</a></div>
-                            <div class="category-card__products">{{product.products_of_groups.all|length}}</div> {% endcomment %}
+                            {% comment %} <div class="category-card__name"><a href="">{{group.group_title}}</a></div> {% endcomment %}
+                          <div class="category-card__name"><a href="{% url 'products:products_of_group' slug=group.slug %}">{{group.group_title}}</a></div>    
+
+                            <div class="category-card__products">{{group.products_of_groups.all|length}}محصول</div>
+                            
+                          
 
                           
                         </div>
@@ -32,4 +35,5 @@
                 <a href="{% url 'products:product_groups' %}">همه</a>
             </div>
 {% endblock content %}
+
 

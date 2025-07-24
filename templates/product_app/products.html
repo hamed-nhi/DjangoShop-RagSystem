@@ -2,339 +2,171 @@
 {% extends "partials/main_template.html" %}
 {% load render_partial %}
 {% load humanize %}
+{% load pagination_tags %} {# <-- گام ۱: تگ جدید را اینجا لود کنید #}
+
 {% block title %}فروشگاه آیکو{% endblock title %}
 {% block content %}
-	<!-- site__body -->
-		<div class="site__body">
-			<div class="page-header">
-				<div class="page-header__container container">
-					<div class="page-header__breadcrumb">
-						<nav aria-label="breadcrumb">
-							<ol class="breadcrumb">
-								<li class="breadcrumb-item">
-									<a href="index.html">خانه</a>
-									/
-								</li>
-								<li class="breadcrumb-item">
-									<a href="#">محصولات</a>
-								</li>
-								
-							</ol>
-						</nav>
-					</div>
-					<div class="page-header__title">
-						<h1>{{current_group.group_title}} </h1></div>
-				</div>
-			</div>
-			<div class="container">
-				<div class="shop-layout shop-layout--sidebar--start">
-					<div class="shop-layout__sidebar">
-						<div class="block block-sidebar">
-							<div class="block-sidebar__item">
-								<div class="widget-filters widget" data-collapse data-collapse-opened-class="filter--opened">
-									<h4 class="widget__title">فیلترها</h4>
-									<div class="widget-filters__list">
-										<div class="widget-filters__item">
-											<div class="filter filter--opened" data-collapse-item>
-												<button type="button" class="filter__title" data-collapse-trigger>دسته ها
-													<svg class="filter__arrow" width="12px" height="7px">
-														<use xlink:href="images/sprite.svg#arrow-rounded-down-12x7"></use>
-													</svg>
-												</button>
-												<div class="filter__body" data-collapse-content>
-													<div class="filter__container">
-														<div class="filter-categories">
-															<ul class="filter-categories__list">
-																<li class="filter-categories__item filter-categories__item--parent">
-																	<svg class="filter-categories__arrow" width="6px" height="9px">
-																		<use xlink:href="images/sprite.svg#arrow-rounded-left-6x9"></use>
-																	</svg> <a href="">ساخت و ساز و تعمیرات</a>
-																	<div class="filter-categories__counter">254</div>
-																</li>
-																<li class="filter-categories__item filter-categories__item--parent">
-																	<svg class="filter-categories__arrow" width="6px" height="9px">
-																		<use xlink:href="images/sprite.svg#arrow-rounded-left-6x9"></use>
-																	</svg> <a href="">ابزار</a>
-																	<div class="filter-categories__counter">75</div>
-																</li>
-																<li class="filter-categories__item filter-categories__item--current"><a href="">ابزار برقی</a>
-																	<div class="filter-categories__counter">21</div>
-																</li>
-																<li class="filter-categories__item filter-categories__item--child"><a href="">دریل و همزن</a>
-																	<div class="filter-categories__counter">15</div>
-																</li>
-																<li class="filter-categories__item filter-categories__item--child"><a href="">پیچ گوشتی برقی</a>
-																	<div class="filter-categories__counter">2</div>
-																</li>
-																<li class="filter-categories__item filter-categories__item--child"><a href="">پیچ گوشتی ها</a>
-																	<div class="filter-categories__counter">30</div>
-																</li>
-																<li class="filter-categories__item filter-categories__item--child"><a href="">آچار ها</a>
-																	<div class="filter-categories__counter">7</div>
-																</li>
-																<li class="filter-categories__item filter-categories__item--child"><a href="">ماشین آلات سنگ زنی</a>
-																	<div class="filter-categories__counter">5</div>
-																</li>
-																<li class="filter-categories__item filter-categories__item--child"><a href="">برش فرز</a>
-																	<div class="filter-categories__counter">2</div>
-																</li>
-																<li class="filter-categories__item filter-categories__item--child"><a href="">سم پاش های الکتریکی</a>
-																	<div class="filter-categories__counter">9</div>
-																</li>
-																<li class="filter-categories__item filter-categories__item--child"><a href="">اره مویی</a>
-																	<div class="filter-categories__counter">4</div>
-																</li>
-																<li class="filter-categories__item filter-categories__item--child"><a href="">مته سنگ شکن</a>
-																	<div class="filter-categories__counter">0</div>
-																</li>
-																<li class="filter-categories__item filter-categories__item--child"><a href="">رنده ها</a>
-																	<div class="filter-categories__counter">12</div>
-																</li>
-																<li class="filter-categories__item filter-categories__item--child"><a href="">تفنگ چسب</a>
-																	<div class="filter-categories__counter">7</div>
-																</li>
-															</ul>
-														</div>
-													</div>
-												</div>
-											</div>
-										</div>
-										<div class="widget-filters__item">
-											<div class="filter filter--opened" data-collapse-item>
-												<button type="button" class="filter__title" data-collapse-trigger>قیمت
-													<svg class="filter__arrow" width="12px" height="7px">
-														<use xlink:href="images/sprite.svg#arrow-rounded-down-12x7"></use>
-													</svg>
-												</button>
-												<div class="filter__body" data-collapse-content>
-													<div class="filter__container">
-														<div class="filter-price" data-min="5000" data-max="150000" data-from="25000" data-to="110000">
-															<div class="filter-price__slider"></div>
-															<div class="filter-price__title"><span class="filter-price__min-value"></span> تومان - <span class="filter-price__max-value"></span> تومان</div>
-														</div>
-													</div>
-												</div>
-											</div>
-										</div>
-										<div class="widget-filters__item">
-											<div class="filter filter--opened" data-collapse-item>
-												<button type="button" class="filter__title" data-collapse-trigger>برند
-													<svg class="filter__arrow" width="12px" height="7px">
-														<use xlink:href="images/sprite.svg#arrow-rounded-down-12x7"></use>
-													</svg>
-												</button>
-												<div class="filter__body" data-collapse-content>
-													<div class="filter__container">
-														<div class="filter-list">
-															<div class="filter-list__list">
-																<label class="filter-list__item"><span class="filter-list__input input-check"><span class="input-check__body"><input class="input-check__input" type="checkbox"> <span class="input-check__box"></span>
-																	<svg class="input-check__icon" width="9px" height="7px">
-																		<use xlink:href="images/sprite.svg#check-9x7"></use>
-																	</svg>
-																	</span>
-																	</span><span class="filter-list__title">واکیتا </span><span class="filter-list__counter">7</span></label>
-																<label class="filter-list__item"><span class="filter-list__input input-check"><span class="input-check__body"><input class="input-check__input" type="checkbox" checked> <span class="input-check__box"></span>
-																	<svg class="input-check__icon" width="9px" height="7px">
-																		<use xlink:href="images/sprite.svg#check-9x7"></use>
-																	</svg>
-																	</span>
-																	</span><span class="filter-list__title">زوک </span><span class="filter-list__counter">42</span></label>
-																<label class="filter-list__item filter-list__item--disabled"><span class="filter-list__input input-check"><span class="input-check__body"><input class="input-check__input" type="checkbox" checked disabled> <span class="input-check__box"></span>
-																	<svg class="input-check__icon" width="9px" height="7px">
-																		<use xlink:href="images/sprite.svg#check-9x7"></use>
-																	</svg>
-																	</span>
-																	</span><span class="filter-list__title">ویوالت</span></label>
-																<label class="filter-list__item filter-list__item--disabled"><span class="filter-list__input input-check"><span class="input-check__body"><input class="input-check__input" type="checkbox" disabled> <span class="input-check__box"></span>
-																	<svg class="input-check__icon" width="9px" height="7px">
-																		<use xlink:href="images/sprite.svg#check-9x7"></use>
-																	</svg>
-																	</span>
-																	</span><span class="filter-list__title">هامر</span></label>
-																<label class="filter-list__item"><span class="filter-list__input input-check"><span class="input-check__body"><input class="input-check__input" type="checkbox"> <span class="input-check__box"></span>
-																	<svg class="input-check__icon" width="9px" height="7px">
-																		<use xlink:href="images/sprite.svg#check-9x7"></use>
-																	</svg>
-																	</span>
-																	</span><span class="filter-list__title">میتاسیا </span><span class="filter-list__counter">1</span></label>
-																<label class="filter-list__item"><span class="filter-list__input input-check"><span class="input-check__body"><input class="input-check__input" type="checkbox"> <span class="input-check__box"></span>
-																	<svg class="input-check__icon" width="9px" height="7px">
-																		<use xlink:href="images/sprite.svg#check-9x7"></use>
-																	</svg>
-																	</span>
-																	</span><span class="filter-list__title">متاگو </span><span class="filter-list__counter">25</span></label>
-															</div>
-														</div>
-													</div>
-												</div>
-											</div>
-										</div>
-										<div class="widget-filters__item">
-											<div class="filter filter--opened" data-collapse-item>
-												<button type="button" class="filter__title" data-collapse-trigger>برند
-													<svg class="filter__arrow" width="12px" height="7px">
-														<use xlink:href="images/sprite.svg#arrow-rounded-down-12x7"></use>
-													</svg>
-												</button>
-												<div class="filter__body" data-collapse-content>
-													<div class="filter__container">
-														<div class="filter-list">
-															<div class="filter-list__list">
-																<label class="filter-list__item"><span class="filter-list__input input-radio"><span class="input-radio__body"><input class="input-radio__input" name="filter_radio" type="radio"> <span class="input-radio__circle"></span> </span>
-																	</span><span class="filter-list__title">واکیتا </span><span class="filter-list__counter">7</span></label>
-																<label class="filter-list__item"><span class="filter-list__input input-radio"><span class="input-radio__body"><input class="input-radio__input" name="filter_radio" type="radio"> <span class="input-radio__circle"></span> </span>
-																	</span><span class="filter-list__title">زوک </span><span class="filter-list__counter">42</span></label>
-																<label class="filter-list__item filter-list__item--disabled"><span class="filter-list__input input-radio"><span class="input-radio__body"><input class="input-radio__input" name="filter_radio" type="radio" checked disabled> <span class="input-radio__circle"></span> </span>
-																	</span><span class="filter-list__title">ویوالت</span></label>
-																<label class="filter-list__item filter-list__item--disabled"><span class="filter-list__input input-radio"><span class="input-radio__body"><input class="input-radio__input" name="filter_radio" type="radio" disabled> <span class="input-radio__circle"></span> </span>
-																	</span><span class="filter-list__title">هامر</span></label>
-																<label class="filter-list__item"><span class="filter-list__input input-radio"><span class="input-radio__body"><input class="input-radio__input" name="filter_radio" type="radio"> <span class="input-radio__circle"></span> </span>
-																	</span><span class="filter-list__title">میتاسیا </span><span class="filter-list__counter">1</span></label>
-																<label class="filter-list__item"><span class="filter-list__input input-radio"><span class="input-radio__body"><input class="input-radio__input" name="filter_radio" type="radio"> <span class="input-radio__circle"></span> </span>
-																	</span><span class="filter-list__title">متاگو </span><span class="filter-list__counter">25</span></label>
-															</div>
-														</div>
-													</div>
-												</div>
-											</div>
-										</div>
-										<div class="widget-filters__item">
-											<div class="filter filter--opened" data-collapse-item>
-												<button type="button" class="filter__title" data-collapse-trigger>رنگ
-													<svg class="filter__arrow" width="12px" height="7px">
-														<use xlink:href="images/sprite.svg#arrow-rounded-down-12x7"></use>
-													</svg>
-												</button>
-												<div class="filter__body" data-collapse-content>
-													<div class="filter__container">
-														<div class="filter-color">
-															<div class="filter-color__list">
-																<label class="filter-color__item"><span class="filter-color__check input-check-color input-check-color--white" style="color: #fff;"><label class="input-check-color__body"><input class="input-check-color__input" type="checkbox"> <span class="input-check-color__box"></span>
-																	<svg class="input-check-color__icon" width="12px" height="9px">
-																		<use xlink:href="images/sprite.svg#check-12x9"></use>
-																	</svg> <span class="input-check-color__stick"></span></label>
-																</span>
-																</label>
-																<label class="filter-color__item"><span class="filter-color__check input-check-color input-check-color--light" style="color: #d9d9d9;"><label class="input-check-color__body"><input class="input-check-color__input" type="checkbox"> <span class="input-check-color__box"></span>
-																	<svg class="input-check-color__icon" width="12px" height="9px">
-																		<use xlink:href="images/sprite.svg#check-12x9"></use>
-																	</svg> <span class="input-check-color__stick"></span></label>
-																</span>
-																</label>
-																<label class="filter-color__item"><span class="filter-color__check input-check-color" style="color: #b3b3b3;"><label class="input-check-color__body"><input class="input-check-color__input" type="checkbox"> <span class="input-check-color__box"></span>
-																	<svg class="input-check-color__icon" width="12px" height="9px">
-																		<use xlink:href="images/sprite.svg#check-12x9"></use>
-																	</svg> <span class="input-check-color__stick"></span></label>
-																</span>
-																</label>
-																<label class="filter-color__item"><span class="filter-color__check input-check-color" style="color: #808080;"><label class="input-check-color__body"><input class="input-check-color__input" type="checkbox"> <span class="input-check-color__box"></span>
-																	<svg class="input-check-color__icon" width="12px" height="9px">
-																		<use xlink:href="images/sprite.svg#check-12x9"></use>
-																	</svg> <span class="input-check-color__stick"></span></label>
-																</span>
-																</label>
-																<label class="filter-color__item"><span class="filter-color__check input-check-color" style="color: #666;"><label class="input-check-color__body"><input class="input-check-color__input" type="checkbox"> <span class="input-check-color__box"></span>
-																	<svg class="input-check-color__icon" width="12px" height="9px">
-																		<use xlink:href="images/sprite.svg#check-12x9"></use>
-																	</svg> <span class="input-check-color__stick"></span></label>
-																</span>
-																</label>
-																<label class="filter-color__item"><span class="filter-color__check input-check-color" style="color: #4d4d4d;"><label class="input-check-color__body"><input class="input-check-color__input" type="checkbox"> <span class="input-check-color__box"></span>
-																	<svg class="input-check-color__icon" width="12px" height="9px">
-																		<use xlink:href="images/sprite.svg#check-12x9"></use>
-																	</svg> <span class="input-check-color__stick"></span></label>
-																</span>
-																</label>
-																<label class="filter-color__item"><span class="filter-color__check input-check-color" style="color: #262626;"><label class="input-check-color__body"><input class="input-check-color__input" type="checkbox"> <span class="input-check-color__box"></span>
-																	<svg class="input-check-color__icon" width="12px" height="9px">
-																		<use xlink:href="images/sprite.svg#check-12x9"></use>
-																	</svg> <span class="input-check-color__stick"></span></label>
-																</span>
-																</label>
-																<label class="filter-color__item"><span class="filter-color__check input-check-color" style="color: #ff4040;"><label class="input-check-color__body"><input class="input-check-color__input" type="checkbox" checked> <span class="input-check-color__box"></span>
-																	<svg class="input-check-color__icon" width="12px" height="9px">
-																		<use xlink:href="images/sprite.svg#check-12x9"></use>
-																	</svg> <span class="input-check-color__stick"></span></label>
-																</span>
-																</label>
-																<label class="filter-color__item"><span class="filter-color__check input-check-color" style="color: #ff8126;"><label class="input-check-color__body"><input class="input-check-color__input" type="checkbox"> <span class="input-check-color__box"></span>
-																	<svg class="input-check-color__icon" width="12px" height="9px">
-																		<use xlink:href="images/sprite.svg#check-12x9"></use>
-																	</svg> <span class="input-check-color__stick"></span></label>
-																</span>
-																</label>
-																<label class="filter-color__item"><span class="filter-color__check input-check-color input-check-color--light" style="color: #ffd440;"><label class="input-check-color__body"><input class="input-check-color__input" type="checkbox"> <span class="input-check-color__box"></span>
-																	<svg class="input-check-color__icon" width="12px" height="9px">
-																		<use xlink:href="images/sprite.svg#check-12x9"></use>
-																	</svg> <span class="input-check-color__stick"></span></label>
-																</span>
-																</label>
-																<label class="filter-color__item"><span class="filter-color__check input-check-color input-check-color--light" style="color: #becc1f;"><label class="input-check-color__body"><input class="input-check-color__input" type="checkbox"> <span class="input-check-color__box"></span>
-																	<svg class="input-check-color__icon" width="12px" height="9px">
-																		<use xlink:href="images/sprite.svg#check-12x9"></use>
-																	</svg> <span class="input-check-color__stick"></span></label>
-																</span>
-																</label>
-																<label class="filter-color__item"><span class="filter-color__check input-check-color" style="color: #8fcc14;"><label class="input-check-color__body"><input class="input-check-color__input" type="checkbox" checked> <span class="input-check-color__box"></span>
-																	<svg class="input-check-color__icon" width="12px" height="9px">
-																		<use xlink:href="images/sprite.svg#check-12x9"></use>
-																	</svg> <span class="input-check-color__stick"></span></label>
-																</span>
-																</label>
-																<label class="filter-color__item"><span class="filter-color__check input-check-color" style="color: #47cc5e;"><label class="input-check-color__body"><input class="input-check-color__input" type="checkbox"> <span class="input-check-color__box"></span>
-																	<svg class="input-check-color__icon" width="12px" height="9px">
-																		<use xlink:href="images/sprite.svg#check-12x9"></use>
-																	</svg> <span class="input-check-color__stick"></span></label>
-																</span>
-																</label>
-																<label class="filter-color__item"><span class="filter-color__check input-check-color" style="color: #47cca0;"><label class="input-check-color__body"><input class="input-check-color__input" type="checkbox"> <span class="input-check-color__box"></span>
-																	<svg class="input-check-color__icon" width="12px" height="9px">
-																		<use xlink:href="images/sprite.svg#check-12x9"></use>
-																	</svg> <span class="input-check-color__stick"></span></label>
-																</span>
-																</label>
-																<label class="filter-color__item"><span class="filter-color__check input-check-color" style="color: #47cccc;"><label class="input-check-color__body"><input class="input-check-color__input" type="checkbox"> <span class="input-check-color__box"></span>
-																	<svg class="input-check-color__icon" width="12px" height="9px">
-																		<use xlink:href="images/sprite.svg#check-12x9"></use>
-																	</svg> <span class="input-check-color__stick"></span></label>
-																</span>
-																</label>
-																<label class="filter-color__item"><span class="filter-color__check input-check-color" style="color: #40bfff;"><label class="input-check-color__body"><input class="input-check-color__input" type="checkbox" disabled> <span class="input-check-color__box"></span>
-																	<svg class="input-check-color__icon" width="12px" height="9px">
-																		<use xlink:href="images/sprite.svg#check-12x9"></use>
-																	</svg> <span class="input-check-color__stick"></span></label>
-																</span>
-																</label>
-																<label class="filter-color__item"><span class="filter-color__check input-check-color" style="color: #3d6dcc;"><label class="input-check-color__body"><input class="input-check-color__input" type="checkbox" checked> <span class="input-check-color__box"></span>
-																	<svg class="input-check-color__icon" width="12px" height="9px">
-																		<use xlink:href="images/sprite.svg#check-12x9"></use>
-																	</svg> <span class="input-check-color__stick"></span></label>
-																</span>
-																</label>
-																<label class="filter-color__item"><span class="filter-color__check input-check-color" style="color: #7766cc;"><label class="input-check-color__body"><input class="input-check-color__input" type="checkbox"> <span class="input-check-color__box"></span>
-																	<svg class="input-check-color__icon" width="12px" height="9px">
-																		<use xlink:href="images/sprite.svg#check-12x9"></use>
-																	</svg> <span class="input-check-color__stick"></span></label>
-																</span>
-																</label>
-																<label class="filter-color__item"><span class="filter-color__check input-check-color" style="color: #b852cc;"><label class="input-check-color__body"><input class="input-check-color__input" type="checkbox"> <span class="input-check-color__box"></span>
-																	<svg class="input-check-color__icon" width="12px" height="9px">
-																		<use xlink:href="images/sprite.svg#check-12x9"></use>
-																	</svg> <span class="input-check-color__stick"></span></label>
-																</span>
-																</label>
-																<label class="filter-color__item"><span class="filter-color__check input-check-color" style="color: #e53981;"><label class="input-check-color__body"><input class="input-check-color__input" type="checkbox"> <span class="input-check-color__box"></span>
-																	<svg class="input-check-color__icon" width="12px" height="9px">
-																		<use xlink:href="images/sprite.svg#check-12x9"></use>
-																	</svg> <span class="input-check-color__stick"></span></label>
-																</span>
-																</label>
-															</div>
-														</div>
-													</div>
-												</div>
-											</div>
-										</div>
+    <div class="site__body">
+        <div class="page-header">
+            <div class="page-header__container container">
+                <div class="page-header__breadcrumb">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item">
+                                <a href="{% url 'main:index' %}">خانه</a>
+                                /
+                            </li>
+                            <li class="breadcrumb-item">
+                                <a href="#">محصولات/ {{current_group.group_title}}</a>
+                            </li>
+                        </ol>
+                    </nav>
+                </div>
+                <div class="page-header__title">
+                    <h1>محصولات گروه <span style="color: green;">{{current_group.group_title}}</span></h1>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="shop-layout shop-layout--sidebar--start">
+                <div class="shop-layout__sidebar">
+                    <div class="block block-sidebar">
+                        <form action="">
+                            <div class="block-sidebar__item">
+                                <div class="widget-filters widget" data-collapse data-collapse-opened-class="filter--opened">
+                                    <h4 class="widget__title">فیلترها</h4>
+
+                                    {% if active_filters %}
+                                    <div class="active-filters-list">
+                                        <span>فیلترهای اعمال شده:</span>
+                                        {% for filter in active_filters %}
+                                            <a href="{{ filter.remove_url }}" class="active-filter-tag">
+                                                {{ filter.name }}
+                                                <i class="fas fa-times"></i>
+                                            </a>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+
+                                    <a id="reset_filters_btn" class="btn-filter-state" href="{% url 'products:products_of_group' slug=group_slug %}" style="display: none; color: #ff5252; font-weight: bold;">
+                                        <i class="fas fa-times"></i> حذف فیلترها
+                                    </a>
+
+                                    <div class="widget-filters__list">
+                                        <div class="widget-filters__item">
+                                            {% include 'partials/products/price_filter.html' %}
+                                        </div>
+                                        <div class="widget-filters__item">
+                                            {% render_partial 'products:brands_partials' slug=group_slug %}
+                                        </div>
+                                        <div class="widget-filters__item">
+                                            {% render_partial 'products:feature_partials' slug=group_slug %}
+                                        </div>
+                                    </div>
+                                    <div class="widget-filters__actions d-flex">
+                                        <button type="submit" class="btn btn-primary btn-sm">فیلتر</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                        </div>
+                </div>
+                <div class="shop-layout__content">
+                    <div class="block">
+                        <div class="products-view">
+                            <div class="products-view__options">
+                                <div class="view-options">
+                                    <div class="view-options__legend">
+                                        تعداد کل محصولات این گروه : {{product_count}} محصول
+                                    </div>
+                                    <div class="view-options__divider"></div>
+                                    <div class="view-options__control">
+                                        <label for="">مرتب‌سازی بر اساس</label>
+                                        <div>
+                                            <select class="form-control form-control-sm" name="sort" id="select_sort">
+                                                <option value="0" {% if sort_type == '0' %}selected{% endif %}>پیش فرض</option>
+                                                <option value="1" {% if sort_type == '1' %}selected{% endif %}>قیمت از کم به زیاد</option>
+                                                <option value="2" {% if sort_type == '2' %}selected{% endif %}>قیمت از زیاد به کم</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    </div>
+                            </div>
+                            <div class="products-view__list products-list" data-layout="grid-3-sidebar" data-with-features="false">
+                                <div class="products-list__body">
+                                    {% for product in page_obj %}
+                                        {% include 'partials/products/product_box.html' with type=3 %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <br>
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination justify-content-center">
+                                    {% if page_obj.has_previous %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?{% query_transform request.GET page=page_obj.previous_page_number %}">قبلی</a>
+                                        </li>
+                                    {% else %}
+                                        <li class="page-item disabled">
+                                            <a class="page-link" href="#" tabindex="-1" aria-disabled="True">قبلی</a>
+                                        </li>
+                                    {% endif %}
+
+                                    {% for i in page_obj.paginator.page_range %}
+                                        {% if page_obj.number == i %}
+                                            <li class="page-item active" aria-current="page">
+                                                <span class="page-link">{{ i }}</span>
+                                            </li>
+                                        {% elif i > page_obj.number|add:'-5' and i < page_obj.number|add:'5' %}
+                                            <li class="page-item">
+                                                <a class="page-link" href="?{% query_transform request.GET page=i %}">{{ i }}</a>
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %}
+
+                                    {% if page_obj.has_next %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?{% query_transform request.GET page=page_obj.next_page_number %}">بعدی</a>
+                                        </li>
+                                    {% else %}
+                                        <li class="page-item disabled">
+                                            <a class="page-link" href="#" tabindex="-1" aria-disabled="True">بعدی</a>
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                            </nav>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endblock content %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% comment %} 
+
+    
 									</div>
 									<div class="widget-filters__actions d-flex">
 										<button class="btn btn-primary btn-sm">فیلتر</button>
@@ -478,4 +310,7 @@
 		</div>
 		<!-- site__body / end -->
 
-{% endblock content %}
+
+
+		
+{% endblock content %}  {% endcomment %}

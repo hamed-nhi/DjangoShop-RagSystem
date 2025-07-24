@@ -9,6 +9,62 @@ body {
 	font-family: "primary-font", "segoe ui", "tahoma";
 	line-height: 1.85;
 }
+
+
+/* دثص ------------------------------------ */
+
+.active-filters-list {
+    margin-bottom: 15px;
+    font-size: 13px;
+}
+
+.active-filters-list span {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.active-filter-tag {
+    display: inline-block;
+    background-color: #e8e8e8;
+    color: #333;
+    padding: 3px 8px;
+    border-radius: 12px;
+    margin: 2px;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.active-filter-tag:hover {
+    background-color: #d1d1d1;
+    color: #333;
+}
+
+.active-filter-tag .fa-times {
+    font-size: 11px;
+    margin-right: 4px;
+}
+/* دثص ------------------------------------ */
+
+
+
+
+
+
+
+
+/* دثص ------------------------------------ */
+.filter-count {
+    background-color: #007bff; /* یا هر رنگ دلخواه دیگر */
+    color: white;
+    border-radius: 8px;
+    padding: 1px 6px;
+    font-size: 11px;
+    margin-right: 5px;
+    font-weight: normal;
+    vertical-align: middle; /* برای تراز عمودی بهتر */
+}
+/* ------------------------------------------ */
 .primary-font {
 	font-family: "primary-font", "segoe ui", "tahoma" !important;
 }

@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'ckeditor_uploader',
     'django_render_partial',
     'django.contrib.humanize',
+    'django_filters',
 ]
 
 
