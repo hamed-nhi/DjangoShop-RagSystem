@@ -1,56 +1,110 @@
-from django.shortcuts import render ,redirect
+from django.shortcuts import render, redirect
 from django.views import View
-from .forms import RegisterUserForm,VerifyResgiterForm,LoginUserForm,ChangePasswordForm,RememberPasswordForm
+from .forms import RegisterUserForm, VerifyResgiterForm, LoginUserForm, ChangePasswordForm, RememberPasswordForm
 from .models import CustomUser
-import utils
+from . import utils 
 from django.contrib import messages
-from django.contrib.auth import authenticate,login,logout
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-
-
-
 class RegisterUserView(View):
-
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             return redirect('main:index')
         return super().dispatch(request, *args, **kwargs)
     
-    def get(self,request,*args,**kwargs):
+    def get(self, request, *args, **kwargs):
         form = RegisterUserForm()
-        return render(request,"accounts_app/register.html",{"form":form})
-        #فرم رو میفرسته
+        return render(request, "accounts_app/register.html", {"form": form})
 
-
-    def post(self,request,*args,**kwargs):
-        form =RegisterUserForm(request.POST)
+    def post(self, request, *args, **kwargs):
+        form = RegisterUserForm(request.POST)
         if form.is_valid():
             data = form.cleaned_data
-            active_code=utils.create_random_code(5)
-        
-            #دیتایی که کاربر وارد کرده از این طریق گرفته میشه 
-
-            #پسووردی که میخواهی اینجا بگیری نیازی نیست اون رو هش کنی چرا کهدر خود فایل مدل اون رو هش کردیم
-            # یعنی در فایل مدل  اومدیم قبل از ذخیره پسوورد اون رو هش میکنیم
-            CustomUser.objects.create_user( #  برای ذخیره کردن  اطلاعاتی که کاربر درج کرده است
-                mobile_number = data['mobile_number'],
+            active_code = utils.create_random_code(5)
+            
+            CustomUser.objects.create_user(
+                mobile_number=data['mobile_number'],
                 active_code=active_code,
-                password= data['password1'],
+                password=data['password1'],
             )
-            # utils.send_sms(data['mobile_number'],f'کد فعال سازی حساب شما {active_code')
-            utils.send_sms(data['mobile_number'],f'کد فعال سازی حساب شما {active_code} می باشد ')
-            #یه سری اطلاعات را بصورت ارایه در سشن نگهداری میکنیم که در حین ثبت نام از انها استفاده کنیم
-            request.session['user_session']={
-                'active_code':str(active_code),
-                'mobile_number':data['mobile_number'],
+
+            # ----- شروع بخش تست -----
+            print(">>> DEBUG: قبل از ارسال پیامک")
+            
+            utils.send_sms(data['mobile_number'], f'کد فعال سازی حساب شما {active_code} می باشد ')
+            
+            print(">>> DEBUG: بعد از ارسال پیامک")
+            # ----- پایان بخش تست -----
+
+            request.session['user_session'] = {
+                'active_code': str(active_code),
+                'mobile_number': data['mobile_number'],
                 'remember_password': False,
             }
-            messages.success(request,'اطلاعات شما ثبت شد و کد فعال سازی ارسال شد ','success')
+            messages.success(request, 'اطلاعات شما ثبت شد و کد فعال سازی ارسال شد ', 'success')
             return redirect('accounts:verify')
-        # if not valid 
-        messages.error(request,'خطا در ثبت نام','danger')
+        
+        # اگر فرم معتبر نبود
+        messages.error(request, 'خطا در ثبت نام. لطفاً اطلاعات را بررسی کنید.', 'danger')
         return render(request, "accounts_app/register.html", {"form": form})
+
+
+
+
+# from django.shortcuts import render ,redirect
+# from django.views import View
+# from .forms import RegisterUserForm,VerifyResgiterForm,LoginUserForm,ChangePasswordForm,RememberPasswordForm
+# from .models import CustomUser
+# import utils
+# from django.contrib import messages
+# from django.contrib.auth import authenticate,login,logout
+# from django.contrib.auth.mixins import LoginRequiredMixin
+
+
+
+
+# class RegisterUserView(View):
+
+#     def dispatch(self, request, *args, **kwargs):
+#         if request.user.is_authenticated:
+#             return redirect('main:index')
+#         return super().dispatch(request, *args, **kwargs)
+    
+#     def get(self,request,*args,**kwargs):
+#         form = RegisterUserForm()
+#         return render(request,"accounts_app/register.html",{"form":form})
+#         #فرم رو میفرسته
+
+
+#     def post(self,request,*args,**kwargs):
+#         form =RegisterUserForm(request.POST)
+#         if form.is_valid():
+#             data = form.cleaned_data
+#             active_code=utils.create_random_code(5)
+        
+#             #دیتایی که کاربر وارد کرده از این طریق گرفته میشه 
+
+#             #پسووردی که میخواهی اینجا بگیری نیازی نیست اون رو هش کنی چرا کهدر خود فایل مدل اون رو هش کردیم
+#             # یعنی در فایل مدل  اومدیم قبل از ذخیره پسوورد اون رو هش میکنیم
+#             CustomUser.objects.create_user( #  برای ذخیره کردن  اطلاعاتی که کاربر درج کرده است
+#                 mobile_number = data['mobile_number'],
+#                 active_code=active_code,
+#                 password= data['password1'],
+#             )
+#             # utils.send_sms(data['mobile_number'],f'کد فعال سازی حساب شما {active_code')
+#             utils.send_sms(data['mobile_number'],f'کد فعال سازی حساب شما {active_code} می باشد ')
+#             #یه سری اطلاعات را بصورت ارایه در سشن نگهداری میکنیم که در حین ثبت نام از انها استفاده کنیم
+#             request.session['user_session']={
+#                 'active_code':str(active_code),
+#                 'mobile_number':data['mobile_number'],
+#                 'remember_password': False,
+#             }
+#             messages.success(request,'اطلاعات شما ثبت شد و کد فعال سازی ارسال شد ','success')
+#             return redirect('accounts:verify')
+#         # if not valid 
+#         messages.error(request,'خطا در ثبت نام','danger')
+#         return render(request, "accounts_app/register.html", {"form": form})
 
 class VerifyResgiterCodeView(View):
 
