@@ -2,8 +2,8 @@
         <div class="container">
                {% include "partials/products/root_group.html" with title='ارزان ترین محصولات' %}
                     <div class="product-flexbox">
-						{% for product in products %}
-							{% include "partials/products/product_box.html" with type=1 %}
+			{% for product in products %}
+			{% include "partials/products/product_box.html" with type=1 %}
                         {% endfor %}
                     {% comment %} <div class="owl-nav disabled"><button type="button" role="presentation"
                             class="owl-prev"><span aria-label="Previous">‹</span></button><button type="button"
