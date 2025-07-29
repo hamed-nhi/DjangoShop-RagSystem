@@ -38,6 +38,177 @@ function updateFilterCounts() {
         });
     });
 }
+status_of_shop_cart();
+
+
+// Min icon Shopcart Counts
+function status_of_shop_cart(){
+     $.ajax({
+        type:"GET",
+        url:"/orders/status_of_shop_cart/",     
+        success:function(res){
+            $("#indicator__value").html(res);
+        }
+    });
+}
+
+
+
+// orders_app Scripts
+function add_to_shop_cart(product_id,qty){
+    if (qty===0){
+        qty=$("#product-quantity").val();
+    }
+    // alert(product_id+"",qty);
+    $.ajax({
+        type:"GET",
+        url:"/orders/add_to_shop_cart/",
+        data:{
+            product_id: product_id,
+            qty: qty,
+        },
+        // success:function(res){
+        //     alert("کالای مورد نظر به سبد خرید شما اضافه شد");
+        //     $("#indicator__value").text(res);
+        // }
+        success: function(response) {
+            // $("#indicator__value").text(response);
+            status_of_shop_cart();
+            // alert("کالای مورد نظر به سبد خرید شما اضافه شد");
+            showToast("کالای مورد نظر به سبد خرید شما اضافه شد");
+
+        },
+        error: function(xhr, status, error) {
+            // This function runs if the request fails
+            console.error("AJAX Error:", status, error);
+            alert("خطایی در افزودن به سبد خرید رخ داد. لطفاً کنسول را بررسی کنید.");
+        }
+    });
+
+}
+
+// orders_app Scripts
+// function delete_from_shop_cart(product_id){
+//     $.ajax({
+//         type:"GET",
+//         url:"/orders/delete_from_shop_cart/",
+//         data:{
+//             product_id:product_id,
+//         },
+//         success:function(res){
+//             alert("کالای مورد نظر از سبد خرید شما حذف شد");
+//             // $("#shop_cart_list").html(res);
+//             status_of_shop_cart();
+
+//         }
+//     });
+// }
+
+// // shopcart Button Sync(بروزرسانی)
+// function update_shop_cart(){
+//     var product_id_list = []
+//     var qty_list =[]
+//     $("input[id^='qty_']").each(function(index){
+//         product_id_list.push($(this).attr('id').slice(4));
+//         qty_list.push($(this).val())
+//     });
+
+
+//    $.ajax({
+//         type:"GET",
+//         url:"/orders/update_shop_cart/",
+//         data:{
+//             product_id_list:product_id_list,
+//             qty_list:qty_list,
+//         },
+//         success:function(res){
+//             // $("#shop_cart_list").html(res);
+//             status_of_shop_cart();
+
+//         }
+//     });
+// }
+// برای گرفتن CSRF token از کوکی
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+const csrftoken = getCookie('csrftoken');
+
+function delete_from_shop_cart(product_id) {
+    $.ajax({
+        type: "POST", // <-- تغییر به POST
+        url: "/orders/delete_from_shop_cart/",
+        data: {
+            product_id: product_id,
+            csrfmiddlewaretoken: csrftoken // <-- افزودن توکن
+        },
+        success: function(res) {
+            // alert("کالای مورد نظر از سبد خرید شما حذف شد");
+            showToast("کالای مورد نظر از سبد خرید شما حذف شد");
+            // کل محتوای سبد خرید را با پاسخ جدید جایگزین می‌کنیم
+            $("#shop_cart_list").html(res);
+            status_of_shop_cart(); // برای آپدیت عدد بالای صفحه
+        }
+    });
+}
+
+function update_shop_cart(event) {
+    event.preventDefault(); // جلوگیری از ارسال عادی فرم
+    var product_id_list = [];
+    var qty_list = [];
+    $("input[id^='qty_']").each(function(index) {
+        product_id_list.push($(this).attr('id').slice(4));
+        qty_list.push($(this).val());
+    });
+
+    $.ajax({
+        type: "POST", // <-- تغییر به POST
+        url: "/orders/update_shop_cart/",
+        data: {
+            product_id_list: product_id_list,
+            qty_list: qty_list,
+            csrfmiddlewaretoken: csrftoken // <-- افزودن توکن
+        },
+        success: function(res) {
+            // alert("سبد خرید شما به روز شد");
+            showToast("سبد خرید شما به روز شد");
+            // کل محتوای سبد خرید را با پاسخ جدید جایگزین می‌کنیم
+            $("#shop_cart_list").html(res);
+            status_of_shop_cart(); // برای آپدیت عدد بالای صفحه
+        }
+    });
+}
+
+// تابع کمکی برای نمایش پیام‌های Toast
+function showToast(message, type = 'success') {
+    const colors = {
+        success: 'linear-gradient(to right, #00b09b, #96c93d)',
+        error: 'linear-gradient(to right, #ff5f6d, #ffc371)'
+    };
+
+    Toastify({
+        text: message,
+        duration: 3000, // پیام برای ۳ ثانیه نمایش داده می‌شود
+        close: true,
+        gravity: "top", // موقعیت: بالا
+        position: "center", // موقعیت: وسط
+        backgroundColor: colors[type],
+        stopOnFocus: true,
+    }).showToast();
+}
+
+
 
 $(document).ready(function() {
     updateFilterCounts();
@@ -790,14 +961,14 @@ $(document).ready(function() {
 // // //     }
 // // // }
 
-// // // function add_to_shop_cart(product_id, tedad) {
+// // // function add_to_shop_cart(product_id, qty) {
 // // //     // FIX 4: The first alert was likely for debugging and was syntactically incorrect. Removed it.
 // // //     $.ajax({
 // // //         type: "GET",
 // // //         url: "/orders/add_to_shop_cart/",
 // // //         data: {
 // // //             product_id: product_id,
-// // //             tedad: tedad,
+// // //             qty: qty,
 // // //         },
 // // //         success: function(res) {
 // // //             alert("کالای مورد نظر به سبد خرید شما اضافه شد");
@@ -895,14 +1066,14 @@ $(document).ready(function() {
 
 
 
-// // // function add_to_shop_cart(product_id,tedad){
-// // //     alert(product_id+"",tedad);
+// // // function add_to_shop_cart(product_id,qty){
+// // //     alert(product_id+"",qty);
 // // //     $.ajax({
 // // //         type:"GET",
 // // //         url:"/orders/add_to_shop_cart/",
 // // //         data:{
 // // //             product_id: product_id,
-// // //             tedad: tedad,
+// // //             qty: qty,
 // // //         },
 // // //         success:function(res){
 // // //             alert("کالای مورد نظر به سبد خرید شما اضافه شد");

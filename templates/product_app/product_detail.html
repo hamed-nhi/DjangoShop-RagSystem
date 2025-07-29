@@ -1,4 +1,4 @@
-{% extends "main_template.html" %}
+{% extends 'main_template.html' %}
 {% load render_partial %}
 {% load humanize %}
 {% block title %}فروشگاه آیکو{% endblock title %}
@@ -224,13 +224,13 @@
                                 <div class="product__actions">
                                     <div class="product__actions-item">
                                         <div class="input-number product__quantity">
-                                            <input id="product-quantity" class="input-number__input form-control form-control-lg" type="number" min="1" value="1">
-                                            <div class="input-number__add"></div>
-                                            <div class="input-number__sub"></div>
+                                            <input id="product-quantity" class="form-control form-control-lg" type="number" min="1" value="1">
+                                             {% comment %}<div class="input-number__add"></div>
+                                            <div class="input-number__sub"></div> {% endcomment %}
                                         </div>
                                     </div>
                                     <div class="product__actions-item product__actions-item--addtocart">
-                                        <button class="btn btn-primary btn-lg">افزودن به سبد</button>
+                                        <button type="button" class="btn btn-primary btn-lg" onclick="add_to_shop_cart({{product.id}},0)">افزودن به سبد</button>
                                     </div>
                                     <div class="product__actions-item product__actions-item--wishlist">
                                         <button type="button" class="btn btn-secondary btn-svg-icon btn-lg" data-toggle="tooltip" title="Wishlist">

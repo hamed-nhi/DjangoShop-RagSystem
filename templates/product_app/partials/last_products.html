@@ -2,8 +2,8 @@
         <div class="container">
                {% include "partials/products/root_group.html" with title='جدید ترین محصولات' %}
                     <div class="product-flexbox">
-						{% for product in products %}
-							{% include "partials/products/product_box.html" with type=2 %}
+			{% for product in products %}
+			{% include "partials/products/product_box.html" with type=2 %}
                         {% endfor %}
                    </div>
         </div>
