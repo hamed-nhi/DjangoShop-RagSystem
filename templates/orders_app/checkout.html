@@ -1,0 +1,246 @@
+{% extends 'main_template.html' %}
+{% load humanize %}
+{% load render_partial %}
+
+{% block titile %} فاکتور سفارش{% endblock titile %}
+
+{% block content %}
+<div class="site">
+    <div class="site__body">
+        <div class="page-header">
+            <div class="page-header__container container">
+                <div class="page-header__breadcrumb">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="index.html">خانه</a> /</li>
+                            <li class="breadcrumb-item active" aria-current="page">پرداخت</li>
+                        </ol>
+                    </nav>
+                </div>
+                <div class="page-header__title">
+                    <h1>پرداخت</h1>
+                </div>
+            </div>
+        </div>
+
+        <div class="checkout block">
+            <div class="container">
+                <div class="row">
+                    {% comment %} <div class="col-12 mb-3">
+                        <div class="alert alert-lg alert-primary">حساب کاربری دارید؟ <a href="login.html">وارد حساب خود شوید</a></div>
+                    </div> {% endcomment %}
+                    
+                    <!-- بخش سمت چپ - فرم پرداخت -->
+                    <div class="col-12 col-lg-6 col-xl-7">
+                        <div class="card mb-lg-0">
+                            <div class="card-body">
+                                <h3 class="card-title">جزئیات پرداخت</h3>
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <div class="form-row">
+                                        <div class="form-group col-md-6">
+                                            <label for="checkout-first-name">نام</label>
+                                            {{form.name}}
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <label for="checkout-last-name">نام خانوادگی</label>
+                                            {{form.family}}
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row">
+                                        <div class="form-group col-md-6">
+                                            <label for="checkout-email">آدرس ایمیل</label>
+                                            {{form.email}}
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <label for="checkout-phone">تلفن</label>
+                                            {{form.phone_number}}
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="checkout-street-address">آدرس</label>
+                                        {{form.address}}
+                                    </div>
+
+                                    <div class="card-divider"></div>
+                                    
+                                    <div class="card-body">
+                                        {% comment %} <h3 class="card-title" >جزئیات حمل و نقل</h3> {% endcomment %}
+                                        <div class="form-group">
+                                            <label for="checkout-comment">توضیحات سفارش <span class="text-muted">(اختیاری)</span></label>
+                                            {{form.description}}
+                                        </div>
+                                    </div>
+									<div class="payment-methods">
+                                    <ul class="payment-methods__list">
+                                        <li class="payment-methods__item">
+                                            <label class="payment-methods__item-header">
+                                                <span class="payment-methods__item-radio input-radio">
+                                                    <span class="input-radio__body">
+                                                        <input class="input-radio__input" name="checkout_payment_method" type="radio">
+														{% comment %} <span class="input-radio__circle"></span> {% endcomment %}
+                                                    </span>
+                                                </span>
+                                                {% comment %} <span class="payment-methods__item-title">پرداخت آنلاین</span> {% endcomment %}
+                                           													{{form.payment_type}}
+
+											</label>
+                                        </li>
+                                        {% comment %} <li class="payment-methods__item">
+                                            <label class="payment-methods__item-header">
+                                                <span class="payment-methods__item-radio input-radio">
+                                                    <span class="input-radio__body">
+                                                        <input class="input-radio__input" name="checkout_payment_method" type="radio">
+                                                        <span class="input-radio__circle"></span>
+                                                    </span>
+                                                </span>
+                                                <span class="payment-methods__item-title">پرداخت در محل</span>
+                                            </label>
+                                        </li> {% endcomment %}
+                                    </ul>
+                                </div>
+
+                                <div class="checkout__agree form-group">
+                                    <div class="form-check">
+                                        <span class="form-check-input input-check">
+                                            <span class="input-check__body">
+                                                <input class="input-check__input" type="checkbox" id="checkout-terms">
+                                                <span class="input-check__box"></span>
+                                                <svg class="input-check__icon" width="9px" height="7px">
+                                                    <use xlink:href="images/sprite.svg#check-9x7"></use>
+                                                </svg>
+                                            </span>
+                                        </span>
+                                        <label class="form-check-label" for="checkout-terms">
+                                            من <a target="_blank" href="terms-and-conditions.html">قوانین و مقررات</a> را خوانده و موافقم *
+                                        </label>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-xl btn-block">ثبت سفارش</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- بخش سمت راست - خلاصه سفارش -->
+                    <div class="col-12 col-lg-6 col-xl-5 mt-4 mt-lg-0">
+                        <div class="card mb-0">
+                            <div class="card-body">
+                                <h3 class="card-title">سفارش شما</h3>
+                                <table class="checkout__totals">
+                                    <thead class="checkout__totals-header">
+                                        <tr>
+                                            <th>محصول</th>
+                                            <th>تعداد</th>
+                                            <th>جمع کل</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="checkout__totals-products">
+                                        {% for item in shop_cart %}
+                                        <tr>
+                                            <td>{{item.product}}</td>
+                                            <td>{{item.qty}}</td>
+                                            <td>{{item.total_price | intcomma}} تومان</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                    <tbody class="checkout__totals-subtotals">
+                                        <tr>
+                                            <th colspan="2">جمع جزء</th>
+                                            <td>{{total_price | intcomma}} تومان</td>
+                                        </tr>
+                                        <tr>
+                                            <th colspan="2">حمل و نقل</th>
+                                            <td>{{delivery | intcomma}} تومان</td>
+                                        </tr>
+                                        <tr>
+                                            <th colspan="2">مالیات</th>
+                                            <td>{{tax | intcomma}} تومان</td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot class="checkout__totals-footer">
+                                        <tr>
+                                            <th colspan="2">جمع کل</th>
+                                            <td>{{grand_total | intcomma}} تومان</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+
+                              {% comment %}  {% endcomment %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- فوتر -->
+    {% comment %} <footer class="site__footer">
+        <div class="site-footer">
+            <div class="container">
+                <div class="site-footer__widgets">
+                    <div class="row">
+                        <div class="col-12 col-md-6 col-lg-4">
+                            <div class="site-footer__widget footer-contacts">
+                                <h5 class="footer-contacts__title">تماس با ما</h5>
+                                <ul class="footer-contacts__contacts">
+                                    <li><i class="footer-contacts__icon fas fa-globe-americas"></i> ملایر، خیابان شهدا</li>
+                                    <li><i class="footer-contacts__icon fas fa-mobile-alt"></i> <span class="ltr_text">081-45231</span></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3 col-lg-2">
+                            <div class="site-footer__widget footer-links">
+                                <h5 class="footer-links__title">اطلاعات</h5>
+                                <ul class="footer-links__list">
+                                    <li class="footer-links__item"><a href="" class="footer-links__link">درباره ما</a></li>
+                                    <li class="footer-links__item"><a href="" class="footer-links__link">تماس با ما</a></li>
+                                    <li class="footer-links__item"><a href="" class="footer-links__link">قوانین و مقررات</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3 col-lg-2">
+                            <div class="site-footer__widget footer-links">
+                                <h5 class="footer-links__title">حساب کاربری</h5>
+                                <ul class="footer-links__list">
+                                    <li class="footer-links__item"><a href="login.html" class="footer-links__link">ورود</a></li>
+                                    <li class="footer-links__item"><a href="register.html" class="footer-links__link">ثبت نام</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-12 col-lg-4">
+                            <div class="site-footer__widget footer-newsletter">
+                                <h5 class="footer-contacts__title">شبکه های اجتماعی</h5>
+                                <div class="footer-newsletter__text footer-newsletter__text--social">ما را در شبکه های اجتماعی دنبال کنید</div>
+                                <ul class="footer-newsletter__social-links">
+                                    <li class="footer-newsletter__social-link footer-newsletter__social-link--facebook">
+                                        <a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                                    </li>
+                                    <li class="footer-newsletter__social-link footer-newsletter__social-link--twitter">
+                                        <a href="#" target="_blank"><i class="fab fa-twitter"></i></a>
+                                    </li>
+                                    <li class="footer-newsletter__social-link footer-newsletter__social-link--youtube">
+                                        <a href="#" target="_blank"><i class="fab fa-youtube"></i></a>
+                                    </li>
+                                    <li class="footer-newsletter__social-link footer-newsletter__social-link--instagram">
+                                        <a href="#" target="_blank"><i class="fab fa-instagram"></i></a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="site-footer__bottom">
+                    <div class="site-footer__copyright">
+                        کلیه حقوق و امتیازات این وبسایت متعلق است به آکادمی
+                        <a href="https://darsman.com" target="_blank">درسمن</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer> {% endcomment %}
+</div>
+{% endblock content %}
