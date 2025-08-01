@@ -101,7 +101,7 @@
                     <div class="cart__actions">
                       <div class="cart__buttons" style="flex: auto; display: flex; gap: 10px;">
 
-    <a href="index.html" 
+    {% comment %} <a href="{% url "orders:create_order" %}" 
        style="background-color: transparent; 
               color: #007bff; 
               padding: 12px 24px; 
@@ -109,7 +109,7 @@
               border-radius: 8px; 
               text-decoration: none; 
               font-weight: bold; 
-              cursor: pointer;">ادامه خرید</a>
+              cursor: pointer;">ادامه خرید</a> {% endcomment %}
 
     <a onclick="update_shop_cart(event)" 
        style="background-color: #007bff; 
@@ -169,7 +169,7 @@
                                             </tr>
                                         </tfoot>
                                     </table>
-                                    <a class="btn btn-primary btn-xl btn-block cart__checkout-button" href="checkout.html">پرداخت</a>
+                                    <a class="btn btn-primary btn-xl btn-block cart__checkout-button" href="{% url "orders:create_order" %}">ادامه خرید </a>
                                 </div>
                             </div>
                         </div>

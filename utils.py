@@ -1,39 +1,67 @@
-# from kavenegar import *
 
-
+import random
 import os
-# from uuid import uuid4
 from uuid import uuid4
+from kavenegar import KavenegarAPI, APIException, HTTPException
 
 
-#فایل هایی که تقریبا همیشه مورد نیازمونه رو تو اینجا نگهداری میکنه
-#  و هر جایی خواستیم ازشون استفاده کنیم از اینجا برمیداریم
+# ----------------------------------------------------------------------------------
 
-# for 5 digit 10000 to 99999
-def create_random_code(count):
-    import random #چون جای دیگری مصرفی نداره همین جا استفاده ش کردیم
-    count-=1
-    return random.randint(10**count,10**(count+1)-1)
+def create_random_code(length=5):
+    return ''.join(random.choices('0123456789', k=length))
 
 
-# ارسال اس ام اس رو پیاده میکنیم چون در امثر جا ها نیاز داریم بهتره اینجا بنویسم و بعدا در جای دیگری استفاده کنیم
- 
-def send_sms(mobile_number,message):
-    # try:   
-    #     api = KavenegarAPI('746166595063714E6F4334744766466A69336D6372735952384C6254564E46326B764F6D384E646A6A33593D')
-    #     params = { 'sender' : '2000660110', 'receptor': 'mobile_number', 'message' :'message' }
-    #     response = api.sms_send(params)
-    #     return response
-    # except APIException as error:
-    #     print(f'error1:{error}')
-    # except HTTPException as error:
-    #     print(f'error2:{error}')
-    pass
+# ----------------------------------------------------------------------------------
 
-#--------------------------------------------------------------------
+def send_sms(receptor, message):
+    api_key = os.environ.get('KAVENEGAR_API_KEY')
 
+    if not api_key:
+        print("!!! KAVENEGAR API KEY not found in environment variables.")
+        return None
 
+    params = {
+        'sender': '2000660110',
+        'receptor': receptor,
+        'message': message,
+    }
 
+    print("--- Kavenegar Debug ---")
+    print(f"Attempting to send SMS with params: {params}")
+
+    try:
+        api = KavenegarAPI(api_key)
+        response = api.sms_send(params)
+        
+        print(f"Kavenegar API Response: {response}")
+
+        if response and response[0]['status'] in [1, 2, 3, 4, 5, 6, 10, 11]:
+            print(">>> SMS sent successfully!")
+        else:
+            print(f">>> SMS FAILED! Status: {response[0]['status']}, Status Text: {response[0]['statustext']}")
+
+        print("-----------------------")
+        return response
+
+    except APIException as e: 
+        print(f"!!! KAVENEGAR API ERROR: {e}")
+        print("-----------------------")
+        return None
+        
+    except HTTPException as e:
+        print(f"!!! KAVENEGAR HTTP ERROR (Connection Problem): {e}")
+        print("-----------------------")
+        return None
+
+    except Exception as e:
+        print(f"!!! UNKNOWN ERROR during SMS send: {e}")
+        print("-----------------------")
+        return None
+    
+    
+    
+
+# ----------------------------------------------------------------------------------
 class FileUpload:
     def __init__(self,dir,prefix):
         self.dir = dir

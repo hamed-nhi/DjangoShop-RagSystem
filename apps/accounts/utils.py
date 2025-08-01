@@ -1,25 +1,21 @@
-import random
-import os  # <--- ۱. این خط را اضافه کنید
 
+import random
+import os
+from uuid import uuid4
 from kavenegar import KavenegarAPI, APIException, HTTPException
 
+
+# ----------------------------------------------------------------------------------
+
 def create_random_code(length=5):
-    """
-    یک کد عددی تصادفی برای فعال‌سازی ایجاد می‌کند.
-    """
     return ''.join(random.choices('0123456789', k=length))
 
 
+# ----------------------------------------------------------------------------------
 
 def send_sms(receptor, message):
-    """
-    این تابع با استفاده از API کاوه‌نگار یک پیامک ارسال می‌کند
-    و تمام جزئیات و خطاها را در ترمینال چاپ می‌کند.
-    """
-    # ۲. کلید API از فایل .env خوانده می‌شود
     api_key = os.environ.get('KAVENEGAR_API_KEY')
 
-    # یک بررسی کوچک برای اطمینان از وجود کلید
     if not api_key:
         print("!!! KAVENEGAR API KEY not found in environment variables.")
         return None
@@ -39,7 +35,6 @@ def send_sms(receptor, message):
         
         print(f"Kavenegar API Response: {response}")
 
-        # ... (بقیه کد شما بدون تغییر باقی می‌ماند) ...
         if response and response[0]['status'] in [1, 2, 3, 4, 5, 6, 10, 11]:
             print(">>> SMS sent successfully!")
         else:
@@ -65,6 +60,8 @@ def send_sms(receptor, message):
     
     
     
+
+# ----------------------------------------------------------------------------------
 class FileUpload:
     def __init__(self,dir,prefix):
         self.dir = dir
