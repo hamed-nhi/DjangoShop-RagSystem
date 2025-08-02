@@ -14,6 +14,9 @@ urlpatterns = [
     path('status_of_shop_cart/',views.status_of_shop_cart,name="status_of_shop_cart"),
     path('create_order/',views.CreateOrderView.as_view(),name="create_order"),
     path('checkout_order/<int:order_id>/',views.CheckoutOrderView.as_view(),name="checkout_order"),
+    path('apply_coupon/<int:order_id>',views.ApllyCoupon.as_view(),name="apply_coupon"),
+    
+
     
     
     

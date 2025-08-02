@@ -11,7 +11,15 @@
         </div>
     </div>
     <div class="product-card__actions">
-        <div class="product-card__charm_prices">{{ product.charm_price|intcomma }} تومان </div>
+
+{% if product.price > product.get_price_by_discount %}
+        <div class="product-card__charm_prices"><del>{{ product.price|intcomma }} تومان </del></div>
+        <div class="product-card__charm_prices">{{ product.get_price_by_discount|intcomma }} تومان </div>
+
+{% else %}
+        <div class="product-card__charm_prices">{{ product.price|intcomma }} تومان </div>
+
+{% endif %}
         <div class="product-card__buttons">
             <button class="btn btn-primary product-card__addtocart" type="button" onclick="add_to_shop_cart({{ product.id }}, 1)">افزودن به سبد</button>
             <button class="btn btn-light btn-svg-icon btn-svg-icon--fake-svg product-card__wishlist" type="button">
@@ -40,7 +48,15 @@
         </div>
     </div>
     <div class="product-card__actions">
-        <div class="product-card__charm_prices">{{ product.charm_price|intcomma }} تومان </div>
+      {% if product.price > product.get_price_by_discount %}
+        <div class="product-card__charm_prices"><del>{{ product.price|intcomma }} تومان </del></div>
+        <div class="product-card__charm_prices">{{ product.get_price_by_discount|intcomma }} تومان </div>
+
+        {% else %}
+                <div class="product-card__charm_prices">{{ product.price|intcomma }} تومان </div>
+
+        {% endif %}
+        {% comment %} <div class="product-card__charm_prices">{{ product.charm_price|intcomma }} تومان </div> {% endcomment %}
         {% comment %} <div class="product-card__buttons">
             <button class="btn btn-primary product-card__addtocart" type="button" onclick="add_to_shop_cart({{ product.id }}, 1)>افزودن به سبد</button>
             <button class="btn btn-light btn-svg-icon btn-svg-icon--fake-svg product-card__wishlist" type="button">
@@ -86,8 +102,19 @@
           موجودی: <span class="text-success">موجود در انبار</span>
         </div>
        
+        {% if product.price > product.get_price_by_discount %}
+        <div class="product-card__charm_prices"><del>{{ product.price|intcomma }} تومان </del></div>
+        <div class="product-card__charm_prices">{{ product.get_price_by_discount|intcomma }} تومان </div>
+
+        {% else %}
+                <div class="product-card__charm_prices">{{ product.price|intcomma }} تومان </div>
+
+        {% endif %}
+        {% comment %} <div class="product-card__charm_prices">{{ product.charm_price|intcomma }} تومان </div> {% endcomment %}          
+        
+        
         {% comment %} <div class="product-card__prices">{{ product.charm_price|intcomma }} تومان</div> {% endcomment %}
-        <div class="product-card__charm_prices">{{ product.charm_price|intcomma }} تومان </div>
+        {% comment %} <div class="product-card__charm_prices">{{ product.charm_price|intcomma }} تومان </div> {% endcomment %}
         {% comment %} <div class="product-card__buttons">
           <button class="btn btn-primary product-card__addtocart" type="button" onclick="add_to_shop_cart({{ product.id }}, 1)">افزودن به سبد</button>
           <button class="btn btn-secondary product-card__addtocart product-card__addtocart--list" type="button" onclick="add_to_shop_cart({{ product.id }}, 1)">افزودن به سبد</button>
