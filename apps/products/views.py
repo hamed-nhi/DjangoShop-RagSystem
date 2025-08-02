@@ -1,23 +1,13 @@
 
-# #Details of Products
-# class ProductDeatailView(View):
-#     def get(self,request,slug):
-#         product=get_object_or_404(Product,slug=slug)
-#         if product.is_active:
-#             return render(request,"product_app/product_detail.html",{'product':product})
- 
-    
+from collections import defaultdict
+from django.core.paginator import Paginator
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
-
 from .filters import ProductFilter
 from .models import FeatureValue, Product, ProductGroup, Brand
 from django.db.models import Q, Count,Min,Max
 from django.views import View
 
-#====================================================
-# دیکشنری‌های ترجمه برای مشخصات فنی محصول
-#====================================================
 FEATURE_NAME_TRANSLATIONS = {
     'Rating': 'امتیاز',
     'processor_brand': 'برند پردازنده',
@@ -223,11 +213,6 @@ def get_filter_value_for_feature(request):
  
  
  
- 
-from collections import defaultdict
-from django.core.paginator import Paginator
-
-# ... (بقیه import های شما) ...
 
 class ProductByGroupsView(View):
     """
@@ -323,7 +308,18 @@ class ProductByGroupsView(View):
         
         # ۹. رندر کردن قالب (فقط یک بار)
         return render(request, "product_app/products.html", context)
-    
+
+
+
+
+
+
+
+
+
+#--------------------------------------------------------------------
+
+
 #-----------------------------------------------------------------------------------------------
 # from collections import defaultdict
 # from django.core.paginator import Paginator

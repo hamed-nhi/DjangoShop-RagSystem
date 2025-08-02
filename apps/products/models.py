@@ -8,7 +8,7 @@ from ckeditor_uploader.fields import RichTextUploadingField
 # from django.core.urlresolvers import reverse 
 from django.urls import reverse
 
-
+from datetime import datetime
 
 def upload_brand_image(instance,filename):
     return f'images/brand/{filename}'
@@ -92,16 +92,30 @@ class Product(models.Model):
     features = models.ManyToManyField(Feature,through='ProductFeature') # توضیحات در بالای مدل ProductFeature
 
 
-
     def __str__(self):
         return self.product_name
     
+    def get_absolute_url(self):
+        return reverse('products:product_details', kwargs={'slug': self.slug})
+
+    def get_price_by_discount(self):
+        list1=[]
+
+        for i in self.discount_basket_details2.all():
+            if (i.discount_basket.is_active==True and
+                i.discount_basket.start_date <= datetime.now() and 
+                datetime.now() <= i.discount_basket.end_date):
+                list1.append(i.discount_basket.discount)
+
+        discount=0
+        if (len(list1)>0):
+            discount=max(list1)
+        return self.price-(self.price*discount/100)
+                
+                
+                
+
     
-    # @property
-    # def charm_price(self):
-    #     if self.price < 100000:
-    #         return math.floor(self.price / 1000) * 1000
-    #     return math.floor(self.price / 10000) * 10000
     @property
     def charm_price(self):
         if self.price < 100000:
@@ -111,15 +125,9 @@ class Product(models.Model):
             rounded_up = math.ceil(self.price / 100000) * 100000
             return rounded_up - 1000
     
-    #new Fun after setting Fetch Data{برای هر محصول یک ضفحه مجزا میخواهیم ست کنیم که نیاز داریم slug  رو اینجا یکاری باهاش بکنیم}
-    #هر زمان مدلی بود که نیاز داشتید مدام به اون دسترسی پیدا کنید  توضیح میشه که همچین تابعی برایش بنویسم
-    ###############################################
-    def get_absolute_url(self):
-        return reverse('products:product_details', kwargs={'slug': self.slug})
+  
     
     
-    
-    ###############################################
     
     class Meta:
         verbose_name='کالا'

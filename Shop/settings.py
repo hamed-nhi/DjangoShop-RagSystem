@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django_render_partial',
     'django.contrib.humanize',
     'django_filters',
+    'apps.discounts.apps.DiscountsConfig',
 ]
 
 SILENCED_SYSTEM_CHECKS = ['ckeditor.W001']
