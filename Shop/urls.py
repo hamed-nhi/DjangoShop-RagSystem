@@ -10,6 +10,7 @@ urlpatterns = [
     path('products/',include("apps.products.urls",namespace="products")),
     path('orders/',include("apps.orders.urls",namespace="orders")),
     path('discounts/',include("apps.discounts.urls",namespace="discounts")),
+    path('warehouses/',include("apps.warehouses.urls",namespace="warehouses")),
     path('ckeditor/',include("ckeditor_uploader.urls")),
     
     
