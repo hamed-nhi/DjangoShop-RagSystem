@@ -235,7 +235,7 @@ class CheckoutOrderView(LoginRequiredMixin,View):
 
                 
                 # پیام موفقیت‌آمیز بهبود یافته با user.name و user.family
-                # messages.success(request, f"آقای/خانم {user.name} {user.family} عزیز، سفارش شما با شماره پیگیری {order.id} با موفقیت ثبت و نهایی شد. ✅ از خرید شما متشکریم!")
+                messages.success(request, f"آقای/خانم {user.name} {user.family} عزیز، سفارش شما با شماره پیگیری {order.id} با موفقیت ثبت و نهایی شد. ✅ از خرید شما متشکریم!")
                 return redirect('orders:checkout_order', order_id=order.id)
             
             except ObjectDoesNotExist:

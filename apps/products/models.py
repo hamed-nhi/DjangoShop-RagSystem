@@ -1,5 +1,6 @@
 import math
 from django.db import models
+from django.db.models import Sum
 from email.mime import image
 from django.utils import timezone
 from utils import FileUpload
@@ -113,8 +114,16 @@ class Product(models.Model):
         return self.price-(self.price*discount/100)
                 
                 
-                
-
+    def get_number_in_warehouse(self):
+        sum1=self.warehouse_products.filter(warehouse_type_id=1).aggregate(Sum('qty'))
+        sum2=self.warehouse_products.filter(warehouse_type_id=2).aggregate(Sum('qty')) 
+        input=0
+        if sum1['qty__sum'] !=None:
+            input=sum1['qty__sum']
+        output=0
+        if sum2['qty__sum']!=None:
+            output = sum2['qty__sum']
+        return input-output
     
     @property
     def charm_price(self):
