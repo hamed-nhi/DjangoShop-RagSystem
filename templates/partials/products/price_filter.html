@@ -1,105 +1,291 @@
-
-{% comment %} <div class="filter filter--opened" data-collapse-item>
-    <button type="button" class="filter__title" data-collapse-trigger>
-        قیمت
-        <svg class="filter__arrow" width="12px" height="7px">
-            <use xlink:href="images/sprite.svg#arrow-rounded-down-12x7"></use>
-        </svg>
-    </button>
-    <div class="filter__body" data-collapse-content>
-        <div class="filter__container">
-            <div class="filter-price">
-                <div id="price-slider" class="filter-price__slider"></div>
-                <div class="filter-price__title">
-                    قیمت:
-                    <span class="filter-price__min-value" id="price-min-display"></span>
-                    تومان –
-                    <span class="filter-price__max-value" id="price-max-display"></span>
-                    تومان
+{% load humanize %}
+<div class="widget-filters__item price-filter-widget" id="price_filter_widget">
+    <div class="filter filter--opened" data-collapse-item>
+        <button type="button" class="filter__title" data-collapse-trigger>
+            
+            محدوده قیمت
+            <span class="filter-indicator"></span>
+            <svg class="filter__arrow" width="12px" height="7px">
+                <use xlink:href="images/sprite.svg#arrow-rounded-down-12x7"></use>
+            </svg>
+        </button>
+        <div class="filter__body" data-collapse-content>
+            <div class="filter__container">
+                <div class="filter-price">
+                    <div class="price-inputs">
+                        <div class="price-input-group">
+                            <label for="price_min">حداقل قیمت (تومان):</label>
+                            <input type="text" 
+                                   id="price_min" 
+                                   name="price_min" 
+                                   value="{{ request.GET.price_min|default:''|intcomma }}"
+                                   class="form-control price-input"
+                                   inputmode="numeric"
+                                   placeholder="{{ res_aggre.min|intcomma }}"
+                                   data-min="{{ res_aggre.min }}"
+                                   data-max="{{ res_aggre.max }}">
+                        </div>
+                        
+                        <div class="price-input-group">
+                            <label for="price_max">حداکثر قیمت (تومان):</label>
+                            <input type="text" 
+                                   id="price_max" 
+                                   name="price_max" 
+                                   value="{{ request.GET.price_max|default:''|intcomma }}"
+                                   class="form-control price-input"
+                                   inputmode="numeric"
+                                   placeholder="{{ res_aggre.max|intcomma }}"
+                                   data-min="{{ res_aggre.min }}"
+                                   data-max="{{ res_aggre.max }}">
+                        </div>
+                    </div>
+                    
+                    <div class="price-range-hint">
+                        <small>محدوده مجاز: {{ res_aggre.min|intcomma }} تا {{ res_aggre.max|intcomma }} تومان</small>
+                    </div>
+                    
+                    <div class="price-filter-actions">
+                        <button type="button" id="apply_price_filter" class="btn btn-primary btn-sm">
+                            <i class="fas fa-filter"></i> اعمال فیلتر
+                        </button>
+                        <button type="button" id="reset_price_filter" class="btn btn-outline-danger btn-sm">
+                            <i class="fas fa-times"></i> حذف فیلتر
+                        </button>
+                    </div>
                 </div>
-                <input type="hidden" name="price_min" id="price_min_hidden">
-                <input type="hidden" name="price_max" id="price_max_hidden">
             </div>
         </div>
     </div>
-</div> {% endcomment %} 
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    function initPriceFilter() {
+        document.getElementById('apply_price_filter').addEventListener('click', applyFilter);
+        
+        document.getElementById('reset_price_filter').addEventListener('click', resetFilter);
+        
+        updateFilterStatus();
+        
+        initNumberFormatting();
+    }
+
+    function applyFilter() {
+        const priceMin = cleanNumberInput(document.getElementById('price_min').value);
+        const priceMax = cleanNumberInput(document.getElementById('price_max').value);
+        const minLimit = parseInt(document.getElementById('price_min').dataset.min);
+        const maxLimit = parseInt(document.getElementById('price_min').dataset.max);
+
+        if (!validatePriceRange(priceMin, priceMax, minLimit, maxLimit)) {
+            return;
+        }
+
+        updateUrlParams(priceMin, priceMax);
+    }
+
+    function resetFilter() {
+        updateUrlParams(null, null);
+    }
+
+    function validatePriceRange(priceMin, priceMax, minLimit, maxLimit) {
+        if (priceMin && priceMin < minLimit) {
+            alert(`حداقل قیمت نمی‌تواند کمتر از ${minLimit.toLocaleString('fa-IR')} تومان باشد`);
+            return false;
+        }
+        
+        if (priceMax && priceMax > maxLimit) {
+            alert(`حداکثر قیمت نمی‌تواند بیشتر از ${maxLimit.toLocaleString('fa-IR')} تومان باشد`);
+            return false;
+        }
+        
+        if (priceMin && priceMax && priceMin > priceMax) {
+            alert('حداقل قیمت نمی‌تواند از حداکثر قیمت بیشتر باشد');
+            return false;
+        }
+        
+        return true;
+    }
+
+    function updateUrlParams(priceMin, priceMax) {
+        const url = new URL(window.location.href);
+        
+        if (priceMin) url.searchParams.set('price_min', priceMin);
+        else url.searchParams.delete('price_min');
+        
+        if (priceMax) url.searchParams.set('price_max', priceMax);
+        else url.searchParams.delete('price_max');
+        
+        url.searchParams.delete('page');
+        
+        window.location.href = url.toString();
+    }
+
+    function updateFilterStatus() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const priceMin = urlParams.get('price_min');
+        const priceMax = urlParams.get('price_max');
+        const widget = document.getElementById('price_filter_widget');
+        const indicator = widget.querySelector('.filter-indicator');
+        
+        if (priceMin || priceMax) {
+            widget.classList.add('active-filter');
+            if (!indicator.hasAttribute('data-active')) {
+                indicator.innerHTML = '1';
+                indicator.setAttribute('data-active', 'true');
+            }
+            updateActiveFiltersList(priceMin, priceMax);
+        } else {
+            widget.classList.remove('active-filter');
+            indicator.innerHTML = '';
+            indicator.removeAttribute('data-active');
+            removePriceFilterFromList();
+        }
+    }
+
+    function updateActiveFiltersList(priceMin, priceMax) {
+        const activeFiltersContainer = document.querySelector('.active-filters-list');
+        if (!activeFiltersContainer) return;
+        
+        removePriceFilterFromList();
+        
+        const removeUrl = new URLSearchParams(window.location.search);
+        removeUrl.delete('price_min');
+        removeUrl.delete('price_max');
+        
+        let filterText = 'قیمت: ';
+        if (priceMin) filterText += `از ${parseInt(priceMin).toLocaleString('fa-IR')} `;
+        if (priceMax) filterText += `تا ${parseInt(priceMax).toLocaleString('fa-IR')}`;
+        
+        const filterTag = document.createElement('a');
+        filterTag.className = 'active-filter-tag price-filter-tag';
+        filterTag.href = '?' + removeUrl.toString();
+        filterTag.innerHTML = `${filterText} <i class="fas fa-times"></i>`;
+        
+        const filterLabel = activeFiltersContainer.querySelector('span');
+        if (filterLabel) {
+            filterLabel.insertAdjacentElement('afterend', filterTag);
+        } else {
+            activeFiltersContainer.insertAdjacentHTML('afterbegin', '<span>فیلترهای اعمال شده:</span>');
+            activeFiltersContainer.appendChild(filterTag);
+        }
+    }
+
+    function removePriceFilterFromList() {
+        document.querySelectorAll('.price-filter-tag').forEach(el => el.remove());
+    }
+
+    function initNumberFormatting() {
+        document.querySelectorAll('.price-input').forEach(input => {
+            input.addEventListener('input', function() {
+                this.value = formatNumber(this.value);
+            });
+        });
+    }
+
+    function cleanNumberInput(value) {
+        return value ? parseInt(value.replace(/\D/g, '')) : null;
+    }
+
+    function formatNumber(value) {
+        const num = value.replace(/\D/g, '');
+        return num ? parseInt(num).toLocaleString('en-US') : '';
+    }
+
+    initPriceFilter();
+});
+</script>
+
+<style>
+.price-filter-widget.active-filter {
+    border-right: 3px solid #4CAF50;
+    background-color: #f8f9fa;
+}
+
+.price-filter-widget.active-filter .filter__title {
+    color: #4CAF50;
+    font-weight: bold;
+}
 
 
+.filter-count {
+    background-color: #007bff;
+    color: white;
+    border-radius: 8px;
+    padding: 1px 6px;
+    font-size: 11px;
+    margin-right: 5px;
+    font-weight: normal;
+    vertical-align: middle;
+}
+
+.filter-indicator {
+    display: inline-block;
+    background-color: #5d7dd6ff;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    line-height: 20px;
+    font-size: 12px;
+    margin-left: 5px;
+}
+
+.active-filters-list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+}
+
+.active-filter-tag {
+    display: inline-flex;
+    align-items: center;
+    background-color: #e9ecef;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 13px;
+    color: #495057;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.active-filter-tag:hover {
+    background-color: #dee2e6;
+}
+
+.active-filter-tag i {
+    margin-right: 5px;
+    font-size: 12px;
+    color: #dc3545;
+}
+
+.price-filter-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 15px;
+}
+
+.price-filter-actions .btn {
+    flex: 1;
+    padding: 8px 12px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    transition: all 0.3s ease;
+}
+
+@media (max-width: 576px) {
+    .price-filter-actions {
+        flex-direction: column;
+    }
+}
+</style>
 
 
- {% load humanize %}
-
-<div id="accordion">
-    <div class="card" style="border: none; color:#868686;">
-      <div class="card-header" style="padding:0 0 10px;">
-        <a class="card-link" data-toggle="collapse" href="#collapsePrice">
-          <button type="button" class="filter__title" data-collapse-trigger style="color:#000;">
-            قیمت<svg class="filter__arrow" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="32" height="32" viewBox="0 0 256 256" xml:space="preserve">
-              <g style="stroke: none; stroke-width: 0; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: none; fill-rule: nonzero; opacity: 1;" transform="translate(1.4065934065934016 1.4065934065934016) ">
-                <path d="M 90 24.25 c 0 -0.896 -0.342 -1.792 -1.025 -2.475 c -1.366 -1.367 -3.583 -1.367 -4.949 0 L 45 60.8 L 5.975 21.775 c -1.367 -1.367 -3.583 -1.367 -4.95 0 c -1.366 1.367 -1.366 3.583 0 4.95 l 41.5 41.5 c 1.366 1.367 3.583 1.367 4.949 0 l 41.5 -41.5 C 89.658 26.042 90 25.146 90 24.25 z" style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: rgb(0,0,0); fill-rule: nonzero; opacity: 1;" transform=" matrix(1 0 0 1 0 0) " stroke-linecap="round" />
-              </g>
-            </svg>
-          </button>
-        </a>
-      </div>
-      <div id="collapsePrice" class="collapse" data-parent="#accordion">
-        <div class="card-body" style="padding: 0;">
-            <span><strong id="sel_price">{{res_aggre.min|intcomma}}</strong> تومان </span>
-                {{filter.form}} 
-                {% comment %} <input type="range" name="price" min="{{res_aggre.min}}" max="{{res_aggre.max}}" value="{{res_aggre.max}}" oninput="showVal(this.value)" onchange="showVal(this.value)">  {% endcomment %}
-             <span>{{res_aggre.min|intcomma}}</span>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <span>{{res_aggre.max|intcomma}}</span>
-        </div>
-      </div>
-    </div>
-  </div> 
-
-
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
-{% comment %}  
- 
- 
- 
- 
- 
- {% load humanize %}
-
-<div id="accordion">
-    <div class="card" style="border: none; color:#868686;">
-      <div class="card-header" style="padding:0 0 10px;">
-        <a class="card-link" data-toggle="collapse" href="#collapsePrice">
-          <button type="button" class="filter__title" data-collapse-trigger style="color:#000;">
-            قیمت<svg class="filter__arrow" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="32" height="32" viewBox="0 0 256 256" xml:space="preserve">
-              <g style="stroke: none; stroke-width: 0; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: none; fill-rule: nonzero; opacity: 1;" transform="translate(1.4065934065934016 1.4065934065934016) ">
-                <path d="M 90 24.25 c 0 -0.896 -0.342 -1.792 -1.025 -2.475 c -1.366 -1.367 -3.583 -1.367 -4.949 0 L 45 60.8 L 5.975 21.775 c -1.367 -1.367 -3.583 -1.367 -4.95 0 c -1.366 1.367 -1.366 3.583 0 4.95 l 41.5 41.5 c 1.366 1.367 3.583 1.367 4.949 0 l 41.5 -41.5 C 89.658 26.042 90 25.146 90 24.25 z" style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: rgb(0,0,0); fill-rule: nonzero; opacity: 1;" transform=" matrix(1 0 0 1 0 0) " stroke-linecap="round" />
-              </g>
-            </svg>
-          </button>
-        </a>
-      </div>
-      <div id="collapsePrice" class="collapse" data-parent="#accordion">
-        <div class="card-body" style="padding: 0;">
-            <span><strong id="sel_price">{{res_aggre.min|intcomma}}</strong> تومان</span>
-                <!-- {{filter.form}} -->
-                <input type="range" name="price" min="{{res_aggre.min}}" max="{{res_aggre.max}}" value="{{res_aggre.max}}" oninput="showVal(this.value)" onchange="showVal(this.value)">
-                <span>{{res_aggre.min|intcomma}}</span>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <span>{{res_aggre.max|intcomma}}</span>
-        </div>
-      </div>
-    </div>
-  </div>  {% endcomment %}
