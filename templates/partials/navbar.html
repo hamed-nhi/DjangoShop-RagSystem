@@ -1,5 +1,130 @@
+<style>/* استایل‌های اختصاصی منوی لپ‌تاپ‌ها */
+.nav-links__title {
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+}
 
- <div class="site-header__nav-panel">
+.nav-links__arrow {
+    margin-right: 5px;
+    transition: transform 0.3s ease;
+}
+
+.nav-links__item--with-submenu:hover .nav-links__arrow {
+    transform: rotate(-180deg);
+}
+
+.megamenu--laptops {
+    padding: 20px;
+    background: linear-gradient(135deg, #f8f9fa, #ffffff);
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.megamenu__column {
+    padding: 0 15px;
+}
+
+.megamenu__header {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #3498db;
+    display: flex;
+    align-items: center;
+}
+
+.megamenu__header i {
+    margin-left: 8px;
+    color: #3498db;
+}
+
+.megamenu__link {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    color: #34495e;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.megamenu__link:hover {
+    background-color: #f1f5f9;
+    color: #3498db;
+    transform: translateX(5px);
+}
+
+.megamenu__link i {
+    margin-left: 8px;
+    width: 20px;
+    text-align: center;
+}
+
+.megamenu__arrow {
+    margin-right: auto;
+    font-size: 0.9rem;
+    transition: transform 0.3s ease;
+}
+
+.megamenu__item--with-submenu:hover .megamenu__arrow {
+    transform: rotate(-90deg);
+}
+
+.megamenu__submenu {
+    padding-right: 20px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.megamenu__item--with-submenu:hover .megamenu__submenu {
+    max-height: 500px;
+}
+
+.megamenu__brands {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.megamenu__brand {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    border: 1px solid #e2e8f0;
+}
+
+.megamenu__brand:hover {
+    background-color: #f8fafc;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.megamenu__brand-img {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+    margin-left: 8px;
+}
+
+.megamenu__brand-name {
+    font-size: 0.9rem;
+}
+
+/* انیمیشن‌ها */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.nav-links__megamenu {
+    animation: fadeIn 0.3s ease forwards;
+}</style>
+
+<div class="site-header__nav-panel">
     <div class="nav-panel">
         <div class="nav-panel__container container">
             <div class="nav-panel__row">
@@ -12,137 +137,231 @@
                 <div class="nav-panel__nav-links nav-links">
                     <ul class="nav-links__list">
                         <li class="nav-links__item nav-links__item--with-submenu">
-                            <a href="{% url "main:index" %}">
-                                <span><i class="fa fa-home" ></i>&nbsp; خانه</span>
+                            <a href="index.html">
+                                <span><i class="fa fa-home"></i>&nbsp; خانه</span>
                             </a>
                         </li>
+
+
+
                         <li class="nav-links__item nav-links__item--with-submenu">
-                            <a href="product-categories.html">
-                                <span>
-                                    دسته بندی کالاها
-                                    &nbsp;
-                                    <i class="fa fa-angle-down"></i>
-                                </span>
-                            </a>
-                            <div class="nav-links__megamenu nav-links__megamenu--size--nl">
-                                <!-- .megamenu -->
-                                <div class="megamenu">
-                                    <div class="row">
-                                        <div class="col-4">
-                                            <ul class="megamenu__links megamenu__links--level--0">
-                                                <li class="megamenu__item megamenu__item--with-submenu">
-                                                    <a href="">کالای دیجیتال</a>
-                                                    <ul
-                                                        class="megamenu__links megamenu__links--level--1">
-                                                        <li class="megamenu__item">
-                                                            <a href="product-list.html">موبایل</a>
-                                                            <ul>
-                                                                <li class="megamenu__links--level--2">
-                                                                    <a href="#">لوازم جانبی</a>
-                                                                </li>
-                                                                <li class="megamenu__links--level--2">
-                                                                    <a href="#">گوشی</a>
-                                                                </li>
-                                                            </ul>
-                                                        </li>
-                                                        <li class="megamenu__item">
-                                                            <a href="#">دوربین</a>
-                                                        </li>
-                                                        <li class="megamenu__item">
-                                                            <a href="#">لپ تاپ</a>
-                                                        </li>
-                                                        <li class="megamenu__item">
-                                                            <a href="#">سخت افزار کامپیوتر</a>
-                                                        </li>
-                                                    </ul>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <div class="col-4">
-                                            <ul class="megamenu__links megamenu__links--level--0">
-                                                <li class="megamenu__item megamenu__item--with-submenu">
-                                                    <a href="">مد و پوشاک</a>
-                                                    <ul
-                                                        class="megamenu__links megamenu__links--level--1">
-                                                        <li class="megamenu__item">
-                                                            <a href="#">مردانه</a>
-                                                            <ul>
-                                                                <li class="megamenu__links--level--2">
-                                                                    <a href="#">پیراهن</a>
-                                                                </li>
-                                                                <li class="megamenu__links--level--2">
-                                                                    <a href="#">شلوار</a>
-                                                                </li>
-                                                                <li class="megamenu__links--level--2">
-                                                                    <a href="#">کفش</a>
-                                                                </li>
-                                                            </ul>
-                                                        </li>
-                                                        <li class="megamenu__item">
-                                                            <a href="#">زنانه</a>
-                                                            <ul>
-                                                                <li class="megamenu__links--level--2">
-                                                                    <a href="#">پیراهن</a>
-                                                                </li>
-                                                                <li class="megamenu__links--level--2">
-                                                                    <a href="#">شلوار</a>
-                                                                </li>
-                                                                <li class="megamenu__links--level--2">
-                                                                    <a href="#">کفش</a>
-                                                                </li>
-                                                            </ul>
-                                                        </li>
-                                                        <li class="megamenu__item">
-                                                            <a href="#">بچه گانه</a>
-                                                        </li>
-
-                                                    </ul>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <div class="col-4">
-                                            <ul class="megamenu__links megamenu__links--level--0">
-                                                <li class="megamenu__item megamenu__item--with-submenu">
-                                                    <a href="">مواد غذایی</a>
-                                                    <ul
-                                                        class="megamenu__links megamenu__links--level--1">
-                                                        <li class="megamenu__item">
-                                                            <a href="#">کالای اساسی و خواربار</a>
-                                                            <ul>
-                                                                <li class="megamenu__links--level--2">
-                                                                    <a href="#">برنج</a>
-                                                                </li>
-                                                                <li class="megamenu__links--level--2">
-                                                                    <a href="#">قند</a>
-                                                                </li>
-                                                                <li class="megamenu__links--level--2">
-                                                                    <a href="#">سایر</a>
-                                                                </li>
-                                                            </ul>
-                                                        </li>
-                                                        <li class="megamenu__item">
-                                                            <a href="#">نوشیدنی</a>
-                                                            <ul>
-                                                                <li class="megamenu__links--level--2">
-                                                                    <a href="#">چای</a>
-                                                                </li>
-                                                                <li class="megamenu__links--level--2">
-                                                                    <a href="#">دمنوش</a>
-                                                                </li>
-                                                            </ul>
-                                                        </li>
-
-
-                                                    </ul>
-                                                </li>
-                                            </ul>
-                                        </div>
-
-                                    </div>
+    <a href="#">
+        <span class="nav-links__title">
+            <i class="fas fa-laptop"></i>&nbsp;
+            دسته‌بندی لپ‌تاپ‌ها
+            <i class="fa fa-angle-down nav-links__arrow"></i>
+        </span>
+    </a>
+    <div class="nav-links__megamenu nav-links__megamenu--size--xxl">
+        <div class="megamenu megamenu--laptops">
+            <div class="row no-gutters">
+                <!-- ستون 1: دسته‌بندی اصلی -->
+                <div class="col-md-3">
+                    <div class="megamenu__column">
+                        <div class="megamenu__header">
+                            <i class="fas fa-layer-group"></i>
+                            دسته‌بندی اصلی
+                        </div>
+                        <ul class="megamenu__links megamenu__links--level--0">
+                            <li class="megamenu__item">
+                                <a href="{% url 'products:products_of_group' 'laptop' %}?feature=2253" class="megamenu__link">
+                                    <i class="fas fa-gamepad"></i>
+                                    گیمینگ
+                                </a>
+                            </li>
+                            <li class="megamenu__item">
+                                <a href="{% url 'products:products_of_group' 'laptop' %}?feature=2254" class="megamenu__link">
+                                    <i class="fas fa-crown"></i>
+                                    حرفه‌ای
+                                </a>
+                            </li>
+                            <li class="megamenu__item">
+                                <a href="{% url 'products:products_of_group' 'laptop' %}?feature=2252" class="megamenu__link">
+                                    <i class="fas fa-wallet"></i>
+                                    اقتصادی
+                                </a>
+                            </li>
+                            <li class="megamenu__item">
+                                <a href="{% url 'products:products_of_group' 'laptop' %}?feature=2255" class="megamenu__link">
+                                    <i class="fas fa-users"></i>
+                                    عمومی
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- ستون 2: پردازنده و رم -->
+                <div class="col-md-3">
+                    <div class="megamenu__column">
+                        <div class="megamenu__header">
+                            <i class="fas fa-microchip"></i>
+                            پردازنده و حافظه
+                        </div>
+                        <ul class="megamenu__links megamenu__links--level--0">
+                            <li class="megamenu__item megamenu__item--with-submenu">
+                                <a href="#" class="megamenu__link">
+                                    <i class="fas fa-microchip"></i>
+                                    برند پردازنده
+                                    <i class="fa fa-angle-left megamenu__arrow"></i>
+                                </a>
+                                <div class="megamenu__submenu">
+                                    <ul class="megamenu__links megamenu__links--level--1">
+                                        <li><a href="{% url 'products:products_of_group' 'laptop' %}?processor_brand=intel">اینتل</a></li>
+                                        <li><a href="{% url 'products:products_of_group' 'laptop' %}?processor_brand=amd">AMD</a></li>
+                                        <li><a href="{% url 'products:products_of_group' 'laptop' %}?processor_brand=apple">اپل</a></li>
+                                    </ul>
                                 </div>
-                                <!-- .megamenu / end -->
-                            </div>
-                        </li>
+                            </li>
+                            <li class="megamenu__item megamenu__item--with-submenu">
+                                <a href="#" class="megamenu__link">
+                                    <i class="fas fa-memory"></i>
+                                    ظرفیت رم
+                                    <i class="fa fa-angle-left megamenu__arrow"></i>
+                                </a>
+                                <div class="megamenu__submenu">
+                                    <ul class="megamenu__links megamenu__links--level--1">
+                                        <li><a href="{% url 'products:products_of_group' 'laptop' %}?ram_memory=8">8GB</a></li>
+                                        <li><a href="{% url 'products:products_of_group' 'laptop' %}?ram_memory=16">16GB</a></li>
+                                        <li><a href="{% url 'products:products_of_group' 'laptop' %}?ram_memory=32">32GB</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- ستون 3: گرافیک و صفحه نمایش -->
+                <div class="col-md-3">
+                    <div class="megamenu__column">
+                        <div class="megamenu__header">
+                            <i class="fas fa-tv"></i>
+                            گرافیک و نمایشگر
+                        </div>
+                        <ul class="megamenu__links megamenu__links--level--0">
+                            <li class="megamenu__item megamenu__item--with-submenu">
+                                <a href="#" class="megamenu__link">
+                                    <i class="fas fa-gamepad"></i>
+                                    کارت گرافیک
+                                    <i class="fa fa-angle-left megamenu__arrow"></i>
+                                </a>
+                                <div class="megamenu__submenu">
+                                    <ul class="megamenu__links megamenu__links--level--1">
+                                        <li><a href="{% url 'products:products_of_group' 'laptop' %}?gpu_brand=intel">گرافیک اینتل</a></li>
+                                        <li><a href="{% url 'products:products_of_group' 'laptop' %}?gpu_brand=amd">گرافیک AMD</a></li>
+                                        <li><a href="{% url 'products:products_of_group' 'laptop' %}?gpu_brand=nvidia">انویدیا</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="megamenu__item megamenu__item--with-submenu">
+                                <a href="#" class="megamenu__link">
+                                    <i class="fas fa-expand"></i>
+                                    اندازه صفحه
+                                    <i class="fa fa-angle-left megamenu__arrow"></i>
+                                </a>
+                                <div class="megamenu__submenu">
+                                    <ul class="megamenu__links megamenu__links--level--1">
+                                        <li><a href="{% url 'products:products_of_group' 'laptop' %}?display_size=13">13 اینچ</a></li>
+                                        <li><a href="{% url 'products:products_of_group' 'laptop' %}?display_size=15">15 اینچ</a></li>
+                                        <li><a href="{% url 'products:products_of_group' 'laptop' %}?display_size=17">17 اینچ</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- ستون 4: برندهای محبوب -->
+                <div class="col-md-3">
+                    <div class="megamenu__column">
+                        <div class="megamenu__header">
+                            <i class="fas fa-crown"></i>
+                            برندهای برتر
+                        </div>
+                        <div class="megamenu__brand-grid">
+                            <a href="{% url 'products:products_of_group' 'laptop' %}?brand=1" class="megamenu__brand">
+                                {% comment %} <img src="{% static 'images/brands/asus.png' %}" alt="ایسوس"> {% endcomment %}
+                                <span>ایسوس</span>
+                            </a>
+                            <a href="{% url 'products:products_of_group' 'laptop' %}?brand=7" class="megamenu__brand">
+                                {% comment %} <img src="{% static 'images/brands/lenovo.png' %}" alt="لنوو"> {% endcomment %}
+                                <span>لنوو</span>
+                            </a>
+                            <a href="{% url 'products:products_of_group' 'laptop' %}?brand=8" class="megamenu__brand">
+                                {% comment %} <img src="{% static 'images/brands/apple.png' %}" alt="اپل"> {% endcomment %}
+                                <span>اپل</span>
+                            </a>
+                            <a href="{% url 'products:products_of_group' 'laptop' %}?brand=10" class="megamenu__brand">
+                                {% comment %} <img src="{% static 'images/brands/dell.png' %}" alt="دل"> {% endcomment %}
+                                <span>دل</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</li>
+     {% comment %} <li class="nav-links__item nav-links__item--with-submenu">
+    <a href="#">
+        <span class="nav-links__title">
+            <i class="fas fa-laptop"></i>&nbsp;
+            دسته‌بندی لپ‌تاپ‌ها
+            <i class="fa fa-angle-down nav-links__arrow"></i>
+        </span>
+    </a>
+    <div class="nav-links__megamenu nav-links__megamenu--size--xl">
+        <div class="megamenu megamenu--laptops">
+            <div class="row no-gutters">
+                <!-- دسته‌بندی بر اساس ویژگی‌ها -->
+                <div class="col-md-6">
+                    <div class="megamenu__column">
+                        <div class="megamenu__header">
+                            <i class="fas fa-filter"></i>
+                            فیلتر بر اساس ویژگی
+                        </div>
+                        <ul class="megamenu__links megamenu__links--level--0">
+                            <li class="megamenu__item">
+                                <a href="{% url 'products:products_of_group' 'laptop' %}?feature=5&value=12" class="megamenu__link">
+                                    <i class="fas fa-gamepad"></i>
+                                    لپ‌تاپ‌های گیمینگ
+                                </a>
+                            </li>
+                            <li class="megamenu__item">
+                                <a href="{% url 'products:products_of_group' 'laptop' %}?feature=5&value=13" class="megamenu__link">
+                                    <i class="fas fa-briefcase"></i>
+                                    لپ‌تاپ‌های حرفه‌ای
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- دسته‌بندی بر اساس برند -->
+                <div class="col-md-6">
+                    <div class="megamenu__column">
+                        <div class="megamenu__header">
+                            <i class="fas fa-copyright"></i>
+                            برندهای محبوب
+                        </div>
+                        <ul class="megamenu__links megamenu__links--level--0">
+                            <li class="megamenu__item">
+                                <a href="{% url 'products:products_of_group' 'laptop' %}?brand=1" class="megamenu__link">
+                                    ایسوس
+                                </a>
+                            </li>
+                            <li class="megamenu__item">
+                                <a href="{% url 'products:products_of_group' 'laptop' %}?brand=2" class="megamenu__link">
+                                    لنوو
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</li> {% endcomment %}
 
                         <li class="nav-links__item nav-links__item--with-submenu">
                             <a href="#">

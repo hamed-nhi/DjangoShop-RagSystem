@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'django_filters',
     'apps.discounts.apps.DiscountsConfig',
     'apps.warehouses.apps.WarehousesConfig',
+    'apps.c_s_f.apps.CSFConfig',
+    'jalali_date',
 ]
 
 SILENCED_SYSTEM_CHECKS = ['ckeditor.W001']
@@ -69,7 +71,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'apps.main.views.media_admin'
+                'apps.main.views.media_admin',
+                'apps.products.views.navbar_context',
             ],
         },
     },

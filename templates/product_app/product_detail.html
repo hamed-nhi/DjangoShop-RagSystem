@@ -3,8 +3,625 @@
 {% load humanize %}
 {% block title %}فروشگاه آیکو{% endblock title %}
 {% block content %}
+{% load jalali_tags %}
+{% load text_processing %}
 
-<!-- site__body -->
+<style>
+
+   /* استایل‌های مدرن برای بخش مشخصات فنی */
+    .spec {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        overflow: hidden;
+        position: relative;
+    }
+
+    .spec:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 100%;
+        height: 5px;
+        background: linear-gradient(90deg, #4CAF50, #8BC34A);
+    }
+
+    .spec__header {
+        font-size: 1.8rem;
+        color: #333;
+        margin-bottom: 25px;
+        position: relative;
+        padding-bottom: 15px;
+        font-weight: 700;
+    }
+
+    .spec__header:after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(90deg, #4CAF50, #8BC34A);
+        border-radius: 3px;
+    }
+
+    .spec__section {
+        margin-bottom: 30px;
+    }
+
+    .spec__section-title {
+        font-size: 1.3rem;
+        color: #444;
+        margin-bottom: 20px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+    }
+
+    .spec__section-title:before {
+        content: '';
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        background: #4CAF50;
+        border-radius: 50%;
+        margin-left: 10px;
+    }
+
+    .spec__row {
+        display: flex;
+        padding: 15px 0;
+        border-bottom: 1px dashed rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .spec__row:hover {
+        background: rgba(0, 0, 0, 0.02);
+        transform: translateX(5px);
+    }
+
+    .spec__name {
+        width: 40%;
+        font-weight: 600;
+        color: #555;
+        padding-left: 15px;
+        position: relative;
+    }
+
+    .spec__name:before {
+        position: absolute;
+        right: 0;
+        color: #4CAF50;
+        font-size: 1.2rem;
+    }
+
+    .spec__value {
+        width: 60%;
+        color: #333;
+        line-height: 1.6;
+    }
+
+    /* انیمیشن برای ظاهر شدن آیتم‌ها */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .spec__row {
+        animation: fadeInUp 0.5s ease forwards;
+        opacity: 0;
+    }
+
+    .spec__row:nth-child(1) { animation-delay: 0.1s; }
+    .spec__row:nth-child(2) { animation-delay: 0.2s; }
+    .spec__row:nth-child(3) { animation-delay: 0.3s; }
+    .spec__row:nth-child(4) { animation-delay: 0.4s; }
+    /* و به همین ترتیب برای آیتم‌های بیشتر */
+
+    /* طراحی ریسپانسیو */
+    @media (max-width: 768px) {
+        .spec {
+            padding: 20px;
+        }
+        
+        .spec__row {
+            flex-direction: column;
+        }
+        
+        .spec__name,
+        .spec__value {
+            width: 100%;
+        }
+        
+        .spec__name {
+            padding-left: 2px;
+            margin-bottom: 5px;
+        }
+        
+        .spec__name:before {
+            display: none;
+        }
+    }
+
+
+    @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(10px); }
+}
+    /* استایل‌های مدرن و جذاب */
+    :root {
+        --primary-color: #4CAF50;
+        --primary-light: #8BC34A;
+        --text-dark: #333;
+        --text-medium: #555;
+        --text-light: #888;
+        --bg-light: #f9f9f9;
+        --white: #fff;
+        --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+        --transition: all 0.3s ease;
+    }
+    
+    /* استایل‌های پایه */
+    .reviews-section {
+        background: var(--bg-light);
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: var(--shadow-sm);
+        margin-top: 40px;
+    }
+    
+    .section-header {
+        font-size: 1.8rem;
+        color: var(--text-dark);
+        margin-bottom: 30px;
+        position: relative;
+        padding-bottom: 15px;
+    }
+    
+    .section-header:after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 80px;
+        height: 3px;
+        background: linear-gradient(to right, var(--primary-color), var(--primary-light));
+        border-radius: 3px;
+    }
+    
+    /* استایل‌های لیست نظرات */
+    .reviews-list__content {
+        list-style: none;
+        padding: 0;
+    }
+    
+    .reviews-list__item {
+        margin-bottom: 30px;
+        padding: 25px;
+        background: var(--white);
+        border-radius: 12px;
+        box-shadow: var(--shadow-sm);
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .reviews-list__item:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-md);
+    }
+    
+    .reviews-list__item:before {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 4px;
+        height: 100%;
+        background: linear-gradient(to bottom, var(--primary-color), var(--primary-light));
+    }
+    
+    /* استایل هر نظر */
+    .review {
+        display: flex;
+        margin-bottom: 20px;
+        position: relative;
+    }
+    
+    .review__avatar {
+        margin-left: 20px;
+        flex-shrink: 0;
+    }
+    
+    .review__avatar img {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid var(--white);
+        box-shadow: var(--shadow-sm);
+        transition: var(--transition);
+    }
+    
+    .review:hover .review__avatar img {
+        transform: scale(1.05);
+    }
+    
+    .review__content {
+        flex: 1;
+        padding: 5px 0;
+    }
+    
+    .review__author {
+        font-weight: 700;
+        font-size: 1.2rem;
+        color: var(--text-dark);
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+    }
+    
+    .review__author:before {
+        content: "";
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        background: var(--primary-color);
+        border-radius: 50%;
+        margin-left: 10px;
+        box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.3);
+    }
+    
+    .review__text {
+        color: var(--text-medium);
+        line-height: 1.7;
+        font-size: 1rem;
+        margin-bottom: 15px;
+    }
+    
+    .review__date {
+        color: var(--text-light);
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+    }
+    
+    .review__date i {
+        margin-left: 8px;
+        font-size: 1.1rem;
+    }
+    
+    /* استایل پاسخ‌ها */
+    .review.reply {
+        margin-right: 50px;
+        padding-right: 25px;
+        position: relative;
+        animation: fadeIn 0.5s ease;
+    }
+    
+    .review.reply:before {
+        content: "";
+        position: absolute;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background: linear-gradient(to bottom, #f1f1f1, var(--primary-light), #f1f1f1);
+        border-radius: 3px;
+    }
+    
+    /* دکمه پاسخ */
+    .review-actions {
+        margin-top: 20px;
+        display: flex;
+        justify-content: flex-end;
+    }
+    
+    .btn-reply {
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+        color: var(--white);
+        padding: 10px 20px;
+        border-radius: 25px;
+        font-size: 0.95rem;
+        cursor: pointer;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        transition: var(--transition);
+        box-shadow: 0 3px 8px rgba(76, 175, 80, 0.3);
+    }
+    
+    .btn-reply:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+        background: linear-gradient(135deg, #43A047, #7CB342);
+    }
+    
+    .btn-reply i {
+        margin-left: 8px;
+    }
+    
+    /* لیست پاسخ‌ها */
+    .replies-list {
+        margin-top: 25px;
+        padding-right: 25px;
+    }
+    
+    /* فرم نظر */
+    .review-form {
+        background: var(--white);
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: var(--shadow-sm);
+        margin-top: 40px;
+    }
+    
+    .review-form h4 {
+        color: var(--text-dark);
+        margin-bottom: 25px;
+        font-weight: 600;
+        position: relative;
+        padding-bottom: 15px;
+        font-size: 1.4rem;
+    }
+    
+    .review-form h4:after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(to right, var(--primary-color), var(--primary-light));
+        border-radius: 3px;
+    }
+    
+    /* پیام ورود/ثبت‌نام */
+    .auth-message {
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
+        margin-top: 30px;
+        box-shadow: var(--shadow-sm);
+    }
+    
+    .auth-message h5 {
+        margin: 0;
+        color: var(--text-dark);
+        font-size: 1.1rem;
+    }
+    
+    .auth-message a {
+        color: var(--primary-color);
+        font-weight: 600;
+        text-decoration: none;
+        transition: var(--transition);
+        position: relative;
+    }
+    
+    .auth-message a:hover {
+        color: #3d8b40;
+    }
+    
+    .auth-message a:after {
+        content: "";
+        position: absolute;
+        bottom: -2px;
+        right: 0;
+        width: 0;
+        height: 2px;
+        background: var(--primary-color);
+        transition: var(--transition);
+    }
+    
+    .auth-message a:hover:after {
+        width: 100%;
+        left: 0;
+    }
+    
+    /* انیمیشن‌ها */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(15px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .reviews-list__item {
+        animation: fadeIn 0.6s ease forwards;
+    }
+    
+    /* ریسپانسیو */
+    @media (max-width: 768px) {
+        .reviews-section {
+            padding: 20px;
+        }
+        
+        .reviews-list__item {
+            padding: 20px;
+        }
+        
+        .review {
+            flex-direction: column;
+        }
+        
+        .review__avatar {
+            margin-left: 0;
+            margin-bottom: 15px;
+        }
+        
+        .review.reply {
+            margin-right: 20px;
+            padding-right: 15px;
+        }
+        
+        .btn-reply {
+            padding: 8px 16px;
+            font-size: 0.9rem;
+        }
+    }
+      /* استایل‌های مدرن برای بخش توضیحات محصول */
+    .typography {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        overflow: hidden;
+        position: relative;
+        animation: fadeIn 0.6s ease;
+    }
+
+    .typography:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 100%;
+        height: 5px;
+        background: linear-gradient(90deg, #2196F3, #03A9F4);
+    }
+
+    .typography h3 {
+        font-size: 1.8rem;
+        color: #333;
+        margin-bottom: 25px;
+        position: relative;
+        padding-bottom: 15px;
+        font-weight: 700;
+    }
+
+    .typography h3:after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(90deg, #2196F3, #03A9F4);
+        border-radius: 3px;
+    }
+
+    .typography p,
+    .typography ul,
+    .typography ol,
+    .typography table {
+        margin-bottom: 1.5rem;
+        line-height: 1.8;
+        color: #444;
+    }
+
+    .typography ul,
+    .typography ol {
+        padding-right: 20px;
+    }
+
+    .typography li {
+        margin-bottom: 0.8rem;
+        position: relative;
+        padding-right: 15px;
+    }
+
+    .typography ul li:before {
+        content: '';
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        background: #2196F3;
+        border-radius: 50%;
+        position: absolute;
+        right: 0;
+        top: 10px;
+    }
+
+    .typography strong {
+        color: #333;
+        font-weight: 600;
+    }
+
+    .typography a {
+        color: #2196F3;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border-bottom: 1px dashed rgba(33, 150, 243, 0.3);
+    }
+
+    .typography a:hover {
+        color: #0d8aee;
+        border-bottom-color: #2196F3;
+    }
+
+    .typography table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 25px 0;
+    }
+
+    .typography table th {
+        background: rgba(33, 150, 243, 0.1);
+        padding: 12px 15px;
+        text-align: right;
+        color: #2196F3;
+        font-weight: 600;
+    }
+
+    .typography table td {
+        padding: 12px 15px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .typography table tr:hover td {
+        background: rgba(33, 150, 243, 0.03);
+    }
+
+    /* طراحی ریسپانسیو */
+    @media (max-width: 768px) {
+        .typography {
+            padding: 20px;
+        }
+        
+        .typography h3 {
+            font-size: 1.5rem;
+        }
+    }
+    .desc-subtitle {
+    font-size: 1.3rem;
+    color: #2c3e50;
+    margin: 1.5rem 0 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #3498db;
+    font-weight: 600;
+}
+
+.typography p {
+    margin-bottom: 1.2rem;
+    line-height: 1.8;
+    text-align: justify;
+}
+
+.typography strong {
+    color: #e74c3c;
+    font-weight: 700;
+}
+</style>
+
 <div class="site__body">
     <div class="page-header">
         <div class="page-header__container container">
@@ -12,7 +629,7 @@
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item">
-                            <a href="index.html">خانه</a>
+                            <a href="{% url "main:index" %}">خانه</a>
                             /
                         </li>
                         <li class="breadcrumb-item">
@@ -29,43 +646,39 @@
         <div class="container">
             <div class="product product--layout--columnar" data-layout="columnar">
                 <div class="product__content">
-                    <!-- .product__gallery -->
+                    <!-- گالری محصول -->
                     <div class="product__gallery">
                         <div class="product-gallery">
                             <div class="product-gallery__featured">
                                 <div class="owl-carousel" id="product-image">
-                                    <a href="images/products/product-16.jpg" target="_blank"><img src="{{media_url}}{{product.image_name}}" alt=""> </a>
-                                    
+                                    <a href="{{media_url}}{{product.image_name}}" target="_blank"><img src="{{media_url}}{{product.image_name}}" alt=""> </a>
                                     {% for img in product.gallery_images.all %}
-                                        <a href="images/products/product-16-1.jpg" target="_blank"><img src="{{media_url}}{{img.image_name}}" alt=""> </a>
+                                        <a href="{{media_url}}{{img.image_name}}" target="_blank"><img src="{{media_url}}{{img.image_name}}" alt=""> </a>
                                     {% endfor %}
-                                        
-                                   
                                 </div>
                             </div>
                             <div class="product-gallery__carousel">
                                 <div class="owl-carousel" id="product-carousel">
-                                    <a href="" class="product-gallery__carousel-item"><img class="product-gallery__carousel-image" src="{{media_url}}{{product.image_name}}" alt=""> </a>
+                                    <a href="#" class="product-gallery__carousel-item"><img class="product-gallery__carousel-image" src="{{media_url}}{{product.image_name}}" alt=""> </a>
                                     {% for img in product.gallery_images.all %}
-
-                                    <a href="" class="product-gallery__carousel-item"><img class="product-gallery__carousel-image" src="{{media_url}}{{img.image_name}}" alt=""> </a>
+                                    <a href="#" class="product-gallery__carousel-item"><img class="product-gallery__carousel-image" src="{{media_url}}{{img.image_name}}" alt=""> </a>
                                     {% endfor %}
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <!-- .product__gallery / end -->
-                    <!-- .product__info -->
+                    
+                    <!-- اطلاعات محصول -->
                     <div class="product__info">
                         <div class="product__wishlist-compare">
                             <button type="button" class="btn btn-sm btn-light btn-svg-icon" data-toggle="tooltip" data-placement="right" title="Wishlist">
                                 <svg width="16px" height="16px">
-                                    <use xlink:href="images/sprite.svg#wishlist-16"></use>
+                                    <use xlink:href="/static/images/sprite.svg#wishlist-16"></use>
                                 </svg>
                             </button>
                             <button type="button" class="btn btn-sm btn-light btn-svg-icon" data-toggle="tooltip" data-placement="right" title="Compare">
                                 <svg width="16px" height="16px">
-                                    <use xlink:href="images/sprite.svg#compare-16"></use>
+                                    <use xlink:href="/static/images/sprite.svg#compare-16"></use>
                                 </svg>
                             </button>
                         </div>
@@ -74,370 +687,293 @@
                             <div class="product__rating-stars">
                                 <div class="rating">
                                     <div class="rating__body">
-                                        <svg class="rating__star rating__star--active" width="13px" height="12px">
-                                            <g class="rating__fill">
-                                                <use xlink:href="images/sprite.svg#star-normal"></use>
-                                            </g>
-                                            <g class="rating__stroke">
-                                                <use xlink:href="images/sprite.svg#star-normal-stroke"></use>
-                                            </g>
-                                        </svg>
-                                        <div class="rating__star rating__star--only-edge rating__star--active">
-                                            <div class="rating__fill">
-                                                <div class="fake-svg-icon"></div>
-                                            </div>
-                                            <div class="rating__stroke">
-                                                <div class="fake-svg-icon"></div>
-                                            </div>
-                                        </div>
-                                        <svg class="rating__star rating__star--active" width="13px" height="12px">
-                                            <g class="rating__fill">
-                                                <use xlink:href="images/sprite.svg#star-normal"></use>
-                                            </g>
-                                            <g class="rating__stroke">
-                                                <use xlink:href="images/sprite.svg#star-normal-stroke"></use>
-                                            </g>
-                                        </svg>
-                                        <div class="rating__star rating__star--only-edge rating__star--active">
-                                            <div class="rating__fill">
-                                                <div class="fake-svg-icon"></div>
-                                            </div>
-                                            <div class="rating__stroke">
-                                                <div class="fake-svg-icon"></div>
-                                            </div>
-                                        </div>
-                                        <svg class="rating__star rating__star--active" width="13px" height="12px">
-                                            <g class="rating__fill">
-                                                <use xlink:href="images/sprite.svg#star-normal"></use>
-                                            </g>
-                                            <g class="rating__stroke">
-                                                <use xlink:href="images/sprite.svg#star-normal-stroke"></use>
-                                            </g>
-                                        </svg>
-                                        <div class="rating__star rating__star--only-edge rating__star--active">
-                                            <div class="rating__fill">
-                                                <div class="fake-svg-icon"></div>
-                                            </div>
-                                            <div class="rating__stroke">
-                                                <div class="fake-svg-icon"></div>
-                                            </div>
-                                        </div>
-                                        <svg class="rating__star rating__star--active" width="13px" height="12px">
-                                            <g class="rating__fill">
-                                                <use xlink:href="images/sprite.svg#star-normal"></use>
-                                            </g>
-                                            <g class="rating__stroke">
-                                                <use xlink:href="images/sprite.svg#star-normal-stroke"></use>
-                                            </g>
-                                        </svg>
-                                        <div class="rating__star rating__star--only-edge rating__star--active">
-                                            <div class="rating__fill">
-                                                <div class="fake-svg-icon"></div>
-                                            </div>
-                                            <div class="rating__stroke">
-                                                <div class="fake-svg-icon"></div>
-                                            </div>
-                                        </div>
-                                        <svg class="rating__star rating__star--active" width="13px" height="12px">
-                                            <g class="rating__fill">
-                                                <use xlink:href="images/sprite.svg#star-normal"></use>
-                                            </g>
-                                            <g class="rating__stroke">
-                                                <use xlink:href="images/sprite.svg#star-normal-stroke"></use>
-                                            </g>
-                                        </svg>
-                                        <div class="rating__star rating__star--only-edge rating__star--active">
-                                            <div class="rating__fill">
-                                                <div class="fake-svg-icon"></div>
-                                            </div>
-                                            <div class="rating__stroke">
-                                                <div class="fake-svg-icon"></div>
-                                            </div>
-                                        </div>
+                                        <!-- محتوای رتبه‌بندی -->
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="product__description">
-                    {% if product.summery_description %}
-                        {{ product.summery_description|safe }}
-                    {% else %}
-                        <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است.</p>
-                    {% endif %}
-                    </div>
-                        <!-- <ul class="product__features">
-                            <li>سرعت: 750 RPM</li>
-                            <li>منبع تغزیه: برق</li>
-                            <li>نوع باتری: لیتیوم</li>
-                            <li>ولتاژ: 20 ولت</li>
-                            <li>ظرفیت باتری: 2 ساعت</li>
-                        </ul> -->
+                        {% if product.summery_description %}
+                            {{ product.summery_description|safe }}
+                        {% else %}
+                            <p>توضیحات کوتاه محصول در اینجا نمایش داده می‌شود.</p>
+                        {% endif %}
+                        </div>
                         <ul class="product__meta">
                             <li class="product__meta-availability">موجودی: <span class="text-success">موجود در انبار</span></li>
-                            <li>برند: <a href=""> {{product.brand}}</a></li>
-                            <li>تعداد نظرات: <a href="">7</a> نظر</li>
-
+                            <li>برند: <a href="#"> {{product.brand}}</a></li>
+                            <li>تعداد نظرات: <a href="#tab-reviews">{{ comment_count }}</a> نظر</li>
                         </ul>
                     </div>
-                    <!-- .product__info / end -->
-                    <!-- .product__sidebar -->
+                    
+                    <!-- سایدبار محصول -->
                     <div class="product__sidebar">
                         <div class="product__availability">موجودی: <span class="text-success">موجود در انبار</span></div>
-                        <div class="product__prices">{{product.charm_price|intcomma }} تومان </div>
-                        <!-- .product__options -->
+                        <div class="product__prices">{{product.price|intcomma }} تومان </div>
                         <form class="product__options">
-                            <!-- <div class="form-group product__option">
-                                <label class="product__option-label">رنگ</label>
-                                <div class="input-radio-color">
-                                    <div class="input-radio-color__list">
-                                        <label class="input-radio-color__item input-radio-color__item--white" style="color: #fff;" data-toggle="tooltip" title="White">
-                                            <input type="radio" name="color"> <span></span></label>
-                                        <label class="input-radio-color__item" style="color: #ffd333;" data-toggle="tooltip" title="Yellow">
-                                            <input type="radio" name="color"> <span></span></label>
-                                        <label class="input-radio-color__item" style="color: #ff4040;" data-toggle="tooltip" title="Red">
-                                            <input type="radio" name="color"> <span></span></label>
-                                        <label class="input-radio-color__item input-radio-color__item--disabled" style="color: #4080ff;" data-toggle="tooltip" title="Blue">
-                                            <input type="radio" name="color" disabled> <span></span></label>
-                                    </div>
-                                </div>
-                            </div> -->
-                            <div class="form-group product__option">
-                                {% comment %} <label class="product__option-label">ویژگی های محصول :</label> {% endcomment %}
-                                <div class="input-radio-label">
-                                    <div class="input-radio-label__list">
-                                         
-                                        {% comment %} {% for feature in rangeproduct.product_features.all %}
-                                            <label>
-                                                <input type="radio" name="material"> <span>{{feature.feature}} : {{feature.value}}</span>
-                                            </label>
-                                        {% endfor %}
-                         {% endcomment %}
-                                    </div>
-                                </div>
-                            </div>
                             <div class="form-group product__option">
                                 <label class="product__option-label" for="product-quantity">تعداد</label>
                                 <div class="product__actions">
                                     <div class="product__actions-item">
                                         <div class="input-number product__quantity">
                                             <input id="product-quantity" class="form-control form-control-lg" type="number" min="1" value="1">
-                                             {% comment %}<div class="input-number__add"></div>
-                                            <div class="input-number__sub"></div> {% endcomment %}
                                         </div>
                                     </div>
                                     <div class="product__actions-item product__actions-item--addtocart">
                                         <button type="button" class="btn btn-primary btn-lg" onclick="add_to_shop_cart({{product.id}},0)">افزودن به سبد</button>
                                     </div>
-                                    <div class="product__actions-item product__actions-item--wishlist">
-                                        <button type="button" class="btn btn-secondary btn-svg-icon btn-lg" data-toggle="tooltip" title="Wishlist">
-                                            <svg width="16px" height="16px">
-                                                <use xlink:href="images/sprite.svg#wishlist-16"></use>
-                                            </svg>
-                                        </button>
-                                    </div>
-                                    <div class="product__actions-item product__actions-item--compare">
-                                        <button type="button" class="btn btn-secondary btn-svg-icon btn-lg" data-toggle="tooltip" title="Compare">
-                                            <svg width="16px" height="16px">
-                                                <use xlink:href="images/sprite.svg#compare-16"></use>
-                                            </svg>
-                                        </button>
-                                    </div>
                                 </div>
                             </div>
                         </form>
-                        <!-- .product__options / end -->
-                    </div>
-                    <!-- .product__end -->
-                    <div class="product__footer">
-                        {% comment %} <div class="product__tags tags">
-                            <div class="tags__list"><a href="">برچسب</a> <a href="">برچسب</a> <a href="">برچسب</a></div>
-                        </div> {% endcomment %}
-                        <div class="product__share-links share-links">
-                            <ul class="share-links__list">
-                                <li class="share-links__item share-links__item--type--like"><a href="">اشتراک گذاری</a></li>
-                            </ul>
-                        </div>
                     </div>
                 </div>
             </div>
-            <div class="product-tabs">
-                <div class="product-tabs__list"><a href="#tab-description" class="product-tabs__item product-tabs__item--active">توضیحات</a> <a href="#tab-specification" class="product-tabs__item">مشخصات فنی</a> <a href="#tab-reviews" class="product-tabs__item">دیدگاه ها</a></div>
-                <div class="product-tabs__content">
-                    {% comment %} <div class="product-tabs__pane product-tabs__pane--active" id="tab-description"> {% endcomment %}
-                        {% comment %} <div class="typography">
-                            <h3>توضیحات کامل محصول</h3>
-                            <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد. کتابهای زیادی در شصت و سه درصد گذشته، حال و آینده شناخت فراوان جامعه و متخصصان را می طلبد تا با نرم افزارها شناخت بیشتری را برای طراحان رایانه ای علی الخصوص طراحان خلاقی و فرهنگ پیشرو در زبان فارسی ایجاد کرد. در این صورت می توان امید داشت که تمام و دشواری موجود در ارائه راهکارها و شرایط سخت تایپ به پایان رسد وزمان مورد نیاز شامل حروفچینی دستاوردهای اصلی و جوابگوی سوالات پیوسته اهل دنیای موجود طراحی اساسا مورد استفاده قرار گیرد. لورم ایپسوم متن ساختگی با تولید</p>
-                            <h3 class="primary-font">لورم ایپسوم متن ساختگی با تولید سادگی</h3>
-                            <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد. کتابهای زیادی در شصت و سه درصد گذشته، حال و آینده شناخت فراوان جامعه و متخصصان را می طلبد تا با نرم افزارها شناخت بیشتری را برای طراحان رایانه ای علی الخصوص</p>
-                            <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد. کتابهای زیادی در شصت و سه درصد گذشته، حال و آینده شناخت فراوان جامعه و متخصصان را می طلبد تا با نرم افزارها شناخت بیشتری را برای طراحان رایانه ای علی الخصوص طراحان خلاقی و فرهنگ پیشرو در</p>
-                        </div>
-                    </div> {% endcomment %}
 
-                        <div class="product-tabs__pane product-tabs__pane--active" id="tab-description">
+            <!-- تب‌های محصول -->
+            <div class="product-tabs">
+                <div class="product-tabs__list">
+                    <a href="#tab-description" class="product-tabs__item product-tabs__item--active">توضیحات</a>
+                    <a href="#tab-specification" class="product-tabs__item">مشخصات فنی</a>
+                    <a href="#tab-reviews" class="product-tabs__item">دیدگاه ها</a>
+                </div>
+                <div class="product-tabs__content">
+                    <!-- تب توضیحات با استایل مدرن -->
+                    {% comment %} <div class="product-tabs__pane product-tabs__pane--active" id="tab-description">
                         <div class="typography">
                             <h3>توضیحات کامل محصول</h3>
                             {% if product.description %}
                                 {{ product.description|safe }}
                             {% else %}
-                                <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد. کتابهای زیادی در شصت و سه درصد گذشته، حال و آینده شناخت فراوان جامعه و متخصصان را می طلبد تا با نرم افزارها شناخت بیشتری را برای طراحان رایانه ای علی الخصوص طراحان خلاقی و فرهنگ پیشرو در زبان فارسی ایجاد کرد.</p>
+                                <p>توضیحات کامل محصول در اینجا نمایش داده می‌شود.</p>
                             {% endif %}
                         </div>
-                    </div>
-                    <div class="product-tabs__pane" id="tab-specification">
-                        <div class="spec">
-                            <h3 class="spec__header">مشخصات فنی</h3>
-                            <div class="spec__section">
-                                <h4 class="spec__section-title">مشخصات کامل</h4>
-                               
-                                {% for spec in specifications %}
-                                    <div class="spec__row">
-                                        {# به جای feature.feature از spec.name استفاده کنید #}
-                                        <div class="spec__name">{{ spec.name }}</div>
-                                        
-                                        {# به جای feature.value از spec.value استفاده کنید #}
-                                        <div class="spec__value">{{ spec.value }}</div>
-                                    </div>
-                                {% endfor %} 
-                                 
-                                {% comment %} </div> {% endcomment %}
-
-                                
-                                    {% comment %} <div class="spec__name">نوع موتور</div>
-                                    <div class="spec__value">بدون برس</div>
-                                </div>
+                    </div> {% endcomment %}
+                    <div class="product-tabs__pane product-tabs__pane--active" id="tab-description">
+    <div class="typography">
+        <h3>توضیحات کامل محصول</h3>
+        {% if product.description %}
+            {{ product.description|format_product_description|safe }}
+        {% else %}
+            <p>توضیحات کامل محصول در اینجا نمایش داده می‌شود.</p>
+        {% endif %}
+    </div>
+</div>
+                                    
+                    <!-- تب مشخصات فنی -->
+                <div class="product-tabs__pane" id="tab-specification">
+                    <div class="spec">
+                        <h3 class="spec__header">مشخصات فنی</h3>
+                        <div class="spec__section">
+                            <h4 class="spec__section-title">مشخصات کامل</h4>
+                            {% for spec in specifications %}
                                 <div class="spec__row">
-                                    <div class="spec__name">ولتاژ باتری</div>
-                                    <div class="spec__value">18 ولت</div>
+                                    <div class="spec__name">{{ spec.name }}</div>
+                                    <div class="spec__value">{{ spec.value }}</div>
                                 </div>
-                                <div class="spec__row">
-                                    <div class="spec__name">نوع باتری</div>
-                                    <div class="spec__value">لیتیوم یون</div>
-                                </div>
-                                <div class="spec__row">
-                                    <div class="spec__name">تعداد سرعت ها</div>
-                                    <div class="spec__value">2</div>
-                                </div>
-                                <div class="spec__row">
-                                    <div class="spec__name">زمان شارژ</div>
-                                    <div class="spec__value">2 ساعت</div>
-                                </div>
-                                <div class="spec__row">
-                                    <div class="spec__name">وزن</div>
-                                    <div class="spec__value">1.5 کیلوگرم</div> {% endcomment %}
-                                </div>
-                            </div>
-                            {% comment %} <div class="spec__section">
-                                <h4 class="spec__section-title">ابعاد</h4>
-                                <div class="spec__row">
-                                    <div class="spec__name">طول</div>
-                                    <div class="spec__value">99 mm</div>
-                                </div>
-                                <div class="spec__row">
-                                    <div class="spec__name">عرض</div>
-                                    <div class="spec__value">207 mm</div>
-                                </div>
-                                <div class="spec__row">
-                                    <div class="spec__name">ارتفاع</div>
-                                    <div class="spec__value">208 mm</div>
-                                </div> {% endcomment %}
-                            </div>
-                            {% comment %} <div class="spec__disclaimer">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز و کاربردهای متنوع با</div> {% endcomment %}
+                            {% endfor %}
                         </div>
                     </div>
+                </div>
+                    
+                    <!-- تب نظرات -->
                     <div class="product-tabs__pane" id="tab-reviews">
-                        <div class="reviews-view">
-                            <div class="reviews-view__list">
-                                <h3 class="reviews-view__header">دیدگاه های مشتریان</h3>
-                                <div class="reviews-list">
-                                    <ol class="reviews-list__content">
-                                        <li class="reviews-list__item">
-                                            <div class="review">
-                                                <div class="review__avatar"><img src="images/avatars/avatar-1.jpg" alt=""></div>
-                                                <div class="review__content">
-                                                    <div class="review__author">مریم محمدی</div>
-
-                                                    <div class="review__text">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز</div>
-                                                    <div class="review__date">27 فروردین 1401</div>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li class="reviews-list__item">
-                                            <div class="review">
-                                                <div class="review__avatar"><img src="images/avatars/avatar-2.jpg" alt=""></div>
-                                                <div class="review__content">
-                                                    <div class="review__author">سعید جعفری</div>
-                                                    <div class="review__text">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد. کتابهای زیادی در شصت و سه درصد گذشته،</div>
-                                                    <div class="review__date">12 فروردین 1401</div>
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li class="reviews-list__item">
-                                            <div class="review">
-                                                <div class="review__avatar"><img src="images/avatars/avatar-3.jpg" alt=""></div>
-                                                <div class="review__content">
-                                                    <div class="review__author">محبوبه حاتمی</div>
-
-                                                    <div class="review__text">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون</div>
-                                                    <div class="review__date">2 فروردین 1401</div>
-                                                </div>
-                                            </div>
-                                        </li>
-                                    </ol>
-                                    <div class="reviews-list__pagination">
-                                        <ul class="pagination justify-content-center">
-                                            <li class="page-item disabled">
-                                                <a class="page-link page-link--with-arrow" href="" aria-label="Previous">
-                                                    <svg class="page-link__arrow page-link__arrow--left" aria-hidden="true" width="8px" height="13px">
-                                                        <use xlink:href="images/sprite.svg#arrow-rounded-left-8x13"></use>
-                                                    </svg>
-                                                </a>
-                                            </li>
-                                            <li class="page-item"><a class="page-link" href="">1</a></li>
-                                            <li class="page-item active"><a class="page-link" href="">2 <span class="sr-only">(کنونی)</span></a></li>
-                                            <li class="page-item"><a class="page-link" href="">3</a></li>
-                                            <li class="page-item">
-                                                <a class="page-link page-link--with-arrow" href="" aria-label="Next">
-                                                    <svg class="page-link__arrow page-link__arrow--right" aria-hidden="true" width="8px" height="13px">
-                                                        <use xlink:href="images/sprite.svg#arrow-rounded-right-8x13"></use>
-                                                    </svg>
-                                                </a>
-                                            </li>
-                                        </ul>
+                        <div class="reviews-section">
+                            {% if comment_count > 0 %}
+                                <div class="reviews-view__list">
+                                    <h3 class="section-header">دیدگاه‌های مشتریان</h3>
+                                    <div class="reviews-list">
+                                        <ol class="reviews-list__content">
+                                            {% for comment in product.comments_product.all %}
+                                                {% if comment.is_active %}
+                                                    {% if comment.comment_parent == None %}
+                                                        <li class="reviews-list__item">
+                                                            <div class="review">
+                                                                <div class="review__avatar">
+                                                                    {% if comment.commentig_user.customer.image %}
+                                                                        <img src="{{media_url}}{{comment.commentig_user.customer.image}}" alt="{{comment.commentig_user.name}}">
+                                                                    {% else %}
+                                                                        <img src="{{media_url}}images/user.png" alt="{{comment.commentig_user.name}}">
+                                                                    {% endif %}
+                                                                </div>
+                                                                <div class="review__content">
+                                                                    <div class="review__author">{{comment.commentig_user.name}}</div>
+                                                                    <div class="review__text">{{comment.comment_text}}</div>
+                                                                    <div class="review__date">
+                                                                        <i class="far fa-clock"></i>
+                                                                        {{comment.register_date|to_jalali:'%H:%M - %y/%m/%d'}}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            {% if user.is_authenticated %}
+                                                                <div class="review-actions">
+                                                                    <button class="btn-reply" id="btn_{{comment.id}}" onclick="showCreateCommentForm({{product.id}}, {{comment.id}}, '{{product.slug}}');">
+                                                                        <i class="fas fa-reply"></i> پاسخ به این نظر
+                                                                    </button>
+                                                                </div>
+                                                                <div id="comment_form_{{comment.id}}"></div>
+                                                            {% endif %}
+                                                            
+                                                            <!-- پاسخ‌های این نظر -->
+                                                            {% if comment.comments_child.all %}
+                                                                <div class="replies-list">
+                                                                    {% for reply in comment.comments_child.all %}
+                                                                        {% if reply.is_active %}
+                                                                            <div class="review reply">
+                                                                                <div class="review__avatar">
+                                                                                    {% if reply.commentig_user.customer.image %}
+                                                                                        <img src="{{media_url}}{{reply.commentig_user.customer.image}}" alt="{{reply.commentig_user.name}}">
+                                                                                    {% else %}
+                                                                                        <img src="{{media_url}}images/user.png" alt="{{reply.commentig_user.name}}">
+                                                                                    {% endif %}
+                                                                                </div>
+                                                                                <div class="review__content">
+                                                                                    <div class="review__author">{{reply.commentig_user.name}}</div>
+                                                                                    <div class="review__text">{{reply.comment_text}}</div>
+                                                                                    <div class="review__date">
+                                                                                        <i class="far fa-clock"></i>
+                                                                                        {{reply.register_date|to_jalali:'%H:%M - %y/%m/%d'}}
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        {% endif %}
+                                                                    {% endfor %}
+                                                                </div>
+                                                            {% endif %}
+                                                        </li>
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% endfor %}
+                                        </ol>
                                     </div>
                                 </div>
-                            </div>
-                            <form class="reviews-view__form">
-                                <h3 class="reviews-view__header">دیدگاه هاخود را بنویسید</h3>
-                                <div class="row">
-                                    <div class="col-12 col-lg-9 col-xl-8">
-                                        <div class="form-row">
-                                            <div class="form-group col-md-4">
-                                                <label for="review-author">نام شما</label>
-                                                <input type="text" class="form-control" id="review-author" >
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="review-text">دیدگاه شما</label>
-                                            <textarea class="form-control" id="review-text" rows="6"></textarea>
-                                        </div>
-                                        <div class="form-group mb-0">
-                                            <button type="submit" class="btn btn-primary btn-lg">ارسال نظر</button>
+                            {% endif %}
+                            
+                            {% if user.is_authenticated %}
+                                <div class="review-form">
+                                    <h4>دیدگاه خود را بنویسید</h4>
+                                    <div class="row">
+                                        <div class="col-12 col-lg-9 col-xl-8">
+                                            {% render_partial 'csf:create_comment' slug=product.slug %}
                                         </div>
                                     </div>
                                 </div>
-                            </form>
+                            {% else %}
+                                <div class="auth-message">
+                                    <h5>برای درج دیدگاه خود باید 
+                                        <a href="{% url 'accounts:login' %}?next=/products/product_details/{{product.slug}}/">ورود</a>
+                                        یا
+                                        <a href="{% url 'accounts:register' %}?next=/products/product_details/{{product.slug}}/">ثبت نام</a>
+                                        کنید
+                                    </h5>
+                                </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- .block-products-carousel -->
-
-{%render_partial 'products:related_products' slug=product.slug%}
-   
-    <!-- .block-products-carousel / end -->
+    
+    {% render_partial 'products:related_products' slug=product.slug %}
 </div>
-<!-- site__body / end -->
 
+<!-- لینک فونت آوسام -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+<!-- اسکریپت‌های مورد نیاز -->
+<script>
+    // نمایش پیام‌های Django به صورت Toast
+    document.addEventListener('DOMContentLoaded', function() {
+        {% if messages %}
+            {% for message in messages %}
+                showToast("{{ message }}", "{{ message.tags }}");
+            {% endfor %}
+        {% endif %}
+    });
+
+    // تابع کمکی برای نمایش پیام‌های Toast
+ function showToast(message, type = 'success') {
+    const colors = {
+        success: 'linear-gradient(to right, #00b09b, #96c93d)',
+        info: 'linear-gradient(to right, #1e88e5, #0d47a1)',
+        warning: 'linear-gradient(to right, #ffa000, #ff6f00)',
+        error: 'linear-gradient(to right, #ff5f6d, #ffc371)',
+        danger: 'linear-gradient(to right, #ff5f6d, #ffc371)'
+    };
+
+    // تبدیل تگ‌های Django و مدیریت حالت‌های مختلف
+    type = type === 'error' ? 'danger' : type;
+    
+    Toastify({
+        text: message,
+        duration: 5000,
+        close: true,
+        gravity: "top",
+        position: "left", // بهتر است برای RTL از left استفاده شود
+        style: {
+            background: colors[type] || colors['info'],
+            'font-family': 'Vazir, Tahoma, sans-serif',
+            'text-align': 'right',
+            'direction': 'rtl',
+            'border-radius': '8px',
+            'padding': '15px',
+            'box-shadow': '0 4px 12px rgba(0,0,0,0.15)',
+            'max-width': '100%'
+        },
+        stopOnFocus: true,
+        onClick: function() {
+            this.hideToast();
+        }
+    }).showToast();
+}
+    // انیمیشن برای نمایش تدریجی نظرات
+    document.addEventListener('DOMContentLoaded', function() {
+        const commentItems = document.querySelectorAll('.reviews-list__item');
+        commentItems.forEach((item, index) => {
+            item.style.animationDelay = `${index * 0.1}s`;
+        });
+    });
+    
+    // تابع برای نمایش فرم پاسخ
+   function showCreateCommentForm(productId, commentId, productSlug) {
+    const formContainer = document.getElementById(`comment_form_${commentId}`);
+    const button = document.getElementById(`btn_${commentId}`);
+    
+    if (!formContainer || !button) return;
+    
+    if (formContainer.innerHTML.trim() === '') {
+        button.disabled = true;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> در حال بارگذاری...';
+        
+        fetch(`/products/create_product_comment/${productId}/${commentId}/${productSlug}/`)
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.text();
+            })
+            .then(html => {
+                formContainer.innerHTML = html;
+                formContainer.style.display = 'block';
+                formContainer.style.animation = 'fadeIn 0.3s ease';
+                button.innerHTML = '<i class="fas fa-times"></i> انصراف';
+                button.disabled = false;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('خطا در بارگذاری فرم', 'error');
+                button.innerHTML = '<i class="fas fa-reply"></i> پاسخ به این نظر';
+                button.disabled = false;
+            });
+    } else {
+        formContainer.style.animation = 'fadeOut 0.3s ease';
+        setTimeout(() => {
+            formContainer.innerHTML = '';
+            formContainer.style.display = 'none';
+        }, 300);
+        button.innerHTML = '<i class="fas fa-reply"></i> پاسخ به این نظر';
+    }
+}
+
+
+    
+</script>
 {% endblock content %}
