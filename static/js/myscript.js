@@ -199,7 +199,7 @@ function showToast(message, type = 'success') {
 
     Toastify({
         text: message,
-        duration: 3000, // پیام برای ۳ ثانیه نمایش داده می‌شود
+        duration: 4000, // پیام برای ۳ ثانیه نمایش داده می‌شود
         close: true,
         gravity: "top", // موقعیت: بالا
         position: "center", // موقعیت: وسط
@@ -207,6 +207,25 @@ function showToast(message, type = 'success') {
         stopOnFocus: true,
     }).showToast();
 }
+
+// ------------------------------------------------------------------------------------------------------
+
+// function showCreateCommentForm(productid,commentid,slug){
+//     $.ajax({
+//         type: "GET",
+//         url : "/csf/create_comment/" + slug,
+//         data:{
+//             productid : productid,
+//             commentid : commentid,
+//         },
+//         success: function(res){
+//             $("#btn_" + commentid).hide();
+//             $("#comment_form_" + commentid).html(res);
+//         }
+//     });
+// }
+
+// ------------------------------------------------------------------------------------------------------
 
 
 

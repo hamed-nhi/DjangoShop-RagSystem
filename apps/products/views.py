@@ -4,7 +4,7 @@ from django.core.paginator import Paginator
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
 from .filters import ProductFilter
-from .models import FeatureValue, Product, ProductGroup, Brand
+from .models import FeatureValue, Product, ProductGroup, Brand, Feature
 from django.db.models import Q, Count,Min,Max
 from django.views import View
 
@@ -82,10 +82,13 @@ class ProductDeatailView(View):
                 translated_name = FEATURE_NAME_TRANSLATIONS.get(spec.feature.feature_name, spec.feature.feature_name)
                 translated_value = FEATURE_VALUE_TRANSLATIONS.get(spec.value, spec.value)
                 translated_specs.append({'name': translated_name, 'value': translated_value})
-            
+
+            comment_count = product.comments_product.filter(is_active=True).count()
+
             context = {
                 'product': product,
                 'specifications': translated_specs,
+                'comment_count': comment_count,
             }
             return render(request, "product_app/product_detail.html", context)
 #----------------------------------------------------------------------------------------------
@@ -108,13 +111,6 @@ def get_related_products(request, *args, **kwargs):
     return render(request, "product_app/partials/related_products.html", {'related_products': related_products})
 #----------------------------------------------------------------------------------------------
 
-# # محصولات مرتبط
-# def get_related_products(request,*args,**kwargs):
-#     current_product=get_object_or_404(Product,slug=kwargs['slug'])
-#     related_products=[]
-#     for group in current_product.product_group.all():
-#         related_products.extend(Product.objects.filter(Q(is_active=True) & Q(product_group=group) & ~Q(id=current_product.id)))
-#     return render(request,"product_app/partials/related_products.html",{'related_products':related_products})
 #----------------------------------------------------------------------------------------------
 # لیست کلیه گروه های محصولات
 class ProductGroupsView(View):
@@ -151,15 +147,7 @@ def get_brands(request,*args,**kwargs):
     
     return render(request,"product_app/partials/brands.html",{'brands':brands})
 #-----------------------------------------------------------------------------------------------
-# لیست های دیگر فیلتر ها بر حسب مقادیر کالاهای درون گروه
-# def get_feature_for_filter(request,*args,**kwargs):
-#     product_groups=get_object_or_404(ProductGroup,slug=kwargs['slug'])
-#     feature_list=product_groups.features_of_groups.all()
-#     feature_dict=dict()
-#     for feature in feature_list:
-#         feature_dict[feature]=feature.feature_values.all()
-#     return render(request,"product_app/partials/features_filter.html",{'feature_dict':feature_dict})
-##برای فارسی نشان دادن فیچر ها 
+
 def get_feature_for_filter(request, *args, **kwargs):
     """
     این ویو لیست ویژگی‌ها و مقادیر آن‌ها را برای یک گروه محصول خاص،
@@ -314,190 +302,21 @@ class ProductByGroupsView(View):
 
 
 
-
-
-
 #--------------------------------------------------------------------
-
-
-#-----------------------------------------------------------------------------------------------
-# from collections import defaultdict
-# from django.core.paginator import Paginator
-# class ProductByGroupsView(View):
-#     """
-#     نمایش لیست محصولات یک گروه خاص به همراه فیلترینگ پیشرفته و صفحه‌بندی.
-#     """
-#     def get(self, request, *args, **kwargs):
-#         slug = kwargs["slug"]
-#         current_group = get_object_or_404(ProductGroup, slug=slug)
-
-                
-        
-        
-#         # ۱. کوئری‌ست اولیه: تمام محصولات فعال در گروه فعلی
-#         products = Product.objects.filter(is_active=True, product_group=current_group)
-        
-        
-#         res_aggre=products.aggregate(min=Min('price'),max=Max('price'))
-        
-        
-        
-#         # ۲. فیلتر قیمت (با استفاده از django-filter)
-#         price_filter = ProductFilter(request.GET, queryset=products)
-#         products = price_filter.qs
-
-#         # ۳. فیلتر برند (شرط OR بین برندهای انتخابی)
-#         brands_filter_ids = request.GET.getlist('brand')
-#         if brands_filter_ids:
-#             products = products.filter(brand__id__in=brands_filter_ids)
-
-#         # ۴. فیلتر ویژگی‌ها (منطق ترکیبی AND/OR)
-#         features_filter_ids = request.GET.getlist('feature')
-#         if features_filter_ids:
-#             # مقادیر انتخاب شده را به همراه ویژگی والدشان (feature) دریافت می‌کنیم
-#             # این کار برای گروه‌بندی لازم است و select_related کوئری را بهینه می‌کند
-#             selected_values = FeatureValue.objects.filter(id__in=features_filter_ids).select_related('feature')
-
-#             # مقادیر را بر اساس شناسه ویژگی والد (feature_id) گروه‌بندی می‌کنیم
-#             # مثال خروجی: { 5: [16, 8], 7: [50] }
-#             # یعنی برای ویژگی با آیدی 5 (مثلا رم)، مقادیر 16 و 8 انتخاب شده‌اند
-#             grouped_values = defaultdict(list)
-#             for value in selected_values:
-#                 grouped_values[value.feature_id].append(value.id)
-
-#             # برای هر گروه از ویژگی‌ها، یک فیلتر AND جداگانه اعمال می‌کنیم
-#             for feature_group_ids in grouped_values.values():
-#                 # در اینجا از __in برای ایجاد شرط OR بین مقادیر یک گروه استفاده می‌کنیم
-#                 # مسیر دقیق بر اساس مدل‌ها: product -> productfeature -> filter_value -> id
-#                 products = products.filter(product_features__filter_value__id__in=feature_group_ids)
-        
-#         # حذف نتایج تکراری که به خاطر join های چندگانه در روابط M2M ایجاد شده
-#         products = products.distinct()
-
-#         # ۵. مرتب‌سازی
-#         sort_type = request.GET.get('sort_type', '0')
-#         if sort_type == '1':
-#             products = products.order_by('price')
-#         elif sort_type == '2':
-#             products = products.order_by('-price')
-
-#         # ۶. صفحه‌بندی (Pagination)
-#         paginator = Paginator(products, 15)
-#         page_number = request.GET.get('page')
-#         page_obj = paginator.get_page(page_number)
-#     # ======================================================================
+def navbar_context(request):
+    # دریافت محصولات با امتیاز 90+
+    high_rated_products = Product.objects.filter(
+        is_active=True,
+        product_features__feature_id=20,  # ID ویژگی Rating
+        product_features__value__gte=60   # امتیاز 90 به بالا
+    ).distinct()[:5]  # فقط 5 محصول برتر
     
-#     # ======================================================================
-#         context = {
-#             'current_group': current_group,
-#             'page_obj': page_obj,
-#             'product_count': paginator.count,
-#             'filter': price_filter,
-#             'sort_type': sort_type,
-#             'group_slug': slug,
-#             'res_aggre':res_aggre,
-
-#         }
-#         return render(request, "product_app/products.html", context)
-
-#-----------------------------------------------------------------------------------------------
-
-# # لیست محصولات هر گروه محصولات
-# class ProductByGroupsView(View):
-#     def get(self,request,*args,**kwargs):
-#         slug=kwargs["slug"]
-#         current_group=get_object_or_404(ProductGroup,slug=slug)
-#         products=Product.objects.filter(Q(is_active=True) & Q(product_group=current_group))
-
-
-#         res_aggre=products.aggregate(min=Min('price'),max=Max('price'))
-
-#         # price filter
-#         filter=ProductFilter(request.GET,queryset=products)
-#         products=filter.qs
-
-
-#         # brand filter
-#         brands_filter=request.GET.getlist('brand')
-#         if brands_filter:
-#             products=products.filter(brand__id__in=brands_filter)
-#         #0---------------------------------------------------------------
-
-#         # features filter
-#         featuers_filter=request.GET.getlist('feature')
-#         if featuers_filter:
-#             products=products.filter(product_features__filter_value__id__in=featuers_filter).distinct()
-
-#         # sort typeee
-#         sort_type=request.GET.get('sort_type')
-#         if not sort_type:
-#             sort_type='0'
-#         if sort_type=='1':
-#             products=products.order_by('price')
-#         elif sort_type=='2':
-#             products=products.order_by('-price')
-
-
-
-#         group_slug=slug
-#         product_per_page=15                           #تعداد کالاها در هر صفحه
-#         paginator=Paginator(products,product_per_page)       
-#         page_number=request.GET.get('page')                 #شماره صفحه جاری  
-#         page_obj=paginator.get_page(page_number)            #لیست کالاها بعد از صفحه بندی برای نمایش در صفحه جاری
-#         product_count=products.count()                      #تعداد کالاها ی موجود در این گروه
-
-#         # لیست اعداد برای منوبازشونده برای تعیین تعداد کالای هر صفحه توسط کاربر
-#         show_count_product=[]
-#         i=product_per_page
-#         while i<product_count:
-#             show_count_product.append(i)
-#             i*=2
-#         show_count_product.append(i)
-
-        
-#         context={
-#             'current_group':current_group,
-#             'products':products,
-#             'res_aggre':res_aggre,
-#             'group_slug':group_slug,
-#             'page_obj':page_obj,
-#             'product_count':product_count,
-#             'show_count_product':show_count_product,
-#             'filter':filter,
-#             'sort_type':sort_type,
-#         }
-#         return render(request,"product_app/products.html",context)
-
-#-----------------------------------------------------------------------------------------------
-
-
-
-
-
-# class BrandListView(View):
-#     def get(self, request):
-#         # شمردن تعداد محصولات هر برند و مرتب‌سازی بر اساس آن
-#         brands = Brand.objects.annotate(product_count=Count('brands')).order_by('-product_count')
-#         return render(request, "product_app/brand_list.html", {'brands': brands})
-
-# class ProductsByBrandView(View):
-#     def get(self, request, *args, **kwargs):
-#         current_brand = get_object_or_404(Brand, slug=kwargs['slug'])
-#         products = Product.objects.filter(is_active=True, brand=current_brand)
-#         return render(request, "product_app/products_by_brand.html", {'products': products, 'current_brand': current_brand})
+    # دریافت برندهای محبوب
+    popular_brands = Brand.objects.annotate(
+        product_count=Count('product_of_brands')
+    ).order_by('-product_count')[:5]
     
-    
-    
-# #------------------------------------------------------------
-# #two dropdown in adminpanel
-# def get_filter_value_for_feature(request):
-#     if request.method == 'GET':
-#         feature_id = request.GET["feature_id"]
-#         feature_values=FeatureValue.objects.filter(feature_id=feature_id)
-#         res = {fv.value_title:fv.id for fv in feature_values}
-#         print(100*"@")
-#         print(res)
-#         print(100*"@")
-#         return JsonResponse(data=res , safe=False)
-
-        
+    return {
+        'high_rated_products': high_rated_products,
+        'popular_brands': popular_brands
+    }
