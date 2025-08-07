@@ -1,13 +1,17 @@
 import math
 from django.db import models
-from django.db.models import Sum
+from django.db.models import Sum, Avg
 from email.mime import image
 from django.utils import timezone
+# from apps.c_s_f.models import Scoring
 from utils import FileUpload
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.urls import reverse
-
 from datetime import datetime
+from middlewares.middlewares import RequestMiddleware
+#--------------------------------------------------------------
+
+
 
 def upload_brand_image(instance,filename):
     return f'images/brand/{filename}'
@@ -127,17 +131,52 @@ class Product(models.Model):
         else:
             rounded_up = math.ceil(self.price / 100000) * 100000
             return rounded_up - 1000
+
     
-  
+    # class Meta:
+    #     verbose_name='کالا'
+    #     verbose_name_plural=' کالا ها'
+
     
+
+    def get_user_score(self):
+        request = RequestMiddleware(get_response=None)
+        request= request.thread_local.current_request
+        score =0
+        user_score=self.scoring_product.filter(scoring_user=request.user)
+        if user_score.count() > 0:
+            score = user_score[0].score_value
+        return score
+        
+
+    def get_average_score(self):
+        avgScore = self.scoring_product.all().aggregate(Avg('score_value'))['score_value__avg']
+        if avgScore == None:
+            return 0
+        else:
+            return avgScore
+
+
+
+    def get_user_favorite(self):
+        request = RequestMiddleware(get_response=None)
+        request = request.thread_local.current_request
+        flag = self.favorite_product.filter(favorite_user=request.user).exists()
+        return flag
     
+    # def getMainProductGroup(self):
+    #     return self.product_group.all()[0].id 
+    def getMainProductGroup(self):
+        if self.product_group.exists():
+            return self.product_group.first().id
+        return None # Or raise an exception, depending on your desired behavior
     
     class Meta:
-        verbose_name='کالا'
-        verbose_name_plural=' کالا ها'
- 
- 
- 
+        verbose_name = 'کالا'
+        verbose_name_plural = 'کالا ها'
+    
+
+
 #------------------------------------------------
 class FeatureValue(models.Model):
     value_title = models.CharField(max_length=200,verbose_name='عنوان مقدار')
@@ -152,11 +191,7 @@ class FeatureValue(models.Model):
         verbose_name_plural='مقادیر ویژگی ها'
      
 #--------------------------------------------------------------
-# جدول که از حاصل ارتباط چند به چند بوجود میاید بصورت اتوماتیک 
-# ولی در اینجا خودمان دستی ایجاد میکنیم چون میخواهیم در ان چیزی دیگری هم اضافه کنم
 
-# ولی یک مشکلی که داریم چون این جدول بصورت اتوماتیک ایجاد نشده بعدا شناخته نخواهد شد برای همین یک فیلد به مدل #
-#product  اضافه میکنیم
 class ProductFeature(models.Model):
     product = models.ForeignKey(Product,on_delete=models.CASCADE,verbose_name='کالا', related_name='product_features')
     feature = models.ForeignKey(Feature, on_delete=models.CASCADE,verbose_name='ویژگی')

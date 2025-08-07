@@ -1,0 +1,92 @@
+{% extends 'main_template.html' %}
+{% load humanize %}
+{% load render_partial %}
+{% load static %}
+
+{% block titile %} لیست علاقه‌مندی‌ها{% endblock titile %}
+
+{% block content %}
+        <div class="site__body">
+            <div class="page-header">
+                <div class="page-header__container container">
+                    <div class="page-header__breadcrumb">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="{% url 'main:index' %}">خانه</a> {# Assuming 'home' URL name #}
+                                    /
+                                </li>
+                                <li class="breadcrumb-item active" aria-current="page">علاقه‌مندی‌ها</li>
+                            </ol>
+                        </nav>
+                    </div>
+                    <div class="page-header__title">
+                        <h1>علاقه‌مندی‌ها</h1></div>
+                </div>
+            </div>
+            <div class="block">
+                <div class="container">
+                    <table class="wishlist">
+                        <thead class="wishlist__head">
+                            <tr class="wishlist__row">
+                                <th class="wishlist__column wishlist__column--image">تصویر</th>
+                                <th class="wishlist__column wishlist__column--product">محصول</th>
+                                <th class="wishlist__column wishlist__column--stock">وضعیت انبار</th>
+                                <th class="wishlist__column wishlist__column--price">قیمت</th>
+                                <th class="wishlist__column wishlist__column--tocart">افزودن به سبد</th>
+                                <th class="wishlist__column wishlist__column--remove">حذف</th> {# NEW: Column for Delete #}
+                            </tr>
+                        </thead>
+                        <tbody class="wishlist__body">
+                                {% for favorite in user_favorite_products %}
+                            <tr class="wishlist__row" id="favorite-row-{{ favorite.product.id }}"> {# Added ID for easy removal #}
+                                <td class="wishlist__column wishlist__column--image">
+                                    <a href="{{ favorite.product.get_absolute_url }}"><img src="{{ media_url }}{{ favorite.product.image_name }}" alt="{{ favorite.product.product_name }}"></a> {# Added alt text #}
+                                </td>
+                                <td class="wishlist__column wishlist__column--product">
+                                    <a href="{{ favorite.product.get_absolute_url }}" class="wishlist__product-name">
+                                        {{ favorite.product.product_name }}
+                                    </a>
+                                </td>
+                                <td class="wishlist__column wishlist__column--stock">
+                                    {% if favorite.product.get_number_in_warehouse > 0 %}
+                                    <div class="badge badge-success">موجود در انبار</div>
+                                    {% else %}
+                                    <div class="badge badge-danger">ناموجود</div>
+                                    {% endif %}
+                                </td>
+                                <td class="wishlist__column wishlist__column--price">{{ favorite.product.price|intcomma }} تومان</td> {# Added intcomma for price #}
+                                <td class="wishlist__column wishlist__column--tocart">
+                                 {% if favorite.product.get_number_in_warehouse > 0 %}
+    <button type="button" class="btn btn-primary btn-sm" onclick="add_to_shop_cart({{ favorite.product.id }}, 1)">
+        <i class="fa fa-shopping-cart"></i> {# Icon for "Add to Cart" #}
+    </button>
+{% else %}
+    <button type="button" class="btn btn-info btn-sm" disabled>
+        <i class="fa fa-shopping-cart"></i> {# Icon for "Add to Cart" #}
+    </button>
+{% endif %}
+                                </td>
+                                <td class="wishlist__column wishlist__column--remove">
+                                    {# NEW: Delete Button for favorite item #}
+                                    <button type="button" class="btn btn-danger btn-sm" onclick="removeFavorite({{ favorite.product.id }})">
+                                        <i class="fa fa-trash-alt"></i> 
+                                    </button>
+                                </td>
+                            </tr>
+                                {% endfor %}
+                                {# NEW: Message if no favorites #}
+                                {% if not user_favorite_products %}
+                                    <tr class="wishlist__row no-favorites">
+                                        <td colspan="6" class="text-center py-4">
+                                            <p class="text-muted">لیست علاقه مندی های شما خالی است.</p>
+                                            {% comment %} <a href="{% url 'product_app:products' %}" class="btn btn-primary mt-3">مشاهده محصولات</a> {# Assuming 'products:product_list' URL name #} {% endcomment %}
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+{% endblock content %}
+

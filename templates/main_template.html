@@ -1,48 +1,36 @@
 {% load static %}
-<html lang="en">
+<html lang="fa" dir="rtl"> {# Changed lang to 'fa' and added 'dir="rtl"' for Persian #}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>
-        
         {% block title %}{% endblock title %}
     </title>
     <link rel="icon" type="image/png" href="{% static "images/favicon.png" %}">
-	<!-- css -->
-	<link rel="stylesheet" href="{% static "vendor/bootstrap-4.5.3/css/bootstrap.min.css" %}">
-	<link rel="stylesheet" href="{% static "vendor/owl-carousel-2.3.4/assets/owl.carousel.min.css" %} ">
-	<link rel="stylesheet" href="{% static "css/style.css" %}">
-	<link rel="stylesheet" href="{% static "css/custom.css" %} ">
-	<link rel="stylesheet" href="{% static "vendor/fontawesome-5.6.3/css/all.min.css" %}">
-	<link rel="stylesheet" href="{% static 'vendor/nouislider/nouislider.min.css' %}">
-	<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 
-	{% comment %}
-	<!-- js -->
-	<script src="{% static "vendor/jquery-3.3.1/jquery.min.js" %} "></script>
-	<script src="{% static "vendor/bootstrap-4.5.3/js/bootstrap.bundle.min.js" %}"></script>
-	<script src="{% static "vendor/owl-carousel-2.3.4/owl.carousel.min.js" %}"></script>
-	<script src="{% static "js/number.js" %}"></script>
-	<script src="{% static "js/main.js" %}"></script>
-	<script src="{% static "js/my_script.js" %}"></script>
-	<!-- font - fontawesome -->
-}
+    <link rel="stylesheet" href="{% static "vendor/bootstrap-4.5.3/css/bootstrap.min.css" %}">
+    <link rel="stylesheet" href="{% static "vendor/owl-carousel-2.3.4/assets/owl.carousel.min.css" %} ">
+    <link rel="stylesheet" href="{% static "css/style.css" %}">
+    <link rel="stylesheet" href="{% static "css/custom.css" %} ">
+    <link rel="stylesheet" href="{% static "vendor/fontawesome-5.6.3/css/all.min.css" %}">
+    <link rel="stylesheet" href="{% static 'vendor/nouislider/nouislider.min.css' %}">
+    
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    
+    {# SweetAlert2 CSS (optional, if you're using it) #}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
-
-
-	{% comment %} 
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.css" />
-
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.js"></script> {% endcomment %}
 
 </head>
 <body>
-	{% include "partials/header.html" %}
-	{% include "partials/messages.html" %}
+    {% include "partials/header.html" %}
+    
+    {# Remove this line if you want to completely manage messages via JS #}
+    {# If you keep it, standard Django messages will also show up. #}
+    {% comment %} {% include "partials/messages.html" %} {% endcomment %} 
+
     {% block content %}{% endblock content %}
-	{% include "partials/footer.html" %}
-
-
+    {% include "partials/footer.html" %}
 
     <script src="{% static "vendor/jquery-3.3.1/jquery.min.js" %}"></script>
     <script src="{% static "vendor/bootstrap-4.5.3/js/bootstrap.bundle.min.js" %}"></script>
@@ -50,65 +38,25 @@
     <script src="{% static "js/number.js" %}"></script>
     <script src="{% static "js/main.js" %}"></script>
     <script src="{% static "vendor/nouislider/nouislider.min.js" %}"></script>
-	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-	<script src="{% static "js/myscript.js" %}"></script> </body>
+    
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    
+    {# SweetAlert2 JS (optional, if you're using it, load it here) #}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    <script>
+        const djangoMessages = [];
+        {% if messages %}
+            {% for message in messages %}
+                djangoMessages.push({
+                    tags: "{{ message.tags }}",
+                    message: "{{ message }}"
+                });
+            {% endfor %}
+        {% endif %}
+    </script>
+
+    <script src="{% static "js/myscript.js" %}"></script>
+    
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-{% comment %} 
-
-<!-- {% load static %}
-
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>
-        
-        {% block title %}{% endblock title %}
-    </title>
-    <link rel="icon" type="image/png" href="{% static "images/favicon.png" %}">
-	<!-- css -->
-	<link rel="stylesheet" href="{% static "vendor/bootstrap-4.5.3/css/bootstrap.min.css" %}">
-	<link rel="stylesheet" href="{% static "vendor/owl-carousel-2.3.4/assets/owl.carousel.min.css" %} ">
-	<link rel="stylesheet" href="{% static "css/style.css" %}">
-	<link rel="stylesheet" href="{% static "css/custom.css" %} ">
-	<!-- js -->
-	<script src="{% static "vendor/jquery-3.3.1/jquery.min.js" %} "></script>
-	<script src="{% static "vendor/bootstrap-4.5.3/js/bootstrap.bundle.min.js" %}"></script>
-	<script src="{% static "vendor/owl-carousel-2.3.4/owl.carousel.min.js" %}"></script>
-	<script src="{% static "js/main.js" %}"></script>
-	<script src="{% static "js/myscript.js" %}"></script>
-
-	<!-- font - fontawesome -->
-	<link rel="stylesheet" href="{% static "vendor/fontawesome-5.6.3/css/all.min.css" %}">
-
-
-
-</head>
-<body>
-	{% include "partials/header.html" %}
-	{% include "partials/messages.html" %}
-    {% block content %}{% endblock content %}
-	{% include "partials/footer.html" %}
-
-
-
-</body>
-</html> --> {% endcomment %}

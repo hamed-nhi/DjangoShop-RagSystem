@@ -75,21 +75,34 @@ class RegisterUserForm(ModelForm):
 
 
 #-----------------------------------------------------------
-        def clean_password2(self):
-            pass1=self.cleaned_data['password1']
-            pass2=self.cleaned_data['password2']
-            if pass1 and pass2 and pass1 !=pass2:
-                raise ValidationError('رمز عبور ها مغایرت دارند ')
-            return pass2
+#         def clean_password2(self):
+#             pass1=self.cleaned_data['password1']
+#             pass2=self.cleaned_data['password2']
+#             if pass1 and pass2 and pass1 !=pass2:
+#                 raise ValidationError(' رمزهای عبور با هم مطابقت ندارند')
+#             return pass2
 
-#-----------------------------------------------------------
+# #-----------------------------------------------------------
 
-        def clean_mobile_number(self):
-            mobile_number = self.cleaned_data.get('mobile_number')
-            if CustomUser.objects.filter(mobile_number=mobile_number).exists():
-                raise ValidationError("This mobile number is already in use.")
-            return mobile_number
+#         def clean_mobile_number(self):
+#             mobile_number = self.cleaned_data.get('mobile_number')
+#             if CustomUser.objects.filter(mobile_number=mobile_number).exists():
+#                 raise ValidationError("این شماره موبایل قبلاً ثبت‌نام شده است.")
+#             return mobile_number
+    def clean_password2(self):
+        pass1 = self.cleaned_data.get('password1')
+        pass2 = self.cleaned_data.get('password2')
+        if pass1 and pass2 and pass1 != pass2:
+            raise ValidationError('رمزهای عبور با هم مطابقت ندارند.')
+        return pass2
 
+    def clean_mobile_number(self):
+        mobile_number = self.cleaned_data.get('mobile_number')
+        # بررسی می‌کنیم که آیا شماره موبایل در دیتابیس وجود دارد
+        if mobile_number and CustomUser.objects.filter(mobile_number=mobile_number).exists():
+            # **پیام خطا را به فارسی تغییر می‌دهیم**
+            raise ValidationError("این شماره موبایل قبلاً ثبت‌نام شده است.")
+        return mobile_number
 
 #-----------------------------------------------------------
 class VerifyResgiterForm(forms.Form):

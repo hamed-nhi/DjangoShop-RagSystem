@@ -87,48 +87,7 @@ function add_to_shop_cart(product_id,qty){
 
 }
 
-// orders_app Scripts
-// function delete_from_shop_cart(product_id){
-//     $.ajax({
-//         type:"GET",
-//         url:"/orders/delete_from_shop_cart/",
-//         data:{
-//             product_id:product_id,
-//         },
-//         success:function(res){
-//             alert("کالای مورد نظر از سبد خرید شما حذف شد");
-//             // $("#shop_cart_list").html(res);
-//             status_of_shop_cart();
 
-//         }
-//     });
-// }
-
-// // shopcart Button Sync(بروزرسانی)
-// function update_shop_cart(){
-//     var product_id_list = []
-//     var qty_list =[]
-//     $("input[id^='qty_']").each(function(index){
-//         product_id_list.push($(this).attr('id').slice(4));
-//         qty_list.push($(this).val())
-//     });
-
-
-//    $.ajax({
-//         type:"GET",
-//         url:"/orders/update_shop_cart/",
-//         data:{
-//             product_id_list:product_id_list,
-//             qty_list:qty_list,
-//         },
-//         success:function(res){
-//             // $("#shop_cart_list").html(res);
-//             status_of_shop_cart();
-
-//         }
-//     });
-// }
-// برای گرفتن CSRF token از کوکی
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -190,7 +149,6 @@ function update_shop_cart(event) {
     });
 }
 
-// تابع کمکی برای نمایش پیام‌های Toast
 function showToast(message, type = 'success') {
     const colors = {
         success: 'linear-gradient(to right, #00b09b, #96c93d)',
@@ -199,35 +157,195 @@ function showToast(message, type = 'success') {
 
     Toastify({
         text: message,
-        duration: 4000, // پیام برای ۳ ثانیه نمایش داده می‌شود
+        duration: 4000, 
         close: true,
-        gravity: "top", // موقعیت: بالا
-        position: "center", // موقعیت: وسط
-        backgroundColor: colors[type],
+        gravity: "top", 
+        position: "center", 
+        // backgroundColor: colors[type],
+        style: {
+            background: colors[type],
+        },
         stopOnFocus: true,
     }).showToast();
 }
 
+
+
+function addScore(score,productid){
+    var starRatings = document.querySelectorAll(".fa-star")
+    starRatings.forEach(element =>{
+        element.classList.remove("checked");
+
+    });
+    for(let i=1; i<= score; i++){
+        const element = document.getElementById("star_" + i);
+        element.classList.add("checked")
+    }
+    $.ajax({
+        type:"GET",
+        url: "/csf/add_score",
+        data:{
+            productid: productid,
+            score: score,
+        },
+        success:function(res){
+                 // Update the text of the span with the new average score
+                document.getElementById("average-score").innerText = res.new_average;
+                
+                // You can still show a success message if you want
+               showToast(res.message, 'success')
+                // alert(res.message);
+        }
+    });
+    starRatings.forEach(element =>{
+        element.classList.add("disable");
+    });
+
+
+
+}
+
+
+function toggleFavorite(productid) {
+    $.ajax({
+        type: "GET",
+        url: "/csf/add_to_favorite/",
+        data: {
+            productid: productid,
+        },
+        success: function(res) {
+            showToast(res.message, res.type || 'success');
+
+            const favoriteButton = $('#favorite-btn-' + productid);
+            const iconElement = favoriteButton.find('i.fa');
+
+            if (res.message.includes('اضافه شد') || res.message.includes('قبلاً اضافه شده است')) {
+                // Remove old classes, add new icon and classes for favorited state
+                iconElement.removeClass('fa-heart-broken unfavorited-icon').addClass('fa-heart favorited-icon');
+            } else if (res.message.includes('حذف شد')) {
+                // Remove old classes, add new icon and classes for unfavorited state
+                iconElement.removeClass('fa-heart favorited-icon').addClass('fa-heart-broken unfavorited-icon');
+            }
+        },
+        error: function(xhr, status, error) {
+            let errorMessage = "خطایی رخ داد. لطفاً دوباره تلاش کنید.";
+            let responseJson;
+            try {
+                responseJson = JSON.parse(xhr.responseText);
+                if (responseJson && responseJson.message) {
+                    errorMessage = responseJson.message;
+                }
+            } catch (e) {
+س            }
+
+            if (xhr.status === 401 || xhr.status === 403) {
+                errorMessage = "برای انجام این عملیات، ابتدا وارد حساب کاربری خود شوید.";
+            } else if (xhr.status === 404) {
+                errorMessage = "کالا یافت نشد.";
+            }
+
+            showToast(errorMessage, 'error');
+        }
+    });
+}
+
+
+function removeFavorite(productId) {
+    Swal.fire({
+        title: 'آیا مطمئن هستید؟',
+        text: "این محصول از لیست علاقه‌مندی‌های شما حذف خواهد شد.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'بله، حذف کن!',
+        cancelButtonText: 'خیر، منصرف شدم'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                type: "GET", // Or "POST" depending on your Django view setup
+                url: "/csf/add_to_favorite/",
+                data: {
+                    productid: productId,
+                },
+                success: function(res) {
+                    showToast(res.message, res.type || 'success');
+                    if (res.message.includes('حذف شد')) {
+                        $('#favorite-row-' + productId).remove();
+                        // Optional: If the list becomes empty, show a message
+                        if ($('.wishlist__body tr').length === 0) {
+                            $('.wishlist__body').append(
+                                '<tr class="wishlist__row no-favorites">' +
+                                    '<td colspan="6" class="text-center py-4">' +
+                                        '<p class="text-muted">لیست علاقه مندی های شما خالی است.</p>' +
+                                        '<a href="{% url "products:product_list" %}" class="btn btn-primary mt-3">مشاهده محصولات</a>' +
+                                    '</td>' +
+                                '</tr>'
+                            );
+                        }
+                    }
+                },
+                error: function(xhr, status, error) {
+                    let errorMessage = "خطایی رخ داد. لطفاً دوباره تلاش کنید.";
+                    try {
+                        let responseJson = JSON.parse(xhr.responseText);
+                        if (responseJson && responseJson.message) {
+                            errorMessage = responseJson.message;
+                        }
+                    } catch (e) {
+                    }
+
+                    if (xhr.status === 401 || xhr.status === 403) {
+                        errorMessage = "برای انجام این عملیات، ابتدا وارد حساب کاربری خود شوید.";
+                    } else if (xhr.status === 404) {
+                        errorMessage = "کالا یافت نشد.";
+                    }
+                    showToast(errorMessage, 'error');
+                }
+            });
+        }
+    });
+}
+
+// Function to display Django messages using showToast
+function displayDjangoMessages() {
+    if (typeof djangoMessages !== 'undefined' && djangoMessages.length > 0) {
+        djangoMessages.forEach(msg => {
+            let messageText = msg.message;
+            let messageType = msg.tags;
+
+            if (messageType.includes('success')) {
+                showToast(messageText, 'success');
+            } else if (messageType.includes('error') || messageType.includes('danger')) {
+                showToast(messageText, 'error');
+            } else if (messageType.includes('warning')) {
+                showToast(messageText, 'warning'); // Use 'warning' type if defined
+            } else {
+                showToast(messageText, 'success'); 
+            }
+        });
+        djangoMessages.length = 0; // Clear messages after displaying
+    }
+}
+
+// Function to display Django form errors
+function displayDjangoFormErrors() {
+    if (typeof djangoFormErrors !== 'undefined' && djangoFormErrors.length > 0) {
+        djangoFormErrors.forEach(errorText => {
+            showToast(errorText, 'error'); 
+        });
+        
+    }
+}
+
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    displayDjangoMessages(); // First, display messages from the messages framework
+    displayDjangoFormErrors(); // Then, display form validation errors
+});
+
 // ------------------------------------------------------------------------------------------------------
-
-// function showCreateCommentForm(productid,commentid,slug){
-//     $.ajax({
-//         type: "GET",
-//         url : "/csf/create_comment/" + slug,
-//         data:{
-//             productid : productid,
-//             commentid : commentid,
-//         },
-//         success: function(res){
-//             $("#btn_" + commentid).hide();
-//             $("#comment_form_" + commentid).html(res);
-//         }
-//     });
-// }
-
-// ------------------------------------------------------------------------------------------------------
-
-
 
 $(document).ready(function() {
     updateFilterCounts();

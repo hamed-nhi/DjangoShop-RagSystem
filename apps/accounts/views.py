@@ -6,6 +6,7 @@ from utils import create_random_code , FileUpload ,send_sms
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db import IntegrityError
 
 
 #----------------------------------------------------------------------------------------------------
@@ -20,6 +21,7 @@ class RegisterUserView(View):
         form = RegisterUserForm()
         return render(request, "accounts_app/register.html", {"form": form})
 
+
     def post(self, request, *args, **kwargs):
         form = RegisterUserForm(request.POST)
         if form.is_valid():
@@ -33,9 +35,7 @@ class RegisterUserView(View):
             )
 
             print(">>> DEBUG: قبل از ارسال پیامک")
-            
             send_sms(data['mobile_number'], f'کد فعال سازی حساب شما {active_code} می باشد ')
-            
             print(">>> DEBUG: بعد از ارسال پیامک")
 
             request.session['user_session'] = {
@@ -43,11 +43,41 @@ class RegisterUserView(View):
                 'mobile_number': data['mobile_number'],
                 'remember_password': False,
             }
-            messages.success(request, 'اطلاعات شما ثبت شد و کد فعال سازی ارسال شد ', 'success')
+            messages.success(request, 'ثبت‌نام با موفقیت انجام شد. کد فعال‌سازی برای شما ارسال گردید.', 'success')
             return redirect('accounts:verify')
         
-        messages.error(request, 'خطا در ثبت نام. لطفاً اطلاعات را بررسی کنید.', 'danger')
+        # messages.error(request, 'خطا در ثبت‌نام. لطفاً اطلاعات وارد شده را بررسی نمایید.', 'danger')
         return render(request, "accounts_app/register.html", {"form": form})
+
+    
+    # def post(self, request, *args, **kwargs):
+    #     form = RegisterUserForm(request.POST)
+    #     if form.is_valid():
+    #         data = form.cleaned_data
+    #         active_code = create_random_code()
+            
+    #         CustomUser.objects.create_user(
+    #             mobile_number=data['mobile_number'],
+    #             active_code=active_code,
+    #             password=data['password1'],
+    #         )
+
+    #         print(">>> DEBUG: قبل از ارسال پیامک")
+            
+    #         send_sms(data['mobile_number'], f'کد فعال سازی حساب شما {active_code} می باشد ')
+            
+    #         print(">>> DEBUG: بعد از ارسال پیامک")
+
+    #         request.session['user_session'] = {
+    #             'active_code': str(active_code),
+    #             'mobile_number': data['mobile_number'],
+    #             'remember_password': False,
+    #         }
+    #         messages.success(request, 'اطلاعات شما ثبت شد و کد فعال سازی ارسال شد ', 'success')
+    #         return redirect('accounts:verify')
+        
+    #     messages.error(request, 'خطا در ثبت نام. لطفاً اطلاعات را بررسی کنید.', 'danger')
+    #     return render(request, "accounts_app/register.html", {"form": form})
     
 #----------------------------------------------------------------------------------------------------
 
@@ -64,7 +94,7 @@ class VerifyResgiterCodeView(View):
         form = VerifyResgiterForm
         return render(request,"accounts_app/verify_register_code.html",{"form":form})
     
-    def post(self,request,*args, **kwargs):
+def post(self,request,*args, **kwargs):
         form= VerifyResgiterForm(request.POST)
         if form.is_valid():
             data=form.cleaned_data
@@ -75,14 +105,17 @@ class VerifyResgiterCodeView(View):
                     user.is_active =True
                     user.active_code=create_random_code()
                     user.save()
-                    messages.success(request,'ثبت نام با موفقیت انجام شد ','success')
+                    # پیام فارسی بهتر
+                    messages.success(request,'حساب کاربری شما با موفقیت فعال شد.','success')
                     return redirect('main:index')
                 else: 
                     return redirect('accounts:change_password')
             else:
-                messages.error(request,'کد فعال سازی ارد شده اشتباه است','danger')
+                # پیام فارسی بهتر
+                messages.error(request,'کد فعال‌سازی وارد شده صحیح نمی‌باشد.','danger')
                 return render(request,"accounts_app/verify_register_code.html",{"form":form})
-        messages.error(request,'اطلاعات وارد شده نادرست است','danger')
+        # پیام فارسی بهتر
+        messages.error(request,'اطلاعات وارد شده نامعتبر است. لطفاً فرم را بررسی نمایید.','danger')
         return render(request,'accounts_app/verify_register_code.html',{"form":form})
 
 
@@ -110,24 +143,23 @@ class LoginUserView(View):
             user = authenticate(username=data['mobile_number'],password=data['password'])
             if user is not None: 
                 db_user = CustomUser.objects.get(mobile_number=data['mobile_number'])
-                # if db_user.is_active==True:
                 if db_user.is_admin==False:
-                    messages.success(request,'ورود با موفقیت انجام شد ','success')   
+                    messages.success(request,'شما با موفقیت وارد شدید.','success')   
                     login(request,user)         
                     next_url = request.GET.get('next')
                     if next_url is not None:
                         return redirect(next_url)
                     else:
                         return redirect('main:index')
-
                 else:
-                    messages.error(request,'کاربر ادمین نمیتواند از اینجا وارد شود','warning')   
+                   
+                    messages.error(request,'ورود کاربران مدیر از این بخش امکان‌پذیر نمی‌باشد.','warning')   
                     return render(request,self.url_temp_name,{"form":form})
             else:
-                messages.error(request,'اطلاعات وارد شده نادرست می باشد','danger')   
+                messages.error(request,'نام کاربری یا رمز عبور اشتباه است.','danger')   
                 return render(request,self.url_temp_name,{"form":form})
         else:
-            messages.error(request,'اطلاعات وارد شده نامعتبر است','danger')   
+            messages.error(request,'اطلاعات ورودی نامعتبر است. لطفاً فرم را بررسی کنید.','danger')   
             return render(request,self.url_temp_name,{"form":form})
 #----------------------------------------------------------------------------------------------------
 
@@ -166,7 +198,6 @@ class ChangePasswordView(View):
     
 #----------------------------------------------------------------------------------------------------
 
-
     def post(self,request,*args, **kwargs):
         form= ChangePasswordForm(request.POST) 
         if form.is_valid():
@@ -174,12 +205,12 @@ class ChangePasswordView(View):
             user_session = request.session['user_session']
             user= CustomUser.objects.get(mobile_number = user_session['mobile_number'])
             user.set_password(data['password1'])
-            user.active_code=create_random_code()
+            user.active_code=create_random_code() 
             user.save()
-            messages.success(request,'رمز عبور شما با موفقیت تغییر کرد', 'success')
+            messages.success(request,'رمز عبور شما با موفقیت تغییر یافت.','success')
             return redirect('accounts:login')
         else:
-            messages.error(request,'اطلاعات وارد شده معتبر نمی باشد', 'danger')
+            messages.error(request,'اطلاعات وارد شده معتبر نیست. لطفاً مجدداً بررسی کنید.','danger')
             return render(request,self.url_temp_name,{"form":form})
 
 #----------------------------------------------------------------------------------------------------
@@ -208,9 +239,9 @@ class RememberPasswordView(View):
                     'mobile_number':data['mobile_number'],
                     'remember_password': True,
                 }
-                messages.success(request,'جهت تغییر رمز عبور خود کد دریافتی را ارسال کنید','success')
+                messages.success(request,'کد تایید برای شماره موبایل شما ارسال شد. لطفاً آن را وارد نمایید.','success')
                 return redirect('accounts:verify')
             except:
-                messages.error(request,'شماره موبایل وارد شده موجود نمی باشد','danger')
+                messages.error(request,'شماره موبایل وارد شده در سیستم ثبت نشده است.','danger')
                 return render(request,self.url_temp_name,{"form":form})
 #----------------------------------------------------------------------------------------------------
