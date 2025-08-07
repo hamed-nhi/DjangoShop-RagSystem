@@ -155,9 +155,9 @@
     }
 
 
-    @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+@keyframes fadeIn {
+from { opacity: 0; transform: translateY(10px); }
+to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes fadeOut {
@@ -702,10 +702,57 @@
                         <ul class="product__meta">
                             <li class="product__meta-availability">موجودی: <span class="text-success">موجود در انبار</span></li>
                             <li>برند: <a href="#"> {{product.brand}}</a></li>
-                            <li>تعداد نظرات: <a href="#tab-reviews">{{ comment_count }}</a> نظر</li>
+                            <li style="list-style:none;">تعداد نظرات: <a href="">{{ product.comments_product.all|length }}</a> نظر</li>
                         </ul>
-                    </div>
-                    
+        {% comment %} </div> {% endcomment %}
+            <div style="display:flex; justify-content: space-between;">
+                {% comment %} <h6>میانگین امتیاز کالا: <span style="color:red;">{{product.get_average_score}}</span></h6> {% endcomment %}
+<h6>میانگین امتیاز کالا: <span id="average-score" style="color:red;">{{product.get_average_score}}</span></h6>                {% if user.is_authenticated %}
+                    {% if  product.get_user_score > 0 %}
+                        <div>
+                            {% with ''|center:5 as range %}
+                                {% for i in range %}
+                                    {% if forloop.counter <= product.get_user_score %}
+                                        <span id="star_{{ forloop.counter}}" class="fa fa-star checked"></span>
+                                     {% else %}
+                                        <span id="star_{{ forloop.counter}}" class="fa fa-star "></span>
+                                    {% endif %}
+                                {% endfor %}                   
+                            {% endwith %}       
+                        </div>            
+                    {% else %}          
+                        <div>
+
+                            <span id="star_1" class="fa fa-star cursor-pointer" onclick="addScore(1,{{product.id}})"></span>
+                            <span id="star_2" class="fa fa-star cursor-pointer" onclick="addScore(2,{{product.id}})"></span>
+                            <span id="star_3" class="fa fa-star cursor-pointer" onclick="addScore(3,{{product.id}})"></span>
+                            <span id="star_4" class="fa fa-star cursor-pointer" onclick="addScore(4,{{product.id}})"></span>
+                            <span id="star_5" class="fa fa-star cursor-pointer" onclick="addScore(5,{{product.id}})"></span>
+
+                        </div>        
+                    {% endif %}
+                {% else %}
+                    <h6 style="text-decoration:underline">
+
+                        برای امتیاز دهی 
+                        {% comment %} <a href="{% url 'accounts:login' %}?next=/products/product_details/{{product.slug}}">ورود</a>                      یا {% endcomment %}
+                        <a href="{% url 'accounts:login' %}?next={{ request.path }}">ورود</a>
+                        یا
+                        <a href="{% url 'accounts:register' %}?next={{ request.path }}">ثبت نام</a>
+                        {% comment %} <a href="{% url 'accounts:register' %}?next=/products/product_details/{{product.slug}}">ثبت نام</a> {% endcomment %}
+
+
+                        کنید
+                    </h6>
+                     {% endif %}
+        </div>
+    </div>
+
+
+
+
+
+
                     <!-- سایدبار محصول -->
                     <div class="product__sidebar">
                         <div class="product__availability">موجودی: <span class="text-success">موجود در انبار</span></div>

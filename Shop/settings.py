@@ -57,6 +57,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "middlewares.middlewares.RequestMiddleware",  # Custom middleware to store the current request
 ]
 
 ROOT_URLCONF = 'Shop.urls'

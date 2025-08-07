@@ -792,3 +792,38 @@ textarea.form-control.is-invalid,
     }
 
 /* ShopCart End */
+
+.checked{
+	color : orange
+}
+
+
+
+/* Base styles for favorite icons */
+.product-card__wishlist i.fa {
+    transition: color 0.3s ease-in-out, transform 0.2s ease-in-out; /* Smooth transition for color and size changes */
+    font-size: 1.2em; /* Slightly larger icon */
+}
+
+/* Styles for favorited state (solid heart) */
+.favorited-icon {
+    color: #ff4d4f !important; /* A vibrant red color for active favorites */
+}
+
+/* Styles for unfavorited state (broken heart) */
+.unfavorited-icon {
+    color: #8c8c8c !important; /* A subtle gray for inactive favorites */
+}
+
+/* Hover effect for both states */
+.favorited-icon:hover {
+    color: #cc0000 !important; /* Darker red on hover for favorited */
+    transform: scale(1.15); /* Slightly bigger on hover */
+    cursor: pointer; /* Indicates it's clickable */
+}
+
+.unfavorited-icon:hover {
+    color: #595959 !important; /* Darker gray on hover for unfavorited */
+    transform: scale(1.15); /* Slightly bigger on hover */
+    cursor: pointer;
+}
