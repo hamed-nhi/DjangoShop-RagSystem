@@ -1,14 +1,16 @@
 import math
 from django.db import models
-from django.db.models import Sum, Avg
+from django.db.models import Sum, Avg, Value
+from django.db.models.functions import Coalesce
 from email.mime import image
 from django.utils import timezone
-# from apps.c_s_f.models import Scoring
 from utils import FileUpload
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.urls import reverse
 from datetime import datetime
 from middlewares.middlewares import RequestMiddleware
+from django.contrib.postgres.search import SearchVector, SearchVectorField
+from django.contrib.postgres.indexes import GinIndex
 #--------------------------------------------------------------
 
 
@@ -88,9 +90,17 @@ class Product(models.Model):
     register_date=models.DateTimeField(auto_now_add=True,verbose_name="تاریخ درج")
     published_date = models.DateTimeField(default=timezone.now,verbose_name='تاریخ انتشار')
     update_date=models.DateTimeField(auto_now=True,verbose_name='تاریخ آخرین بروز رسانی')
-    features = models.ManyToManyField(Feature,through='ProductFeature') # توضیحات در بالای مدل ProductFeature
+    features = models.ManyToManyField(Feature,through='ProductFeature') 
 
 
+
+
+    # +++  field for search optimization +++
+    search_vector = SearchVectorField(null=True, blank=True)
+    
+
+
+    
     def __str__(self):
         return self.product_name
     
@@ -171,9 +181,25 @@ class Product(models.Model):
             return self.product_group.first().id
         return None # Or raise an exception, depending on your desired behavior
     
+
+    def save(self, *args, **kwargs):
+        # This part is crucial for future products
+        super().save(*args, **kwargs) 
+        vector = (
+            SearchVector('product_name', weight='A', config='simple') +
+            SearchVector(Coalesce('brand__brand_title', Value('')), weight='B', config='simple') +
+            SearchVector(Coalesce('summery_description', Value('')), weight='C', config='simple')
+        )
+        Product.objects.filter(pk=self.pk).update(search_vector=vector)
+
+
+
     class Meta:
         verbose_name = 'کالا'
         verbose_name_plural = 'کالا ها'
+        indexes = [
+            GinIndex(fields=['search_vector']),
+        ]
     
 
 

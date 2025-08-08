@@ -4565,7 +4565,8 @@ screen and (-ms-high-contrast:active) {
 	border-top: 1px solid #ebebeb
 }
 .site-footer__widgets {
-	padding: 48px 0 54px
+	/* padding: 48px 0 54px */
+	padding: 15px 1px 15px 1px;
 }
 .site-footer__bottom {
 	height: 54px;

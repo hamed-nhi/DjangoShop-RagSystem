@@ -198,14 +198,8 @@ def get_filter_value_for_feature(request):
  #-----------------------------------------------------------------------------------------------
  
  
- 
- 
- 
-
 class ProductByGroupsView(View):
-    """
-    نمایش لیست محصولات یک گروه خاص به همراه فیلترینگ پیشرفته و صفحه‌بندی.
-    """
+   
     def get(self, request, *args, **kwargs):
         slug = kwargs["slug"]
         current_group = get_object_or_404(ProductGroup, slug=slug)
@@ -320,3 +314,8 @@ def navbar_context(request):
         'high_rated_products': high_rated_products,
         'popular_brands': popular_brands
     }
+
+
+#--------------------------------------------------------------------
+from django.contrib.postgres.search import SearchVectorField
+from django.contrib.postgres.indexes import GinIndex

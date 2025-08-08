@@ -14,6 +14,7 @@ urlpatterns = [
     path('warehouses/',include("apps.warehouses.urls",namespace="warehouses")),
     path('csf/',include("apps.c_s_f.urls",namespace="csf")),
     path('ckeditor/',include("ckeditor_uploader.urls")),
+    path('search/',include("apps.search.urls",namespace="search")),
     
     
 

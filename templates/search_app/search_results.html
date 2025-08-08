@@ -1,0 +1,116 @@
+{% extends "main_template.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}نتایج جستجو برای {{ query }}{% endblock title %}
+
+{% block content %}
+<div class="site__body">
+    <div class="page-header">
+        <div class="page-header__container container">
+            <div class="page-header__breadcrumb">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'main:index' %}">خانه</a> /</li>
+                        <li class="breadcrumb-item active" aria-current="page">نتایج جستجو</li>
+                    </ol>
+                </nav>
+            </div>
+            {% if query %}
+            <div class="page-header__title">
+                <h1>نتایج جستجو برای <span style="color: green;">"{{ query }}"</span></h1>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="container">
+        <div class="shop-layout shop-layout--sidebar--start">
+            <div class="shop-layout__sidebar">
+                <div class="block block-sidebar">
+                    <form method="get" action="{% url 'search:search_view' %}" id="filter-form">
+                        <input type="hidden" name="q" value="{{ query }}">
+                        <div class="block-sidebar__item">
+                            <div class="widget-filters widget">
+                                <h4 class="widget__title">فیلترها</h4>
+                                <div class="widget-filters__list">
+                                    {% if dynamic_price_range.min is not None %}
+                                    <div class="widget-filters__item">
+                                        {% include 'partials/products/price_filter.html' with res_aggre=dynamic_price_range %}
+                                    </div>
+                                    {% endif %}
+                                    {% if available_brands %}
+                                    <div class="widget-filters__item">
+                                        {% include 'search_app/brands_filter_partial.html' with brands=available_brands %}
+                                    </div>
+                                 
+                                </div>
+                                <div class="widget-filters__actions d-flex">
+                                    <button type="submit" class="btn btn-primary btn-sm">اعمال فیلتر</button> 
+                                      {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="shop-layout__content">
+                <div class="block">
+                    <div class="products-view">
+                        <div class="products-view__options">
+                            <div class="view-options">
+                                <div class="view-options__legend">
+                                    تعداد نتایج یافت شده: {{ page_obj.paginator.count }} محصول
+                                </div>
+                                <div class="view-options__divider"></div>
+                                <div class="view-options__control">
+                                    <label for="select_sort">مرتب‌سازی بر اساس</label>
+                                    <div>
+                                        <select class="form-control form-control-sm" name="sort_type" id="select_sort">
+                                            <option value="0" {% if sort_type == '0' %}selected{% endif %}>مرتبط‌ترین</option>
+                                            <option value="1" {% if sort_type == '1' %}selected{% endif %}>قیمت از کم به زیاد</option>
+                                            <option value="2" {% if sort_type == '2' %}selected{% endif %}>قیمت از زیاد به کم</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {% if page_obj %}
+                        <div class="products-view__list products-list" data-layout="grid-3-sidebar">
+                            <div class="products-list__body">
+                                {% for product in page_obj %}
+                                    {% include 'partials/products/product_box.html' with type=3 headline=product.headline %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <br>
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination justify-content-center">
+                                {% if page_obj.has_previous %}
+                                    <li class="page-item"><a class="page-link" href="?{{ request.GET.urlencode }}&page={{ page_obj.previous_page_number }}">قبلی</a></li>
+                                {% endif %}
+                                {% for i in page_obj.paginator.page_range %}
+                                    {% if page_obj.number == i %}
+                                        <li class="page-item active"><span class="page-link">{{ i }}</span></li>
+                                    {% elif i > page_obj.number|add:'-5' and i < page_obj.number|add:'5' %}
+                                        <li class="page-item"><a class="page-link" href="?{{ request.GET.urlencode }}&page={{ i }}">{{ i }}</a></li>
+                                    {% endif %}
+                                {% endfor %}
+                                {% if page_obj.has_next %}
+                                    <li class="page-item"><a class="page-link" href="?{{ request.GET.urlencode }}&page={{ page_obj.next_page_number }}">بعدی</a></li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                        {% else %}
+                            <div class="container" style="padding:100px;">
+                                <h3 style="text-align:center; color:red;">متاسفانه کالای با عنوان "{{ query }}" وجود ندارد.</h3>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

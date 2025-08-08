@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'apps.discounts.apps.DiscountsConfig',
     'apps.warehouses.apps.WarehousesConfig',
     'apps.c_s_f.apps.CSFConfig',
+    'apps.search.apps.SearchConfig',
     'jalali_date',
 ]
 
