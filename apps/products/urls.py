@@ -17,9 +17,7 @@ urlpatterns = [
     path('products_groups_partials',views.get_product_groups,name='products_groups_partials'),
     path('brands_partials/<slug:slug>/',views.get_brands,name='brands_partials'),
     path('feature_partials/<slug:slug>/',views.get_feature_for_filter,name='feature_partials'),
-
    
-    
 
 
 ]

@@ -9,7 +9,19 @@
     </div>
     <div class="product-card__info">
         <div class="product-card__name">
-            <a href="{{product.get_absolute_url}}"> {{ product.product_name }}</a>
+            <a href="{{product.get_absolute_url}}">
+                {# --- Start of Change --- #}
+                {% if headline %}
+                    {{ headline|safe }}
+                {% else %}
+                    {{ product.product_name }}
+                {% endif %}
+                {# --- End of Change --- #}
+            </a>
+             <div style="font-size: 10px; background-color: #eee; padding: 2px; text-align: left; direction: ltr;">
+        Rank: {{ product.rank|floatformat:4 }} <br>
+        Sim: {{ product.similarity|floatformat:4 }}
+    </div>
         </div>
     </div>
     <div class="product-card__actions">
@@ -33,11 +45,10 @@
                 <button id="favorite-btn-{{ product.id }}" class="btn btn-light btn-svg-icon btn-svg-icon--fake-svg product-card__wishlist" type="button"
                         data-product-id="{{ product.id }}"
                         onclick="toggleFavorite({{ product.id }})">
-                    {# Add initial CSS classes based on current favorite status #}
                     {% if product.get_user_favorite %}
-                        <i class="fa fa-heart favorited-icon"></i> {# Add favorited-icon class #}
+                        <i class="fa fa-heart favorited-icon"></i>
                     {% else %}
-                        <i class="fa fa-heart-broken unfavorited-icon"></i> {# Add unfavorited-icon class #}
+                        <i class="fa fa-heart-broken unfavorited-icon"></i>
                     {% endif %}
                     <span class="fake-svg-icon fake-svg-icon--wishlist-16"></span>
                 </button>
@@ -56,7 +67,15 @@
     <div class="new-badge">جدید</div>
     <div class="product-card__info">
         <div class="product-card__name">
-            <a href="{{product.get_absolute_url}}"> {{ product.product_name }}</a>
+            <a href="{{product.get_absolute_url}}">
+                {# --- Start of Change --- #}
+                {% if headline %}
+                    {{ headline|safe }}
+                {% else %}
+                    {{ product.product_name }}
+                {% endif %}
+                {# --- End of Change --- #}
+            </a>
         </div>
     </div>
     <div class="product-card__actions">
@@ -75,8 +94,7 @@
             {% if product.get_number_in_warehouse > 0 %}
                 <button class="btn btn-primary product-card__addtocart" type="button" onclick="add_to_shop_cart({{ product.id }}, 1)">افزودن به سبد</button>
             {% endif %}
-
-            {# Start of Favorite Button Changes for type 2 #}
+            
             {% if user.is_authenticated %}
                 <button id="favorite-btn-{{ product.id }}" class="btn btn-light btn-svg-icon btn-svg-icon--fake-svg product-card__wishlist" type="button"
                         data-product-id="{{ product.id }}"
@@ -89,9 +107,7 @@
                     <span class="fake-svg-icon fake-svg-icon--wishlist-16"></span>
                 </button>
             {% endif %}
-            {# End of Favorite Button Changes for type 2 #}
 
-            {# Original shopping cart button - assuming this is distinct from favorite #}
             <button class="btn btn-light btn-svg-icon btn-svg-icon--fake-svg product-card__wishlist" type="button">
                 <i class="fa fa-shopping-cart"></i>
                 <span class="fake-svg-icon fake-svg-icon--wishlist-16"></span>
@@ -113,7 +129,15 @@
         </div>
         <div class="product-card__info">
             <div class="product-card__name">
-                <a href="{{ product.get_absolute_url }}">{{ product.product_name }}</a>
+                <a href="{{ product.get_absolute_url }}">
+                    {# --- Start of Change --- #}
+                    {% if headline %}
+                        {{ headline|safe }}
+                    {% else %}
+                        {{ product.product_name }}
+                    {% endif %}
+                    {# --- End of Change --- #}
+                </a>
             </div>
         </div>
         <div class="product-card__actions">
@@ -138,8 +162,7 @@
                     <button class="btn btn-primary product-card__addtocart" type="button" onclick="add_to_shop_cart({{ product.id }}, 1)">افزودن به سبد</button>
                     <button class="btn btn-secondary product-card__addtocart product-card__addtocart--list" type="button" onclick="add_to_shop_cart({{ product.id }}, 1)">افزودن به سبد</button>
                 {% endif %}
-
-                {# Start of Favorite Button Changes for type 3 #}
+                
                 {% if user.is_authenticated %}
                     <button id="favorite-btn-{{ product.id }}" class="btn btn-light btn-svg-icon btn-svg-icon--fake-svg product-card__wishlist" type="button"
                             data-product-id="{{ product.id }}"
@@ -152,9 +175,7 @@
                         <span class="fake-svg-icon fake-svg-icon--wishlist-16"></span>
                     </button>
                 {% endif %}
-                {# End of Favorite Button Changes for type 3 #}
 
-                {# Original shopping cart button - assuming this is distinct from favorite #}
                 <button class="btn btn-light btn-svg-icon btn-svg-icon--fake-svg product-card__wishlist" type="button">
                     <i class="fa fa-shopping-cart"></i>
                     <span class="fake-svg-icon fake-svg-icon--wishlist-16"></span>
@@ -164,3 +185,5 @@
     </div>
 </div>
 {% endif %}
+
+

@@ -1,0 +1,16 @@
+{% comment %} {% extends "main_template.html" %} {% endcomment %}
+{% for brand in brands %}
+
+    <label class="filter-list__item">
+        <span class="filter-list__input input-check">
+            <span class="input-check__body">
+                <input name="brand" value="{{ brand.id }}" type="checkbox" class="input-check__input" {% if brand.id|stringformat:"s" in selected_brands %}checked{% endif %}>
+                {% comment %} <input name="brand" value="{{ brand.id }}" type="checkbox" class="input-check__input" {% if brand.id|stringformat:"s" in request.GET.brand %}checked{% endif %}> {% endcomment %}
+                <span class="input-check__box"></span>
+                {% comment %} <svg class="input-check__icon" width="9px" height="7px"><use xlink:href="{% static 'images/sprite.svg' %}#check-9x7"></use></svg> {% endcomment %}
+            </span>
+        </span>
+        <span class="filter-list__title">{{ brand.brand_title }}</span>
+        <span class="filter-list__counter">{{ brand.product_count }}</span>
+    </label>
+{% endfor %}

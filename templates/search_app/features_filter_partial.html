@@ -1,0 +1,29 @@
+{% comment %} {% extends "main_template.html" %} {% endcomment %}
+{% for feature in translated_features %}
+
+<div class="card" style="border: none; color:#868686;">
+        <div class="card-header" style="padding:0 0 10px;">
+            <a class="card-link" data-toggle="collapse" href="#collapseFeature{{feature.id}}">
+                <button type="button" class="filter__title" data-collapse-trigger style="color:#000;">
+                    {{ feature.translated_name }}
+                </button>
+            </a>
+        </div>
+        <div id="collapseFeature{{feature.id}}" class="collapse" data-parent="#accordionFeatures">
+            <div class="card-body" style="padding: 0;">
+                {% for item in feature.values %}
+                    <label class="filter-list__item">
+                        <span class="filter-list__input input-check">
+                            <span class="input-check__body">
+                                <input name="feature" value="{{ item.id }}" type="checkbox" class="input-check__input" {% if item.id|stringformat:"s" in request.GET.feature %}checked{% endif %}>
+                                <span class="input-check__box"></span>
+                                {% comment %} <svg class="input-check__icon" width="9px" height="7px"><use xlink:href="{% static 'images/sprite.svg' %}#check-9x7"></use></svg> {% endcomment %}
+                            </span>
+                        </span>
+                        <span class="filter-list__title">{{ item.translated_title }}</span>
+                    </label>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endfor %}
