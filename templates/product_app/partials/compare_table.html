@@ -1,0 +1,278 @@
+{% comment %} {% extends "main_template.html" %} {% endcomment %}
+{% load humanize %}
+{% load product_tags %}
+
+{% block title %}مقایسه محصولات{% endblock title %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="mb-4 text-center font-weight-bold">مقایسه محصولات</h2>
+    
+    <!-- دکمه کنترلی -->
+    <div class="text-center mb-3">
+        <button id="toggleDifferences" class="btn btn-outline-primary btn-sm ripple">نمایش تفاوت‌ها</button>
+    </div>
+
+    <div class="table-responsive-container shadow-sm animate-in">
+        <table class="compare-table">
+            <thead>
+                <tr>
+                    <th>ویژگی محصول</th>
+                    {% for product in products %}
+                    <th>
+                        <a class="compare-table__product-link" href="{{ product.get_absolute_url }}">
+                            <div class="compare-table__product-image">
+                                
+                                <img src="{{ product.image_name.url }}" alt="{{ product.product_name }}">
+                            </div>
+                            <div class="compare-table__product-name">{{ product.product_name }}</div>
+                        </a>
+                    </th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="feature-name">امتیاز</td>
+                    {% for product in products %}
+                    <td data-label="امتیاز">{{ product.get_average_score|floatformat:1 }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td class="feature-name">موجودی</td>
+                    {% for product in products %}
+                    <td data-label="موجودی">
+                        {% if product.get_number_in_warehouse > 0 %}
+                        <span class="badge badge-success">موجود</span>
+                        {% else %}
+                        <span class="badge badge-danger">ناموجود</span>
+                        {% endif %}
+                    </td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td class="feature-name">قیمت</td>
+                    {% for product in products %}
+                    <td data-label="قیمت">{{ product.price|intcomma }} تومان</td>
+                    {% endfor %}
+                </tr>
+
+                {% for feature in features %}
+                <tr>
+                    <td class="feature-name">{{ feature.get_display_name }}</td>
+                    {% for product in products %}
+                    <td data-label="{{ feature.get_display_name }}">{% get_feature_value product feature %}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+
+                <tr class="compare-table__row--actions">
+                    <td></td>
+                    {% for product in products %}
+                    <td>
+                        {% if product.get_number_in_warehouse > 0 %}
+                        <button class="btn btn-primary btn-sm ripple" onclick="add_to_shop_cart({{ product.id }}, 1);">افزودن به سبد</button>
+                        {% endif %}
+                    </td>
+                    {% endfor %}
+                </tr>
+                <tr class="compare-table__row--actions">
+                    <td></td>
+                    {% for product in products %}
+                    <td>
+                        <button class="btn btn-secondary btn-sm ripple remove-product" data-id="{{ product.id }}">حذف</button>
+                    </td>
+                    {% endfor %}
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+:root {
+    --compare-primary-color: #3498db;
+    --compare-border-color: #e5e7eb;
+    --compare-header-bg: rgba(255, 255, 255, 0.6);
+    --compare-highlight-bg: rgba(240, 248, 255, 0.6);
+}
+.product-image-container {
+    width: 300px; /* اندازه استاندارد قاب */
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden; /* جلوگیری از بیرون زدن تصویر */
+}
+
+.product-image-container img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain; /* حفظ نسبت تصویر */
+}
+.table-responsive-container {
+    overflow-x: auto;
+    border: 1px solid var(--compare-border-color);
+    border-radius: 12px;
+    background: var(--compare-header-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    animation: fadeSlide 0.6s ease forwards;
+}
+
+.compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+    font-size: 1rem;
+}
+
+.compare-table th,
+.compare-table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--compare-border-color);
+    transition: background 0.3s;
+}
+
+.compare-table thead th {
+    border-bottom: 3px solid var(--compare-primary-color);
+    font-weight: 700;
+    background: rgba(255,255,255,0.8);
+}
+
+.compare-table .feature-name {
+    background-color: var(--compare-header-bg);
+    font-weight: 600;
+    text-align: right;
+    border-right: 1px solid var(--compare-border-color);
+}
+
+.compare-table__product-image img {
+    max-width: 140px;
+    border-radius: 8px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.compare-table__product-link:hover img {
+    transform: scale(1.08);
+    box-shadow: 0 8px 18px rgba(52,152,219,0.4);
+}
+
+.compare-table tbody tr:hover {
+    background-color: var(--compare-highlight-bg);
+}
+
+.compare-table__row--actions {
+    background-color: rgba(248, 249, 250, 0.8);
+}
+
+/* Ripple effect for buttons */
+.ripple {
+    position: relative;
+    overflow: hidden;
+}
+.ripple::after {
+    content: "";
+    position: absolute;
+    background: rgba(255,255,255,0.5);
+    border-radius: 50%;
+    transform: scale(0);
+    opacity: 0;
+    transition: transform 0.4s, opacity 0.8s;
+}
+.ripple:active::after {
+    transform: scale(4);
+    opacity: 1;
+    transition: 0s;
+}
+
+/* Highlight different cells */
+.diff-highlight {
+    background-color: rgba(255, 235, 59, 0.3) !important;
+}
+
+/* Animation */
+@keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+
+/* Mobile view */
+@media (max-width: 768px) {
+    .compare-table, .compare-table thead, .compare-table tbody, .compare-table th, .compare-table td, .compare-table tr {
+        display: block;
+    }
+    .compare-table thead {
+        display: none;
+    }
+    .compare-table tr {
+        margin-bottom: 1rem;
+        border: 1px solid var(--compare-border-color);
+        border-radius: 10px;
+        overflow: hidden;
+        background: rgba(255,255,255,0.8);
+    }
+    .compare-table td {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.75rem 1rem;
+        border-bottom: 1px dashed var(--compare-border-color);
+    }
+    .compare-table td:last-child {
+        border-bottom: none;
+    }
+    .compare-table td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        margin-left: 1rem;
+        color: #555;
+    }
+    .compare-table .feature-name {
+        display: none;
+    }
+}
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const toggleBtn = document.getElementById("toggleDifferences");
+
+    toggleBtn.addEventListener("click", function() {
+        const rows = document.querySelectorAll(".compare-table tbody tr");
+        let showingDifferences = this.classList.toggle("active");
+        this.textContent = showingDifferences ? "نمایش همه ویژگی‌ها" : "نمایش فقط تفاوت‌ها";
+
+        rows.forEach(row => {
+            const cells = [...row.querySelectorAll("td:not(.feature-name)")];
+            const values = cells.map(td => td.innerText.trim());
+            const isDifferent = new Set(values).size > 1;
+
+            if (showingDifferences) {
+                if (!isDifferent) row.classList.add("d-none");
+                else row.classList.add("diff-highlight");
+            } else {
+                row.classList.remove("d-none", "diff-highlight");
+            }
+        });
+    });
+
+    // حذف محصول با انیمیشن
+    document.querySelectorAll(".remove-product").forEach(btn => {
+        btn.addEventListener("click", function() {
+            const id = this.dataset.id;
+            const colIndex = [...this.closest("tr").children].indexOf(this.closest("td"));
+            document.querySelectorAll(`.compare-table tr`).forEach(tr => {
+                const cell = tr.children[colIndex];
+                if (cell) {
+                    cell.style.transition = "all 0.3s ease";
+                    cell.style.opacity = "0";
+                    cell.style.transform = "scale(0.9)";
+                    setTimeout(() => cell.remove(), 300);
+                }
+            });
+            deleteFromCompareList(id);
+        });
+    });
+});
+</script>
+{% endblock content %}
