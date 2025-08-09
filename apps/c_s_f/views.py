@@ -83,45 +83,101 @@ def add_score(request):
 
     # Return a JSON response with the new average
     return JsonResponse({
+        'new_average': product.get_average_score(),  # Make sure this returns a float
+        'total_votes': product.scoring_product.count(),
         'message': 'امتیاز شما با موفقیت ثبت شد',
+        'status': 'success',
         'new_average': round(new_average, 1) # Round to one decimal place
     })
 
 #---------------------------------------------------------------------------
 
+# def add_to_favorite(request):
+#     product_id = request.GET.get('productid')
+
+#     if not product_id:
+#         return JsonResponse({'message': 'شناسه کالا نامعتبر است.', 'type': 'error'}, status=400)
+
+#     product = get_object_or_404(Product, id=product_id)
+#     user = request.user # Get the current logged-in user
+
+#     # Check if the product is already favorited by the current user
+#     favorite_obj = Favorite.objects.filter(favorite_user=user, product=product).first()
+
+#     if favorite_obj:
+#         # If it exists, it means the user wants to REMOVE it from favorites
+#         favorite_obj.delete()
+#         message = 'محصول با موفقیت از علاقه‌مندی‌ها حذف شد.'
+#         status_type = 'success'
+#     else:
+#         # If it doesn't exist, it means the user wants to ADD it to favorites
+#         Favorite.objects.create(
+#             product=product,
+#             favorite_user=user
+#         )
+#         message = 'محصول با موفقیت به علاقه‌مندی‌ها اضافه شد.'
+#         status_type = 'success'
+
+#     return JsonResponse({'message': message, 'type': status_type})
+
+# csf/views.py
+
+# ... (existing imports)
+
 def add_to_favorite(request):
-    product_id = request.GET.get('productid')
+    # Ensure it's a POST request (though Django will handle this with CSRF anyway)
+    if request.method == 'POST':
+        # Get product_id from POST data (request.POST) instead of GET data (request.GET)
+        product_id = request.POST.get('productid') 
 
-    if not product_id:
-        return JsonResponse({'message': 'شناسه کالا نامعتبر است.', 'type': 'error'}, status=400)
+        if not product_id:
+            return JsonResponse({'message': 'شناسه کالا نامعتبر است.', 'type': 'error'}, status=400)
 
-    product = get_object_or_404(Product, id=product_id)
-    user = request.user # Get the current logged-in user
+        # The rest of your logic for adding/removing from favorites
+        try:
+            product = Product.objects.get(id=product_id)
+        except Product.DoesNotExist:
+            return JsonResponse({'message': 'کالا یافت نشد.', 'type': 'error'}, status=404)
 
-    # Check if the product is already favorited by the current user
-    favorite_obj = Favorite.objects.filter(favorite_user=user, product=product).first()
-
-    if favorite_obj:
-        # If it exists, it means the user wants to REMOVE it from favorites
-        favorite_obj.delete()
-        message = 'محصول با موفقیت از علاقه‌مندی‌ها حذف شد.'
-        status_type = 'success'
-    else:
-        # If it doesn't exist, it means the user wants to ADD it to favorites
-        Favorite.objects.create(
-            product=product,
-            favorite_user=user
-        )
-        message = 'محصول با موفقیت به علاقه‌مندی‌ها اضافه شد.'
-        status_type = 'success'
-
-    return JsonResponse({'message': message, 'type': status_type})
+        user = request.user 
+        
+        # Ensure user is authenticated, though toggleFavorite JS already redirects for 401/403
+        if not user.is_authenticated:
+             return JsonResponse({'message': 'برای انجام این عملیات، ابتدا وارد حساب کاربری خود شوید.', 'type': 'error'}, status=401)
 
 
+        favorite_obj = Favorite.objects.filter(favorite_user=user, product=product).first()
+
+        is_favorite = False # Flag to tell JS the new state
+        if favorite_obj:
+            favorite_obj.delete()
+            message = 'محصول با موفقیت از علاقه‌مندی‌ها حذف شد.'
+            status_type = 'success'
+            is_favorite = False
+        else:
+            Favorite.objects.create(
+                product=product,
+                favorite_user=user
+            )
+            message = 'محصول با موفقیت به علاقه‌مندی‌ها اضافه شد.'
+            status_type = 'success'
+            is_favorite = True # Product is now favorited
+
+        return JsonResponse({'message': message, 'type': status_type, 'is_favorite': is_favorite})
+    
+    # If it's not a POST request, perhaps return an error or redirect
+    return JsonResponse({'message': 'درخواست نامعتبر است.', 'type': 'error'}, status=405) # Method Not Allowed
 
 #---------------------------------------------------------------------------
 
 class UserFavoriteView(View):
     def get(self, request, *args, **kwargs):
         user_favorite_products = Favorite.objects.filter(Q(favorite_user_id=request.user.id))
-        return render(request, 'csf_app/user_favorite.html', {'user_favorite_products': user_favorite_products})            
+        return render(request, 'csf_app/user_favorite.html', {'user_favorite_products': user_favorite_products})      
+
+
+def status_of_favorite_list_view(request):
+        # Change 'favorite_set' to 'favorite_user1'
+    favorite_count = request.user.favorite_user1.count() 
+    return HttpResponse(favorite_count)
+    # return HttpResponse(0) # Or redirect to l

@@ -619,7 +619,64 @@ to { opacity: 1; transform: translateY(0); }
 .typography strong {
     color: #e74c3c;
     font-weight: 700;
+} 
+.compare-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: #f3f6fb;
+    color: #0b61d8;
+    font-weight: 600;
+    font-size: 14px;
+    text-decoration: none;
+    cursor: pointer;
+    border: 1px solid rgba(11,97,216,0.15);
+    transition: all .15s ease;
+    direction: rtl;
+    user-select: none;
+  }
+  .compare-btn svg {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.6;
+  }
+  .compare-btn:hover {
+    background: #eaf1fc;
+    box-shadow: 0 2px 8px rgba(11,97,216,0.12);
+    transform: translateY(-1px);
+  }
+  .compare-btn.added {
+    background: #d8f5d0;
+    color: #2e7d32;
+    border-color: rgba(46,125,50,0.3);
+  }
+
+
+.product-brand {
+  display: inline-block;
+  padding: 6px 12px;
+  background: #f4f6f8;
+  border: 1px solid #e0e0e0;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  transition: all 0.2s ease;
 }
+
+.product-brand:hover {
+  background: #ffb400;
+  border-color: #ffb400;
+  color: #fff;
+  text-decoration: none;
+  box-shadow: 0 2px 6px rgba(255, 180, 0, 0.4);
+}
+
+  
 </style>
 
 <div class="site__body">
@@ -628,15 +685,17 @@ to { opacity: 1; transform: translateY(0); }
             <div class="page-header__breadcrumb">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item">
+                       <li class="breadcrumb-item">
                             <a href="{% url "main:index" %}">خانه</a>
                             /
                         </li>
                         <li class="breadcrumb-item">
-                            <a href="#">محصولات</a>
+                            <a href="{% url "products:all_product_groups" %}">محصولات</a>
                             /
                         </li>
-                        <li class="active" aria-current="page">محصول</li>
+                        <li class="active" aria-current="page">
+                            {{ product.product_name }}
+                        </li>
                     </ol>
                 </nav>
             </div>
@@ -682,8 +741,7 @@ to { opacity: 1; transform: translateY(0); }
                                 </svg>
                             </button>
                         </div>
-                        <h1 class="product__name">{{product.product_name}}</h1>
-                        <div class="product__rating">
+<h1 class="product__name" style="direction:ltr; text-align: left;">{{product.product_name}}</h1>                        <div class="product__rating">
                             <div class="product__rating-stars">
                                 <div class="rating">
                                     <div class="rating__body">
@@ -701,7 +759,9 @@ to { opacity: 1; transform: translateY(0); }
                         </div>
                         <ul class="product__meta">
                             <li class="product__meta-availability">موجودی: <span class="text-success">موجود در انبار</span></li>
-                            <li>برند: <a href="#"> {{product.brand}}</a></li>
+                            {% comment %} <li>برند: <a href="#"> {{product.brand}}</a></li>
+                             {% endcomment %}
+                            <li>برند: <span> {{ product.brand }}</span></li>
                             <li style="list-style:none;">تعداد نظرات: <a href="">{{ product.comments_product.all|length }}</a> نظر</li>
                         </ul>
         {% comment %} </div> {% endcomment %}
@@ -773,6 +833,43 @@ to { opacity: 1; transform: translateY(0); }
                             </div>
                         </form>
                     </div>
+                               <div class="product_footer">
+                                   <div class=" product__tags tag">
+                                    {% comment %} <div class="tags__list"><a href="">برچسب</a></div> {% endcomment %}
+                                   </div>
+                                   <div class="product__share-links shae-links">
+                                    <ul class="share-links__list">
+                                        <li class="share-links__item share-links__item--type--linke">
+                                            {% comment %} <a href="#">تلگرام</a> {% endcomment %}
+                                        </li>
+                                    </ul> 
+
+{% comment %} <a onclick="addToCompareList({{product.id}}, {{product.getMainProductGroup}})" style="cursor: pointer;">
+    اضافه کردن به مقایسه
+</a> {% endcomment %}
+<a
+  href="javascript:void(0)"
+  role="button"
+  class="compare-btn"
+  aria-label="افزودن به لیست مقایسه"
+  onclick="addToCompareList({{product.id}}, {{product.getMainProductGroup}})"
+  title="افزودن به مقایسه"
+>
+  <!-- SVG آیکون مناسب مقایسه (دو برگه/دو پنجره که روبروی هم قرار دارند) -->
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+    <path d="M9 6h10v10" />
+    <rect x="3" y="3" width="12" height="12" rx="2" />
+    <path d="M7 18h10v3H7z" /> <!-- یک پایه / خط برای نمایش لیست -->
+  </svg>
+
+  <span>افزودن به لیست مقایسه</span>
+</a>
+                                   </div>
+                                </div>
+
+
+
+
                 </div>
             </div>
 

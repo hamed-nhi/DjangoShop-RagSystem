@@ -1,6 +1,8 @@
 
 {% extends 'main_template.html' %}
 {% load render_partial %}
+
+
 {% block title %}فروشگاه آیکو{% endblock title %}
 {% block content %}
 {% comment %} {% render_partial 'main:test_view' %} <!-- مثل اینکلود هست ولی با این تفاوت که اینکلودد صفحه اچ تی ام ال ران میکنه ولی این ویو اجرا میکنه--> {% endcomment %}
@@ -136,7 +138,7 @@
     <!-- .block-banner / end -->
     <!-- .block-products -->
     <div class="block block-products block-products--layout--large-last">
-        <div class="container">
+        {% comment %} <div class="container">
             <div class="block-header">
                 <h3 class="block-header__title">پرفروش ترین ها</h3>
                 <div class="block-header__divider"></div>
@@ -453,7 +455,11 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> {% endcomment %}
+         {% comment %} <div class="container"> {% endcomment %}
+            {% render_partial 'products:best_selling_products' %}
+
+            {% comment %} </div> {% endcomment %}
     </div>
     <!-- .block-products / end -->
     <!-- .block-categories -->

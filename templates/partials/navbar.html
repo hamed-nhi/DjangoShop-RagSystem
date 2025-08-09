@@ -129,7 +129,7 @@
         <div class="nav-panel__container container">
             <div class="nav-panel__row">
                 <div class="nav-panel__logo">
-                    <a href="index.html">
+                    <a href="{% url "main:index" %}">
                         <img src="images/shopLogo.png" alt="">
                     </a>
                 </div>
@@ -137,7 +137,7 @@
                 <div class="nav-panel__nav-links nav-links">
                     <ul class="nav-links__list">
                         <li class="nav-links__item nav-links__item--with-submenu">
-                            <a href="index.html">
+                            <a href="{% url "main:index" %}">
                                 <span><i class="fa fa-home"></i>&nbsp; خانه</span>
                             </a>
                         </li>
@@ -302,67 +302,6 @@
         </div>
     </div>
 </li>
-     {% comment %} <li class="nav-links__item nav-links__item--with-submenu">
-    <a href="#">
-        <span class="nav-links__title">
-            <i class="fas fa-laptop"></i>&nbsp;
-            دسته‌بندی لپ‌تاپ‌ها
-            <i class="fa fa-angle-down nav-links__arrow"></i>
-        </span>
-    </a>
-    <div class="nav-links__megamenu nav-links__megamenu--size--xl">
-        <div class="megamenu megamenu--laptops">
-            <div class="row no-gutters">
-                <!-- دسته‌بندی بر اساس ویژگی‌ها -->
-                <div class="col-md-6">
-                    <div class="megamenu__column">
-                        <div class="megamenu__header">
-                            <i class="fas fa-filter"></i>
-                            فیلتر بر اساس ویژگی
-                        </div>
-                        <ul class="megamenu__links megamenu__links--level--0">
-                            <li class="megamenu__item">
-                                <a href="{% url 'products:products_of_group' 'laptop' %}?feature=5&value=12" class="megamenu__link">
-                                    <i class="fas fa-gamepad"></i>
-                                    لپ‌تاپ‌های گیمینگ
-                                </a>
-                            </li>
-                            <li class="megamenu__item">
-                                <a href="{% url 'products:products_of_group' 'laptop' %}?feature=5&value=13" class="megamenu__link">
-                                    <i class="fas fa-briefcase"></i>
-                                    لپ‌تاپ‌های حرفه‌ای
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                
-                <!-- دسته‌بندی بر اساس برند -->
-                <div class="col-md-6">
-                    <div class="megamenu__column">
-                        <div class="megamenu__header">
-                            <i class="fas fa-copyright"></i>
-                            برندهای محبوب
-                        </div>
-                        <ul class="megamenu__links megamenu__links--level--0">
-                            <li class="megamenu__item">
-                                <a href="{% url 'products:products_of_group' 'laptop' %}?brand=1" class="megamenu__link">
-                                    ایسوس
-                                </a>
-                            </li>
-                            <li class="megamenu__item">
-                                <a href="{% url 'products:products_of_group' 'laptop' %}?brand=2" class="megamenu__link">
-                                    لنوو
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</li> {% endcomment %}
-
                         <li class="nav-links__item nav-links__item--with-submenu">
                             <a href="#">
                                 <span>
@@ -393,7 +332,7 @@
                     </ul>
                 </div>
                 <!-- .nav-links / end -->
-                <div class="nav-panel__indicators">
+                {% comment %} <div class="nav-panel__indicators">
                     <div class="indicator indicator--trigger--click">
                         <button type="button" class="indicator__button">
                             <span class="indicator__area">
@@ -430,7 +369,49 @@
                             </span>
                         </a>
                     </div>
-                </div>
+                </div> {% endcomment %}
+                <div class="nav-panel__indicators">
+
+    <div class="indicator indicator--trigger--click">
+        </div>
+
+    {% comment %} <div class="indicator">
+        <a href="{% url ":user_favorite" %}" class="indicator__button">
+            <span class="indicator__area">
+                <i class="fa fa-heart"></i>
+                <span class="indicator__value">0</span>
+            </span>
+        </a>
+    </div> {% endcomment %}
+
+    <div class="indicator">
+    <a href="{% url "csf:user_favorite" %}" class="indicator__button">
+        <span class="indicator__area">
+            <i class="fa fa-heart"></i>
+            <span class="indicator__value" id="favorite_count">0</span>
+        </span>
+    </a>
+</div>
+    <div class="indicator" id="compare_count_icon" style="display: none;"> <a href="{% url 'products:show_compare_list' %}" class="indicator__button">
+            <span class="indicator__area">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2m.995-14.901a1 1 0 1 0-1.99 0A5 5 0 0 0 3 6c0 1.098.5 6.255 6 6.255s6-5.157 6-6.255a5 5 0 0 0-4.005-4.901"/>
+                </svg>
+                <span class="indicator__value" id="compare_count">0</span>
+            </span>
+        </a>
+    </div>
+
+    <div class="indicator">
+        <a href="{% url 'orders:shop_cart' %}" class="indicator__button">
+            <span class="indicator__area">
+                <i class="fa fa-shopping-cart"></i>
+                <span class="indicator__value" id="indicator__value">0</span>
+            </span>
+        </a>
+    </div>
+
+</div>
             </div>
         </div>
     </div>

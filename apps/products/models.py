@@ -1,6 +1,6 @@
 import math
 from django.db import models
-from django.db.models import Sum, Avg, Value
+from django.db.models import Sum, Avg, Value, Count
 from django.db.models.functions import Coalesce
 from email.mime import image
 from django.utils import timezone
@@ -11,6 +11,7 @@ from datetime import datetime
 from middlewares.middlewares import RequestMiddleware
 from django.contrib.postgres.search import SearchVector, SearchVectorField
 from django.contrib.postgres.indexes import GinIndex
+from .translations import FEATURE_NAME_TRANSLATIONS 
 #--------------------------------------------------------------
 
 
@@ -67,7 +68,8 @@ class Feature(models.Model):
     
     def __str__(self):
         return self.feature_name
-    
+    def get_display_name(self):
+        return FEATURE_NAME_TRANSLATIONS.get(self.feature_name, self.feature_name)
     
     class Meta:
         verbose_name='ویژگی'
@@ -92,7 +94,15 @@ class Product(models.Model):
     update_date=models.DateTimeField(auto_now=True,verbose_name='تاریخ آخرین بروز رسانی')
     features = models.ManyToManyField(Feature,through='ProductFeature') 
 
-
+    base_rating = models.DecimalField(
+        max_digits=3, decimal_places=2, 
+        default=0.0, 
+        verbose_name='امتیاز پایه'
+    )
+    base_rating_weight = models.PositiveIntegerField(
+        default=0, 
+        verbose_name='وزن امتیاز پایه'
+    )
 
 
     # +++  field for search optimization +++
@@ -159,13 +169,40 @@ class Product(models.Model):
         return score
         
 
+    # def get_average_score(self):
+    #     avgScore = self.scoring_product.all().aggregate(Avg('score_value'))['score_value__avg']
+    #     if avgScore == None:
+    #         return 0
+    #     else:
+    #         return avgScore
     def get_average_score(self):
-        avgScore = self.scoring_product.all().aggregate(Avg('score_value'))['score_value__avg']
-        if avgScore == None:
-            return 0
-        else:
-            return avgScore
+        """
+        Calculates the weighted average score for the product with exactly 2 decimal places.
+        """
+        # Get the sum and count of scores from your site's users
+        user_scores_data = self.scoring_product.aggregate(
+            total_score=Sum('score_value'),
+            vote_count=Count('id')
+        )
+        
+        user_total_score = user_scores_data['total_score'] or 0
+        user_vote_count = user_scores_data['vote_count'] or 0
 
+        # Get the base rating and weight from the model
+        base_score = self.base_rating * self.base_rating_weight
+        base_votes = self.base_rating_weight
+
+        # Calculate the weighted total score and total votes
+        total_score = base_score + user_total_score
+        total_votes = base_votes + user_vote_count
+
+        # Avoid division by zero if there are no ratings at all
+        if total_votes == 0:
+            return 0.00  # Explicitly return with 2 decimal places
+
+        # Calculate the final weighted average and format to 2 decimal places
+        weighted_average = total_score / total_votes
+        return float("{0:.2f}".format(weighted_average)) 
 
 
     def get_user_favorite(self):
@@ -174,13 +211,9 @@ class Product(models.Model):
         flag = self.favorite_product.filter(favorite_user=request.user).exists()
         return flag
     
-    # def getMainProductGroup(self):
-    #     return self.product_group.all()[0].id 
-    def getMainProductGroup(self):
-        if self.product_group.exists():
-            return self.product_group.first().id
-        return None # Or raise an exception, depending on your desired behavior
     
+    def getMainProductGroup(self):
+        return self.product_group.all()[0].id
 
     def save(self, *args, **kwargs):
         # This part is crucial for future products

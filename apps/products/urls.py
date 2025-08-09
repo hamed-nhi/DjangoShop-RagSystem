@@ -17,7 +17,17 @@ urlpatterns = [
     path('products_groups_partials',views.get_product_groups,name='products_groups_partials'),
     path('brands_partials/<slug:slug>/',views.get_brands,name='brands_partials'),
     path('feature_partials/<slug:slug>/',views.get_feature_for_filter,name='feature_partials'),
-   
+    path('compare/', views.show_compare_list_view, name='show_compare_list'),
+
+    # URL for the PARTIAL table. Change the name here.
+    path('compare-table/', views.compare_table_partial, name='compare_table'), # Changed from 'compare_table_partial'
+    
+    # URLs for the AJAX functions
+    path('add_to_compare_list/', views.add_to_compare_list, name='add_to_compare_list'),
+    path('delete_from_compare_list/', views.delete_from_compare_list, name='delete_from_compare_list'),
+    path('status_of_compare_list/', views.status_of_compare_list, name='status_of_compare_list'),
+    path('all_product_groups/', views.AllProductGroupsView.as_view(), name='all_product_groups'), 
+    path('best_selling_products/', views.get_best_selling_products, name='best_selling_products'),
 
 
 ]
