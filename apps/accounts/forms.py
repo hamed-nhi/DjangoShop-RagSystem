@@ -150,3 +150,37 @@ class RememberPasswordForm(forms.Form):
                                 error_messages={"required":"این فیلد نمیتواند خالی باشد"},
                                 widget=forms.TextInput(attrs={'class':'form-control','placeholder':' شماره موبایل خود را وارد کنید'},)
        )
+#-----------------------------------------------------------
+
+
+class UpdateProfileForm(forms.Form):
+    mobile_number=forms.CharField(label="",
+                                  widget=forms.TextInput(attrs={'class':'form-control','placeholder':'شماره تلفن را وارد کنید','readonly':'readonly'}))
+    name=forms.CharField(label="",
+                                error_messages={'required':'این فیلد نمیتواند خالی باشد'},
+                                  widget=forms.TextInput(attrs={'class':'form-control','placeholder':'نام خود را وارد کنید'}))
+    family=forms.CharField(label="",
+                                error_messages={'required':'این فیلد نمیتواند خالی باشد'},
+                                  widget=forms.TextInput(attrs={'class':'form-control','placeholder':'نام خانوادگی خود را وارد کنید'}))
+    email=forms.CharField(label="",
+                                error_messages={'required':'این فیلد نمیتواند خالی باشد'},
+                                  widget=forms.EmailInput(attrs={'class':'form-control','placeholder':'ایمیل خود را وارد کنید'}))
+    phone_number=forms.CharField(label="",
+                                error_messages={'required':'این فیلد نمیتواند خالی باشد'},
+                                  widget=forms.TextInput(attrs={'class':'form-control','placeholder':'شماره تلفن را وارد کنید'}))                              
+    address=forms.CharField(label="",
+                                error_messages={'required':'این فیلد نمیتواند خالی باشد'},
+                                  widget=forms.Textarea(attrs={'class':'form-control','placeholder':'آدرس خود را وارد کنید'}))
+    
+    image=forms.ImageField(required=False)
+    
+    def clean_image(self):
+        image = self.cleaned_data.get('image')
+        if image:
+            max_size = 5 * 1024 * 1024
+            if image.size > max_size:
+                raise ValidationError('حجم تصویر نباید بیشتر از 5 مگابایت باشد.')
+            allowed_types = ['image/jpeg', 'image/png']
+            if image.content_type not in allowed_types:
+                raise ValidationError('فقط فایل‌های JPEG و PNG مجاز هستند.')
+        return image

@@ -3,6 +3,19 @@ from apps.accounts.models import Customer
 from apps.products.models import Product
 from django.utils import timezone
 import uuid
+# -----------------------------------------------------------------------------------------
+
+
+class OrderState(models.Model):
+    order_state_title=models.CharField(max_length=50,verbose_name='وضعیت سفارش')
+
+    def __str__(self):
+        return self.order_state_title
+
+    class Meta:
+        verbose_name="وضعیت سفارش"
+        verbose_name_plural="انواع وضعیت های سفارش"
+
 
 # -----------------------------------------------------------------------------------------
 
@@ -28,13 +41,23 @@ class Order(models.Model):
     discount = models.IntegerField(blank=True,null=True,default=0, verbose_name='تخفیف روی فاکتور')
     description= models.TextField(blank=True,null=True,verbose_name='توضیحات')
     payment_type = models.ForeignKey(PaymentType, default=None,on_delete=models.CASCADE, null=True,blank=True, related_name='payment_types',verbose_name='نوع پرداخت ')
-    
+    order_state = models.ForeignKey(OrderState,on_delete=models.CASCADE,verbose_name="وضعیت سفارش",null=True,blank=True,related_name='orders_states') 
+
     def __str__(self):
         return f"{self.customer}\t{self.id}\t{self.is_finaly}"
     
     class Meta:
         verbose_name='سفارش'
         verbose_name_plural='سفارشات'
+
+
+
+    # def get_order_total_price(self):
+    #     sum=0
+    #     for item in self.order_details1.all():
+    #         sum+=item.product.get_price_by_discount()*item.qty
+    #     order_final_price,delivery,tax=utils.price_by_delivery_tax(sum,self.discount)
+    #     return int(order_final_price*10)
 # -----------------------------------------------------------------------------------------
 class OrderDetails(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='orders_details1',verbose_name='سفارش' )

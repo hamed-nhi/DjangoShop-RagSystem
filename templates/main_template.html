@@ -6,8 +6,10 @@
     <title>
         {% block title %}{% endblock title %}
     </title>
-    <link rel="icon" type="image/png" href="{% static "images/favicon.png" %}">
-
+    {% comment %} <link rel="icon" type="image/png" href="{% static "images/favicon.png" %}"> {% endcomment %}
+   
+    {% comment %} <link rel="icon" type="image/png" href="{{ MEDIA_URL }}images/favicon3.png"> {% endcomment %}
+    {% comment %} <link rel="icon" type="image/png" href="{{ MEDIA_URL }}images/favicon3.png?v={% now 'U' %}"> {% endcomment %}
     <link rel="stylesheet" href="{% static "vendor/bootstrap-4.5.3/css/bootstrap.min.css" %}">
     <link rel="stylesheet" href="{% static "vendor/owl-carousel-2.3.4/assets/owl.carousel.min.css" %} ">
     <link rel="stylesheet" href="{% static "css/style.css" %}">

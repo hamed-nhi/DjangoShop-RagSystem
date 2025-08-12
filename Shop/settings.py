@@ -17,9 +17,12 @@ load_dotenv(os.path.join(BASE_DIR, '.env'))
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # DEBUG is read from the .env file. The value will be 'True' or 'False' as a string.
-DEBUG = os.environ.get('DEBUG') == 'True'
+# DEBUG = os.environ.get('DEBUG') == 'False'
+# DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
+DEBUG = True
 
 ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = ['*']
 
 
 # --- Application definition ---
@@ -52,6 +55,7 @@ SILENCED_SYSTEM_CHECKS = ['ckeditor.W001']
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -62,7 +66,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'Shop.urls'
-
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -118,9 +122,8 @@ USE_TZ = False
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 
-MEDIA_URL ="/media/"
-MEDIA_ROOT= os.path.join(BASE_DIR,"media")
-
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # --- CKEditor Settings ---
 CKEDITOR_UPLOAD_PATH ='images/ckeditor/upload_files/'
 CKEDITOR_ALLOW_NONIMAGE_FILES=False

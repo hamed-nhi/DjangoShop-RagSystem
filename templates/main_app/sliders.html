@@ -1,0 +1,64 @@
+<div class="block-slideshow block-slideshow--layout--full block">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="block-slideshow__body">
+                    <div class="owl-carousel">
+                        {% for slide in sliders %}
+                        <a class="block-slideshow__slide" href="{{ slide.slider_link }}" target="_blank">
+                            <!-- تصویر واحد با کلاس‌های ریسپانسیو -->
+                            <div class="block-slideshow__slide-image"
+                                style="background-image: url('{{ slide.image_name.url }}')"></div>
+                            
+                            <div class="block-slideshow__slide-content">
+                                <div class="block-slideshow__slide-title">
+                                    {{ slide.slider_title1|default:"" }}
+                                </div>
+                                <div class="block-slideshow__slide-text">
+                                    {{ slide.slider_title2|default:"" }}
+                                    <br />
+                                    {{ slide.slider_title3|default:"" }}
+                                </div>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+.block-slideshow__slide-image {
+    width: 100%;
+    height: 500px; 
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+@media (max-width: 768px) {
+    .block-slideshow__slide-image {
+        height: 300px; 
+    }
+    
+    .block-slideshow__slide-content {
+        padding: 15px;
+    }
+    
+    .block-slideshow__slide-title {
+        font-size: 1.5rem;
+    }
+    
+    .block-slideshow__slide-text {
+        font-size: 1rem;
+    }
+}
+
+
+@media (max-width: 480px) {
+    .block-slideshow__slide-image {
+        height: 200px;
+    }
+}
+</style>

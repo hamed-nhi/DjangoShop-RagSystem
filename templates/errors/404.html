@@ -1,0 +1,21 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>خطای ۴۰۴ - صفحه پیدا نشد</title>
+    <link rel="stylesheet" href="{% static 'css/error.css' %}">
+</head>
+<body>
+    <section class="container-404">
+        <h1 class="error-code">404</h1>
+        <h2 class="error-title">صفحه پیدا نشد</h2>
+        <p class="error-message">
+            صفحه‌ای که به دنبال آن هستید جابه‌جا شده، حذف شده یا هیچ‌وقت وجود نداشته است.
+        </p>
+        <a class="home-button" href="{% url 'main:index' %}">بازگشت به صفحه اصلی</a>
+    </section>
+</body>
+</html>

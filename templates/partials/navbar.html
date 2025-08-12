@@ -1,3 +1,5 @@
+{% load static %}
+
 <style>/* استایل‌های اختصاصی منوی لپ‌تاپ‌ها */
 .nav-links__title {
     display: flex;
@@ -130,7 +132,9 @@
             <div class="nav-panel__row">
                 <div class="nav-panel__logo">
                     <a href="{% url "main:index" %}">
-                        <img src="images/shopLogo.png" alt="">
+                        {% comment %} <img src="{% static 'images/shopLogo.png' %}" alt="Shop Logo"> {% endcomment %}
+                        <img src="{{media_url}}/images/shopLogo.png" alt="shopLogo">
+
                     </a>
                 </div>
                 <!-- .nav-links -->

@@ -177,7 +177,8 @@ class UserFavoriteView(View):
 
 
 def status_of_favorite_list_view(request):
-        # Change 'favorite_set' to 'favorite_user1'
-    favorite_count = request.user.favorite_user1.count() 
-    return HttpResponse(favorite_count)
-    # return HttpResponse(0) # Or redirect to l
+    if request.user.is_authenticated:
+        favorite_count = request.user.favorite_user1.count()
+        return HttpResponse(favorite_count)
+    else:
+        return HttpResponse(0)
