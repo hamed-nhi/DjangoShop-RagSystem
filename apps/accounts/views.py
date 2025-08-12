@@ -1,14 +1,18 @@
+from urllib import request
 from django.shortcuts import render, redirect
 from django.views import View
-from .forms import RegisterUserForm, VerifyResgiterForm, LoginUserForm, ChangePasswordForm, RememberPasswordForm
-from .models import CustomUser
+from langsmith import expect
+
+from apps.orders.models import Order
+from .forms import RegisterUserForm, VerifyResgiterForm, LoginUserForm, ChangePasswordForm, RememberPasswordForm, UpdateProfileForm
+from .models import CustomUser, Customer
 from utils import create_random_code , FileUpload ,send_sms
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import IntegrityError
-
-
+from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.decorators import login_required
 #----------------------------------------------------------------------------------------------------
 
 class RegisterUserView(View):
@@ -94,7 +98,7 @@ class VerifyResgiterCodeView(View):
         form = VerifyResgiterForm
         return render(request,"accounts_app/verify_register_code.html",{"form":form})
     
-def post(self,request,*args, **kwargs):
+    def post(self,request,*args, **kwargs):
         form= VerifyResgiterForm(request.POST)
         if form.is_valid():
             data=form.cleaned_data
@@ -191,20 +195,18 @@ class UserPanelView(LoginRequiredMixin,View):
 
 class ChangePasswordView(View):
     url_temp_name = "accounts_app/change_password.html"
-
     def get(self,request,*args, **kwargs):
         form = ChangePasswordForm()
         return render(request,self.url_temp_name,{"form":form})
     
-#----------------------------------------------------------------------------------------------------
-
     def post(self,request,*args, **kwargs):
         form= ChangePasswordForm(request.POST) 
         if form.is_valid():
             data = form.cleaned_data
-            user_session = request.session['user_session']
-            user= CustomUser.objects.get(mobile_number = user_session['mobile_number'])
-            user.set_password(data['password1'])
+            # user_session = request.session['user_session']
+            user= request.user
+            # user= CustomUser.objects.get(mobile_number = user_session['mobile_number'])
+            user.set_password(data['password1'])    
             user.active_code=create_random_code() 
             user.save()
             messages.success(request,'رمز عبور شما با موفقیت تغییر یافت.','success')
@@ -245,3 +247,110 @@ class RememberPasswordView(View):
                 messages.error(request,'شماره موبایل وارد شده در سیستم ثبت نشده است.','danger')
                 return render(request,self.url_temp_name,{"form":form})
 #----------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------
+
+
+class UserPanelView(LoginRequiredMixin,View):
+    def get(self,request):
+        user=request.user
+        try:
+            customer= Customer.objects.get(user=request.user)
+            user_info={
+                "name":user.name ,
+                "family":user.family,
+                "email":user.email,
+                "phone_number":customer.phone_number,
+                "address":customer.address,
+                "image":customer.image_name,
+
+            }
+        except ObjectDoesNotExist:
+                user_info={
+                "name":user.name,
+                "family":user.family,
+                "email":user.email,
+                }
+        return render(request,"accounts_app/userpanel.html",{"user_info":user_info})
+#----------------------------------------------------------------------------------------------------
+           
+
+@login_required
+def show_last_orders(request):
+    orders =Order.objects.filter(customer_id=request.user.id).order_by('-register_date')[:4]
+    return render(request,"accounts_app/partials/show_last_orders.html",{'orders':orders})
+
+#----------------------------------------------------------------------------------------------------
+
+# @login_required
+# def show_user_payments(request):
+#     payments=Payment.objects.filter(customr_id=request.user.id).order_by('-register-date')
+#     return render(request,"accounts_app/show_user_payments.html","payments":payments)
+
+
+
+
+
+
+#----------------------------------------------------------------------------------------------------
+
+class UpdateProfileView(LoginRequiredMixin,View):
+
+    def get(self, request):
+        user = request.user
+        try:
+            customer =Customer.objects.get(user=request.user)
+            initial_dict={
+                "mobile_number":user.mobile_number,
+                "name":user.name,
+                "family":user.family,
+                "email":user.email,
+                "phone_number":customer.phone_number,
+                "address":customer.address,
+
+            }
+        except ObjectDoesNotExist:
+             initial_dict={ 
+                "mobile_number":user.mobile_number,
+                "name":user.name,
+                "family":user.family,
+                "email":user.email,
+                }   
+
+        form=UpdateProfileForm(initial=initial_dict)
+        return render(request,"accounts_app/update_profile.html",{"form":form,"image_url":customer.image_name})    
+    
+
+    def post(self,request):
+        form =UpdateProfileForm(request.POST,request.FILES)
+        if form.is_valid():
+            cd =form.cleaned_data
+            user= request.user
+            user.name=cd['name']
+            user.family=cd['family']
+            user.email=cd['email']
+            user.save()
+
+            try:
+                customer=Customer.objects.get(user=request.user)
+                customer.phone_number=cd['phone_number']
+                customer.address=cd['address']
+                customer.image_name=cd['image']
+                customer.save()
+            except ObjectDoesNotExist:
+                Customer.objects.create(
+                    user=request.user,
+                    phone_number=cd['phone_number'],
+                    address=cd['address'],
+                    image=cd['image']
+
+                )
+            messages.success(request, 'ویرایش بروفایل با موفقیت انجام شد')
+            return redirect('accounts:userpanel')
+        else:
+            messages.error(request, 'اظلاعات وارد شده معتبر نمی باشد')
+            return render(request,"main_app/update_profile.html",{'form':form})
+        
+#----------------------------------------------------------------------------------------------------
+    

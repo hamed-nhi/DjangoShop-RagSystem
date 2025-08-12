@@ -1,15 +1,17 @@
-
-{% extends 'main_template.html' %}
+{% extends "user_panel_template.html" %}
+{% load render_partial %}
 
 {% block title %}
-پنل کاربری
+فروشگاه آیکو
 {% endblock title %}
 
-
 {% block content %}
- 
 
- <h1>
-    پنل کاربری شما
- </h1>
+    <div class="dashboard">
+
+        {% include "accounts_app/partials/user_info.html" %}
+        {% render_partial 'account:show_last_orders' %}
+    </div>
+
+
 {% endblock content %}

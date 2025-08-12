@@ -1,0 +1,40 @@
+{% extends "user_panel_template.html" %}
+ {% block title %} فروشگاه آیکو 
+ {%endblock title %}
+
+{% block content %}
+
+<div class="block">
+    <div class="container">
+      <div class="row d-flex justify-content-center:">
+        <div class="col-md-9">
+            <div class="card felx-grow-1 mb-md-0">
+                <div class="card-body">
+                    <h3 class="card-title"></h3>
+                        <form action="" method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                {{form.as_p}}
+                                
+                                <img src="{{media_url}}{{image_url}}" style="width:100px;height:100px;" alt="">
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary mt-4">ویرایش</button>
+                                    <a href="{% url "accounts:userpanel" %}" class="btn btn-info mt-4">انصراف</a>
+                                </div>
+                        </form>
+                    
+    
+</div>
+</div>
+</div>
+</div>
+</div>  
+</div>
+
+{% endblock content %}
+
+
+
+
+
+
+

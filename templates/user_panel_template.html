@@ -1,0 +1,98 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl"> 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        {% block title %}{% endblock title %}
+    </title>
+    <link rel="icon" type="image/png" href="{% static "images/favicon.png" %}">
+    <link rel="stylesheet" href="{% static "vendor/bootstrap-4.5.3/css/bootstrap.min.css" %}">
+    <link rel="stylesheet" href="{% static "vendor/owl-carousel-2.3.4/assets/owl.carousel.min.css" %} ">
+    <link rel="stylesheet" href="{% static "css/style.css" %}">
+    <link rel="stylesheet" href="{% static "css/custom.css" %} ">
+    <link rel="stylesheet" href="{% static "vendor/fontawesome-5.6.3/css/all.min.css" %}">
+    <link rel="stylesheet" href="{% static 'vendor/nouislider/nouislider.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+
+</head>
+<body>
+    {% include "partials/header.html" %}
+    <!-- site__body -->
+		<div class="site__body">
+			<div class="page-header">
+				<div class="page-header__container container">
+					<div class="page-header__breadcrumb">
+						<nav aria-label="breadcrumb">
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="#">خانه</a>
+									/
+								</li>
+								<li class="breadcrumb-item"><a href="{% url 'accounts:userpanel' %}">داشبورد</a>
+									
+								</li>
+								
+							</ol>
+						</nav>
+					</div>
+					<div class="page-header__title">
+						<h1>حساب کاربری</h1></div>
+				</div>
+			</div>
+			<div class="block">
+				<div class="container">
+					<div class="row">
+						<div class="col-12 col-lg-3 d-flex">
+							<div class="account-nav flex-grow-1">
+								<h4 class="account-nav__title">منوی اصلی</h4>
+								<ul>
+									<li class="account-nav__item account-nav__item--active"><a href="{% url 'accounts:userpanel' %}">داشبورد</a></li>
+									<li class="account-nav__item"><a href="{% url 'accounts:update-profile' %}">ویرایش پروفایل</a></li>
+									{% comment %} <li class="account-nav__item"><a href="">سابقه خرید</a></li> {% endcomment %}
+									<li class="account-nav__item"><a href="{% url 'accounts:change_password' %}">تغییر رمز عبور</a></li>
+									<li class="account-nav__item"><a href="{% url 'accounts:logout' %}">خروج</a></li>
+								</ul>
+							</div>
+						</div>
+						<div class="col-12 col-lg-9 mt-4 mt-lg-0">
+                             {% block content %}{% endblock content %}
+
+						
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- site__body / end -->
+
+
+    {% include "partials/footer.html" %}
+
+    <script src="{% static "vendor/jquery-3.3.1/jquery.min.js" %}"></script>
+    <script src="{% static "vendor/bootstrap-4.5.3/js/bootstrap.bundle.min.js" %}"></script>
+    <script src="{% static "vendor/owl-carousel-2.3.4/owl.carousel.min.js" %}"></script>
+    <script src="{% static "js/number.js" %}"></script>
+    <script src="{% static "js/main.js" %}"></script>
+    <script src="{% static "vendor/nouislider/nouislider.min.js" %}"></script>  
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        const djangoMessages = [];
+        {% if messages %}
+            {% for message in messages %}
+                djangoMessages.push({
+                    tags: "{{ message.tags }}",
+                    message: "{{ message }}"
+                });
+            {% endfor %}
+        {% endif %}
+    </script>
+
+    <script src="{% static "js/myscript.js" %}"></script>
+    
+</body>
+</html>
