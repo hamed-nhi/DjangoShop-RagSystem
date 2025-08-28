@@ -1,0 +1,200 @@
+
+
+ <!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دستیار هوشمند</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/font-face.css">
+
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --hover-color: #0056b3;
+            --bg-light: #f8f9fa;
+            --border-color: #dee2e6;
+            --text-dark: #343a40;
+            --text-light: #6c757d;
+        }
+        body { font-family: Vazir, sans-serif; background-color: var(--bg-light); color: var(--text-dark); margin: 0; display: flex; height: 100vh; }
+        .sidebar { width: 280px; background: #fff; border-left: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 15px; box-shadow: 2px 0 5px rgba(0,0,0,0.05); }
+        .sidebar-header { padding: 10px; border-bottom: 1px solid var(--border-color); margin-bottom: 15px; }
+        .new-chat-button { display: block; width: 100%; padding: 12px 15px; background-color: var(--primary-color); color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; text-align: center; text-decoration: none; transition: background-color 0.3s; margin-bottom: 20px;}
+        .new-chat-button:hover { background-color: var(--hover-color); }
+        .conversations-list { list-style: none; padding: 0; margin: 0; overflow-y: auto; }
+        .conversations-list li a { display: block; padding: 12px 15px; text-decoration: none; color: var(--text-dark); border-radius: 6px; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .conversations-list li a:hover { background-color: var(--bg-light); }
+        .conversations-list li a.active { background-color: var(--primary-color); color: white; font-weight: bold; }
+        .chat-container { flex-grow: 1; display: flex; flex-direction: column; height: 100vh; background: #fff; }
+        .chat-box { flex-grow: 1; padding: 20px; overflow-y: auto; }
+        .chat-form { display: flex; padding: 20px; border-top: 1px solid var(--border-color); background: #fdfdfd; }
+        #message-input { flex-grow: 1; border: 1px solid var(--border-color); padding: 10px 15px; border-radius: 20px; font-size: 16px; transition: border-color 0.3s; background: #fefefe; }
+        #message-input:focus { border-color: var(--primary-color); outline: none; box-shadow: 0 0 0 2px rgba(0,123,255,0.2); }
+        #send-button { background-color: var(--primary-color); color: white; border: none; padding: 10px 20px; border-radius: 20px; margin-right: 10px; cursor: pointer; font-size: 16px; transition: background-color 0.3s; }
+        #send-button:hover { background-color: var(--hover-color); }
+        .message { margin-bottom: 20px; display: flex; align-items: flex-start; max-width: 85%; }
+        .message .content { padding: 12px 18px; border-radius: 18px; line-height: 1.6; }
+        .user-message { align-self: flex-start; } /* Changed to start */
+        .user-message .content { background-color: var(--primary-color); color: white; border-bottom-right-radius: 4px; direction: rtl; }
+        .bot-message { align-self: flex-end; } /* Changed to end */
+        .bot-message .content { background-color: #e9ecef; color: var(--text-dark); border-bottom-left-radius: 4px; direction: rtl; }
+        pre { white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: inherit; font-size: inherit; }
+    .conversation-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+.conversation-item a {
+    flex-grow: 1; /* باعث می‌شود لینک تمام فضای موجود را بگیرد */
+}
+.delete-btn {
+    background: none;
+    border: none;
+    color: #dc3545;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 50%;
+    line-height: 1;
+    font-size: 18px; /* اندازه آیکون سطل زباله */
+    display: none; /* در حالت عادی مخفی است */
+}
+.conversation-item:hover .delete-btn {
+    display: inline-block; /* با هاور روی آیتم، دکمه نمایش داده می‌شود */
+}
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <div class="sidebar-header">
+        <a href="{% url 'ai_assistant:new_chat_view' %}" class="new-chat-button">+ چت جدید</a>
+    </div>
+   <ul class="conversations-list">
+    {% for conv in user_conversations %}
+        <li class="conversation-item">
+            <a href="{% url 'ai_assistant:chat_view_conversation' conv.id %}"
+               class="{% if conv.id|stringformat:"s" == active_conversation_id %}active{% endif %}">
+                {{ conv.title }}
+            </a>
+            
+            <form action="{% url 'ai_assistant:delete_chat_view' conv.id %}" method="post" 
+                  onsubmit="return confirm('آیا از حذف این مکالمه مطمئن هستید؟ این عمل غیرقابل بازگشت است.');">
+                {% csrf_token %}
+                <button type="submit" class="delete-btn" title="حذف مکالمه">
+                    &#128465; </button>
+            </form>
+        </li>
+    {% empty %}
+        <li><span style="color: var(--text-light); padding: 10px;">هنوز مکالمه‌ای شروع نشده.</span></li>
+    {% endfor %}
+</ul>
+</div>
+
+<div class="chat-container">
+    <div class="chat-box" id="chat-box">
+        {% if not current_chat_messages %}
+            <div class="message bot-message" style="align-self: center; text-align: center;">
+                <div class="content">
+                    <pre>سلام! من دستیار هوشمند شما هستم. چطور می‌توانم در خرید لپ‌تاپ کمکتان کنم؟</pre>
+                </div>
+            </div>
+        {% else %}
+            {% for msg in current_chat_messages %}
+                {% if msg.sender == 'user' %}
+                    <div class="message user-message">
+                        <div class="content"><pre>{{ msg.content }}</pre></div>
+                    </div>
+                {% else %}
+                    <div class="message bot-message">
+                        <div class="content"><pre>{{ msg.content }}</pre></div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+    <form class="chat-form" id="chat-form">
+        {% csrf_token %}
+        <input type="text" id="message-input" placeholder="پیام خود را بنویسید..." autocomplete="off">
+        <button type="submit" id="send-button">ارسال</button>
+    </form>
+</div>
+
+<script>
+    const chatForm = document.getElementById('chat-form');
+    const messageInput = document.getElementById('message-input');
+    const chatBox = document.getElementById('chat-box');
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    window.onload = () => { chatBox.scrollTop = chatBox.scrollHeight; };
+
+    chatForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const userMessage = messageInput.value.trim();
+        if (userMessage === '') return;
+
+        appendMessage(userMessage, 'user');
+        messageInput.value = '';
+
+        // Create a new, empty message bubble for the bot's response
+        const botMessageElement = createMessageElement('bot');
+        chatBox.appendChild(botMessageElement);
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        try {
+            const response = await fetch(window.location.pathname, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+                body: JSON.stringify({ message: userMessage }),
+            });
+
+            if (!response.ok) {
+                botMessageElement.querySelector('pre').textContent = 'An error occurred on the server.';
+                return;
+            }
+
+            // Read the response as a stream
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+
+            while (true) {
+                const { value, done } = await reader.read();
+                if (done) break;
+
+                const chunk = decoder.decode(value);
+                // Append each chunk of text to the bot's message bubble
+                botMessageElement.querySelector('pre').textContent += chunk;
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }
+
+        } catch (error) {
+            console.error('Error:', error);
+            botMessageElement.querySelector('pre').textContent = 'A connection error occurred.';
+        }
+    });
+
+    function createMessageElement(sender) {
+        const messageWrapper = document.createElement('div');
+        messageWrapper.classList.add('message', sender === 'user' ? 'user-message' : 'bot-message');
+        
+        const contentDiv = document.createElement('div');
+        contentDiv.classList.add('content');
+        
+        const preTag = document.createElement('pre');
+        contentDiv.appendChild(preTag);
+        messageWrapper.appendChild(contentDiv);
+        
+        return messageWrapper;
+    }
+
+    function appendMessage(message, sender) {
+        const messageElement = createMessageElement(sender);
+        messageElement.querySelector('pre').textContent = message;
+        chatBox.appendChild(messageElement);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+</script>
+</body>
+</html>
+

@@ -18,6 +18,7 @@ FEATURE_NAME_TRANSLATIONS = {
     'OS': 'سیستم عامل',
     'year_of_warranty': 'سال گارانتی',
     'category': 'کاربری',
+    'cpu_model':'مدل پردازنده',
     'False': 'خیر',
     'True': 'بله',
 }

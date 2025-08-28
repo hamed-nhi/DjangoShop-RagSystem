@@ -49,6 +49,8 @@ INSTALLED_APPS = [
     'apps.c_s_f.apps.CSFConfig',
     'apps.search.apps.SearchConfig',
     'jalali_date',
+    'apps.ai_assistant.apps.AiAssistantConfig',
+    
 ]
 
 SILENCED_SYSTEM_CHECKS = ['ckeditor.W001']
