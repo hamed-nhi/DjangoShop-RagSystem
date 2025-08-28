@@ -16,6 +16,8 @@ urlpatterns = [
     path('csf/',include("apps.c_s_f.urls",namespace="csf")),
     path('ckeditor/',include("ckeditor_uploader.urls")),
     path('search/',include("apps.search.urls",namespace="search")),
+   #path('ai_assistant/',include("apps.ai_assistant.urls"), name="ai_assistant"),
+    path('assistant/', include('apps.ai_assistant.urls'), name="assistant"),
     
     
 

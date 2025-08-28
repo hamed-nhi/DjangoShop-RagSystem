@@ -12,6 +12,10 @@ from middlewares.middlewares import RequestMiddleware
 from django.contrib.postgres.search import SearchVector, SearchVectorField
 from django.contrib.postgres.indexes import GinIndex
 from .translations import FEATURE_NAME_TRANSLATIONS 
+from django.utils.html import strip_tags 
+from django.db.models.functions import Coalesce
+from django.contrib.postgres.search import SearchVector
+from django.db.models import Value as V  # <--- تغییر کلیدی اینجاست
 #--------------------------------------------------------------
 
 
@@ -50,7 +54,6 @@ class ProductGroup(models.Model):
     register_date=models.DateTimeField(auto_now_add=True,verbose_name="تاریخ درج")
     published_date = models.DateTimeField(default=timezone.now,verbose_name='تاریخ انتشار')
     update_date=models.DateTimeField(auto_now=True,verbose_name='تاریخ آخرین بروز رسانی')
-
 
     def __str__(self):
         return self.group_title
@@ -107,10 +110,8 @@ class Product(models.Model):
 
     # +++  field for search optimization +++
     search_vector = SearchVectorField(null=True, blank=True)
-    
 
 
-    
     def __str__(self):
         return self.product_name
     
@@ -152,12 +153,7 @@ class Product(models.Model):
             rounded_up = math.ceil(self.price / 100000) * 100000
             return rounded_up - 1000
 
-    
-    # class Meta:
-    #     verbose_name='کالا'
-    #     verbose_name_plural=' کالا ها'
 
-    
 
     def get_user_score(self):
         request = RequestMiddleware(get_response=None)
@@ -169,12 +165,7 @@ class Product(models.Model):
         return score
         
 
-    # def get_average_score(self):
-    #     avgScore = self.scoring_product.all().aggregate(Avg('score_value'))['score_value__avg']
-    #     if avgScore == None:
-    #         return 0
-    #     else:
-    #         return avgScore
+
     def get_average_score(self):
         """
         Calculates the weighted average score for the product with exactly 2 decimal places.
@@ -215,17 +206,26 @@ class Product(models.Model):
     def getMainProductGroup(self):
         return self.product_group.all()[0].id
 
+ 
     def save(self, *args, **kwargs):
-        # This part is crucial for future products
-        super().save(*args, **kwargs) 
+        super().save(*args, **kwargs)
+
+        product_name_val = self.product_name or ''
+        brand_title_val = self.brand.brand_title if self.brand else ''
+        features_qs = self.product_features.all()
+        features_val = ' '.join([pf.value for pf in features_qs if pf.value])
+        description_val = self.description or ''
+
+        
         vector = (
-            SearchVector('product_name', weight='A', config='simple') +
-            SearchVector(Coalesce('brand__brand_title', Value('')), weight='B', config='simple') +
-            SearchVector(Coalesce('summery_description', Value('')), weight='C', config='simple')
+            SearchVector(Value(product_name_val), weight='A', config='simple') +
+            SearchVector(Value(brand_title_val), weight='B', config='simple') +
+            SearchVector(Value(features_val), weight='C', config='simple') +
+            SearchVector(Value(description_val), weight='D', config='simple')
         )
-        Product.objects.filter(pk=self.pk).update(search_vector=vector)
-
-
+        
+        self.__class__.objects.filter(pk=self.pk).update(search_vector=vector)
+  
 
     class Meta:
         verbose_name = 'کالا'
@@ -233,6 +233,7 @@ class Product(models.Model):
         indexes = [
             GinIndex(fields=['search_vector']),
         ]
+
     
 
 
@@ -277,4 +278,3 @@ class ProductGallary(models.Model):
         verbose_name_plural='تصاویر'
         
 #--------------------------------------------------------------
-        
