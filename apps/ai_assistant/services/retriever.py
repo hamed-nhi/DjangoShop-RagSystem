@@ -48,70 +48,15 @@ class HybridRetriever:
             results.append({'id': doc['id'], 'score': doc.get('_rankingScore', 1.0)})
         return results
 
-    # def search(self, query_text, k=5, filters: str = None):
-    #     """
-    #     Executes a weighted hybrid search using the RRF algorithm to prioritize keyword-based results.
-    #     """
-    #     print("\n" + "="*60)
-    #     print(f"WEIGHTED HYBRID RETRIEVER ACTIVATED | Query: '{query_text}'")
-    #     print("="*60)
-
-    #     # --- 1. Execute both searches concurrently ---
-    #     start_faiss = time.perf_counter()
-    #     faiss_results = self._search_faiss(query_text, k=20)
-    #     end_faiss = time.perf_counter()
-
-    #     start_meili = time.perf_counter()
-    #     meili_results = self._search_meilisearch(query_text, k=20, filters=filters)
-    #     end_meili = time.perf_counter()
-
-    #     # --- Log raw results ---
-    #     faiss_ids = [res['id'] for res in faiss_results]
-    #     meili_ids = [res['id'] for res in meili_results]
-    #     print(f"-> [TIMER] Faiss Search took: {end_faiss - start_faiss:.4f} seconds")
-    #     print(f"   [LOG] Raw Faiss IDs: {faiss_ids}")
-    #     print(f"-> [TIMER] MeiliSearch took: {end_meili - start_meili:.4f} seconds")
-    #     print(f"   [LOG] Raw MeiliSearch IDs: {meili_ids}")
-
-    #     # --- 2. Fuse results with weighted RRF ---
-    #     fused_scores = {}
-    #     rrf_k = 60
-
-    #     # Give more weight to MeiliSearch (keyword-based) results
-    #     MEILI_WEIGHT = 2.0  # <-- Key change
-    #     FAISS_WEIGHT = 1.0  # <-- Key change
-
-    #     # Process MeiliSearch results with a higher weight
-    #     for i, doc in enumerate(meili_results):
-    #         doc_id = doc['id']
-    #         fused_scores.setdefault(doc_id, 0)
-    #         fused_scores[doc_id] += MEILI_WEIGHT * (1 / (rrf_k + i + 1))
-
-    #     # Process Faiss results with a standard weight
-    #     for i, doc in enumerate(faiss_results):
-    #         doc_id = doc['id']
-    #         fused_scores.setdefault(doc_id, 0)
-    #         fused_scores[doc_id] += FAISS_WEIGHT * (1 / (rrf_k + i + 1))
-            
-    #     reranked_results = sorted(fused_scores.items(), key=lambda item: item[1], reverse=True)
-    #     final_ids = [doc_id for doc_id, score in reranked_results[:k]]
-        
-    #     print(f"-> [LOG] Final Fused IDs (Weighted): {final_ids}")
-    #     print("="*60 + "\n")
-        
-    #     return final_ids
-    # In apps/ai_assistant/services/retriever.py
-# Make sure Product is imported: from apps.products.models import Product
-
     def search(self, query_text, k=5, filters: str = None):
         """
-        Executes a weighted hybrid search and logs full product names for raw results.
+        Executes a weighted hybrid search using the RRF algorithm to prioritize keyword-based results.
         """
         print("\n" + "="*60)
         print(f"WEIGHTED HYBRID RETRIEVER ACTIVATED | Query: '{query_text}'")
         print("="*60)
 
-        # --- 1. Execute both searches ---
+        # --- 1. Execute both searches concurrently ---
         start_faiss = time.perf_counter()
         faiss_results = self._search_faiss(query_text, k=20)
         end_faiss = time.perf_counter()
@@ -120,37 +65,29 @@ class HybridRetriever:
         meili_results = self._search_meilisearch(query_text, k=20, filters=filters)
         end_meili = time.perf_counter()
 
-        # --- 2. Log raw results with product names ---
+        # --- Log raw results ---
         faiss_ids = [res['id'] for res in faiss_results]
         meili_ids = [res['id'] for res in meili_results]
-        
-        # Fetch product objects to get their names for logging
-        all_retrieved_ids = list(set(faiss_ids + meili_ids))
-        products_in_bulk = Product.objects.in_bulk(all_retrieved_ids)
-
         print(f"-> [TIMER] Faiss Search took: {end_faiss - start_faiss:.4f} seconds")
-        print("   [LOG] Raw Faiss Results:")
-        for pid in faiss_ids:
-            product_name = products_in_bulk.get(pid, "Product not found").product_name
-            print(f"     - (ID: {pid}) {product_name}")
-
+        print(f"   [LOG] Raw Faiss IDs: {faiss_ids}")
         print(f"-> [TIMER] MeiliSearch took: {end_meili - start_meili:.4f} seconds")
-        print("   [LOG] Raw MeiliSearch Results:")
-        for pid in meili_ids:
-            product_name = products_in_bulk.get(pid, "Product not found").product_name
-            print(f"     - (ID: {pid}) {product_name}")
+        print(f"   [LOG] Raw MeiliSearch IDs: {meili_ids}")
 
-        # --- 3. Fuse results (logic is unchanged) ---
+        # --- 2. Fuse results with weighted RRF ---
         fused_scores = {}
         rrf_k = 60
-        MEILI_WEIGHT = 2.0
-        FAISS_WEIGHT = 1.0
 
+        # Give more weight to MeiliSearch (keyword-based) results
+        MEILI_WEIGHT = 2.0  # <-- Key change
+        FAISS_WEIGHT = 1.0  # <-- Key change
+
+        # Process MeiliSearch results with a higher weight
         for i, doc in enumerate(meili_results):
             doc_id = doc['id']
             fused_scores.setdefault(doc_id, 0)
             fused_scores[doc_id] += MEILI_WEIGHT * (1 / (rrf_k + i + 1))
 
+        # Process Faiss results with a standard weight
         for i, doc in enumerate(faiss_results):
             doc_id = doc['id']
             fused_scores.setdefault(doc_id, 0)

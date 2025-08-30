@@ -1,200 +1,567 @@
-
-
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>دستیار هوشمند</title>
+    <title>دستیار هوشمند - فروشگاه آیکو</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/font-face.css">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --primary-color: #007bff;
-            --hover-color: #0056b3;
+            --primary-hover: #0056b3;
+            --secondary-color: #6c757d;
+            --success-color: #28a745;
             --bg-light: #f8f9fa;
-            --border-color: #dee2e6;
-            --text-dark: #343a40;
+            --bg-dark: #343a40;
             --text-light: #6c757d;
+            --text-dark: #212529;
+            --border-color: #dee2e6;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            --gradient: linear-gradient(135deg, #007bff, #0056b3);
         }
-        body { font-family: Vazir, sans-serif; background-color: var(--bg-light); color: var(--text-dark); margin: 0; display: flex; height: 100vh; }
-        .sidebar { width: 280px; background: #fff; border-left: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 15px; box-shadow: 2px 0 5px rgba(0,0,0,0.05); }
-        .sidebar-header { padding: 10px; border-bottom: 1px solid var(--border-color); margin-bottom: 15px; }
-        .new-chat-button { display: block; width: 100%; padding: 12px 15px; background-color: var(--primary-color); color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; text-align: center; text-decoration: none; transition: background-color 0.3s; margin-bottom: 20px;}
-        .new-chat-button:hover { background-color: var(--hover-color); }
-        .conversations-list { list-style: none; padding: 0; margin: 0; overflow-y: auto; }
-        .conversations-list li a { display: block; padding: 12px 15px; text-decoration: none; color: var(--text-dark); border-radius: 6px; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .conversations-list li a:hover { background-color: var(--bg-light); }
-        .conversations-list li a.active { background-color: var(--primary-color); color: white; font-weight: bold; }
-        .chat-container { flex-grow: 1; display: flex; flex-direction: column; height: 100vh; background: #fff; }
-        .chat-box { flex-grow: 1; padding: 20px; overflow-y: auto; }
-        .chat-form { display: flex; padding: 20px; border-top: 1px solid var(--border-color); background: #fdfdfd; }
-        #message-input { flex-grow: 1; border: 1px solid var(--border-color); padding: 10px 15px; border-radius: 20px; font-size: 16px; transition: border-color 0.3s; background: #fefefe; }
-        #message-input:focus { border-color: var(--primary-color); outline: none; box-shadow: 0 0 0 2px rgba(0,123,255,0.2); }
-        #send-button { background-color: var(--primary-color); color: white; border: none; padding: 10px 20px; border-radius: 20px; margin-right: 10px; cursor: pointer; font-size: 16px; transition: background-color 0.3s; }
-        #send-button:hover { background-color: var(--hover-color); }
-        .message { margin-bottom: 20px; display: flex; align-items: flex-start; max-width: 85%; }
-        .message .content { padding: 12px 18px; border-radius: 18px; line-height: 1.6; }
-        .user-message { align-self: flex-start; } /* Changed to start */
-        .user-message .content { background-color: var(--primary-color); color: white; border-bottom-right-radius: 4px; direction: rtl; }
-        .bot-message { align-self: flex-end; } /* Changed to end */
-        .bot-message .content { background-color: #e9ecef; color: var(--text-dark); border-bottom-left-radius: 4px; direction: rtl; }
-        pre { white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: inherit; font-size: inherit; }
-    .conversation-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 5px;
-}
-.conversation-item a {
-    flex-grow: 1; /* باعث می‌شود لینک تمام فضای موجود را بگیرد */
-}
-.delete-btn {
-    background: none;
-    border: none;
-    color: #dc3545;
-    cursor: pointer;
-    padding: 10px;
-    border-radius: 50%;
-    line-height: 1;
-    font-size: 18px; /* اندازه آیکون سطل زباله */
-    display: none; /* در حالت عادی مخفی است */
-}
-.conversation-item:hover .delete-btn {
-    display: inline-block; /* با هاور روی آیتم، دکمه نمایش داده می‌شود */
-}
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Vazir, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .chat-app {
+            width: 100%;
+            max-width: 1200px;
+            height: 90vh;
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            display: flex;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 300px;
+            background: var(--bg-dark);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .new-chat-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .new-chat-btn:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        .conversations-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .conversation-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+            cursor: pointer;
+        }
+
+        .conversation-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .conversation-item.active {
+            background: var(--primary-color);
+        }
+
+        .conversation-link {
+            flex: 1;
+            color: white;
+            text-decoration: none;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .delete-form {
+            display: none;
+        }
+
+        .conversation-item:hover .delete-form {
+            display: block;
+        }
+
+        .delete-btn {
+            background: none;
+            border: none;
+            color: #dc3545;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: background 0.3s ease;
+        }
+
+        .delete-btn:hover {
+            background: rgba(220, 53, 69, 0.1);
+        }
+
+        .chat-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-light);
+        }
+
+        .chat-header {
+            padding: 20px;
+            background: white;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .ai-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        .chat-info h2 {
+            font-size: 18px;
+            margin-bottom: 4px;
+            color: var(--text-dark);
+        }
+
+        .chat-info p {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .message {
+            display: flex;
+            gap: 12px;
+            max-width: 80%;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .user-message {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 16px;
+        }
+
+        .user-message .message-avatar {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .bot-message .message-avatar {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .message-content {
+            padding: 16px;
+            border-radius: 18px;
+            line-height: 1.6;
+            box-shadow: var(--shadow);
+        }
+
+        .user-message .message-content {
+            background: var(--primary-color);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .bot-message .message-content {
+            background: white;
+            color: var(--text-dark);
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-content pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            margin: 0;
+            font-family: inherit;
+            font-size: 14px;
+        }
+
+        .chat-input {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .message-input {
+            flex: 1;
+            border: 2px solid var(--border-color);
+            padding: 14px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s ease;
+            background: var(--bg-light);
+        }
+
+        .message-input:focus {
+            border-color: var(--primary-color);
+            background: white;
+        }
+
+        .send-btn {
+            width: 50px;
+            height: 50px;
+            border: none;
+            background: var(--gradient);
+            color: white;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .send-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+        }
+
+        .send-btn:disabled {
+            background: var(--secondary-color);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background: white;
+            border-radius: 18px;
+            box-shadow: var(--shadow);
+            align-self: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--text-light);
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-4px); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .chat-app {
+                flex-direction: column;
+                height: 100vh;
+                border-radius: 0;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: 200px;
+                border-left: none;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            }
+            
+            .message {
+                max-width: 90%;
+            }
+            
+            body {
+                padding: 0;
+            }
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-light);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--secondary-color);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-color);
+        }
     </style>
 </head>
 <body>
-
-<div class="sidebar">
-    <div class="sidebar-header">
-        <a href="{% url 'ai_assistant:new_chat_view' %}" class="new-chat-button">+ چت جدید</a>
-    </div>
-   <ul class="conversations-list">
-    {% for conv in user_conversations %}
-        <li class="conversation-item">
-            <a href="{% url 'ai_assistant:chat_view_conversation' conv.id %}"
-               class="{% if conv.id|stringformat:"s" == active_conversation_id %}active{% endif %}">
-                {{ conv.title }}
-            </a>
+    <div class="chat-app">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <a href="{% url 'ai_assistant:new_chat_view' %}" class="new-chat-btn">
+                    <i class="fas fa-plus"></i> چت جدید
+                </a>
+            </div>
             
-            <form action="{% url 'ai_assistant:delete_chat_view' conv.id %}" method="post" 
-                  onsubmit="return confirm('آیا از حذف این مکالمه مطمئن هستید؟ این عمل غیرقابل بازگشت است.');">
-                {% csrf_token %}
-                <button type="submit" class="delete-btn" title="حذف مکالمه">
-                    &#128465; </button>
-            </form>
-        </li>
-    {% empty %}
-        <li><span style="color: var(--text-light); padding: 10px;">هنوز مکالمه‌ای شروع نشده.</span></li>
-    {% endfor %}
-</ul>
-</div>
+            <ul class="conversations-list">
+                {% for conv in user_conversations %}
+                <li class="conversation-item {% if conv.id|stringformat:'s' == active_conversation_id %}active{% endif %}">
+                    <a href="{% url 'ai_assistant:chat_view_conversation' conv.id %}" class="conversation-link">
+                        {{ conv.title }}
+                    </a>
+                    <form action="{% url 'ai_assistant:delete_chat_view' conv.id %}" method="post" 
+                          onsubmit="return confirm('آیا از حذف این مکالمه مطمئن هستید؟');" class="delete-form">
+                        {% csrf_token %}
+                        <button type="submit" class="delete-btn" title="حذف مکالمه">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </form>
+                </li>
+                {% empty %}
+                <li style="color: var(--text-light); padding: 20px; text-align: center;">
+                    هنوز مکالمه‌ای شروع نشده
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
 
-<div class="chat-container">
-    <div class="chat-box" id="chat-box">
-        {% if not current_chat_messages %}
-            <div class="message bot-message" style="align-self: center; text-align: center;">
-                <div class="content">
-                    <pre>سلام! من دستیار هوشمند شما هستم. چطور می‌توانم در خرید لپ‌تاپ کمکتان کنم؟</pre>
+        <!-- Main Chat Area -->
+        <div class="chat-main">
+            <div class="chat-header">
+                <div class="ai-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="chat-info">
+                    <h2>هوشیار - دستیار خرید</h2>
+                    <p>همراه شما در انتخاب بهترین لپ‌تاپ</p>
                 </div>
             </div>
-        {% else %}
-            {% for msg in current_chat_messages %}
-                {% if msg.sender == 'user' %}
-                    <div class="message user-message">
-                        <div class="content"><pre>{{ msg.content }}</pre></div>
+
+            <div class="chat-messages" id="chat-messages">
+                {% if not current_chat_messages %}
+                <div class="message bot-message">
+                    <div class="message-avatar">
+                        <i class="fas fa-robot"></i>
                     </div>
+                    <div class="message-content">
+                        <pre>سلام! من هوشیار، دستیار هوشمند شما هستم. چطور می‌توانم در انتخاب و خرید لپ‌تاپ کمکتان کنم؟</pre>
+                    </div>
+                </div>
                 {% else %}
-                    <div class="message bot-message">
-                        <div class="content"><pre>{{ msg.content }}</pre></div>
+                {% for msg in current_chat_messages %}
+                <div class="message {% if msg.sender == 'user' %}user-message{% else %}bot-message{% endif %}">
+                    <div class="message-avatar">
+                        <i class="fas fa-{% if msg.sender == 'user' %}user{% else %}robot{% endif %}"></i>
                     </div>
+                    <div class="message-content">
+                        <pre>{{ msg.content }}</pre>
+                    </div>
+                </div>
+                {% endfor %}
                 {% endif %}
-            {% endfor %}
-        {% endif %}
+            </div>
+
+            <form class="chat-input" id="chat-form">
+                {% csrf_token %}
+                <input type="text" class="message-input" id="message-input" 
+                       placeholder="پیام خود را بنویسید..." autocomplete="off">
+                <button type="submit" class="send-btn" id="send-button" disabled>
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </form>
+        </div>
     </div>
-    <form class="chat-form" id="chat-form">
-        {% csrf_token %}
-        <input type="text" id="message-input" placeholder="پیام خود را بنویسید..." autocomplete="off">
-        <button type="submit" id="send-button">ارسال</button>
-    </form>
-</div>
 
-<script>
-    const chatForm = document.getElementById('chat-form');
-    const messageInput = document.getElementById('message-input');
-    const chatBox = document.getElementById('chat-box');
-    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatForm = document.getElementById('chat-form');
+            const messageInput = document.getElementById('message-input');
+            const sendButton = document.getElementById('send-button');
+            const chatMessages = document.getElementById('chat-messages');
+            const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
-    window.onload = () => { chatBox.scrollTop = chatBox.scrollHeight; };
+            // Auto-scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
 
-    chatForm.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const userMessage = messageInput.value.trim();
-        if (userMessage === '') return;
-
-        appendMessage(userMessage, 'user');
-        messageInput.value = '';
-
-        // Create a new, empty message bubble for the bot's response
-        const botMessageElement = createMessageElement('bot');
-        chatBox.appendChild(botMessageElement);
-        chatBox.scrollTop = chatBox.scrollHeight;
-
-        try {
-            const response = await fetch(window.location.pathname, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
-                body: JSON.stringify({ message: userMessage }),
+            // Enable/disable send button based on input
+            messageInput.addEventListener('input', function() {
+                sendButton.disabled = messageInput.value.trim() === '';
             });
 
-            if (!response.ok) {
-                botMessageElement.querySelector('pre').textContent = 'An error occurred on the server.';
-                return;
+            chatForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const userMessage = messageInput.value.trim();
+                if (userMessage === '') return;
+
+                // Add user message
+                addMessage(userMessage, 'user');
+                messageInput.value = '';
+                sendButton.disabled = true;
+
+                // Show typing indicator
+                const typingIndicator = createTypingIndicator();
+                chatMessages.appendChild(typingIndicator);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+
+                try {
+                    const response = await fetch(window.location.pathname, {
+                        method: 'POST',
+                        headers: { 
+                            'Content-Type': 'application/json', 
+                            'X-CSRFToken': csrftoken 
+                        },
+                        body: JSON.stringify({ message: userMessage }),
+                    });
+
+                    // Remove typing indicator
+                    chatMessages.removeChild(typingIndicator);
+
+                    if (!response.ok) {
+                        throw new Error('Server error');
+                    }
+
+                    const reader = response.body.getReader();
+                    const decoder = new TextDecoder();
+                    let botMessageElement = createMessageElement('', 'bot');
+                    chatMessages.appendChild(botMessageElement);
+
+                    while (true) {
+                        const { value, done } = await reader.read();
+                        if (done) break;
+
+                        const chunk = decoder.decode(value);
+                        botMessageElement.querySelector('pre').textContent += chunk;
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                    }
+
+                } catch (error) {
+                    console.error('Error:', error);
+                    addMessage('خطا در ارتباط با سرور. لطفاً دوباره تلاش کنید.', 'bot');
+                }
+            });
+
+            function addMessage(text, sender) {
+                const messageElement = createMessageElement(text, sender);
+                chatMessages.appendChild(messageElement);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
             }
 
-            // Read the response as a stream
-            const reader = response.body.getReader();
-            const decoder = new TextDecoder();
-
-            while (true) {
-                const { value, done } = await reader.read();
-                if (done) break;
-
-                const chunk = decoder.decode(value);
-                // Append each chunk of text to the bot's message bubble
-                botMessageElement.querySelector('pre').textContent += chunk;
-                chatBox.scrollTop = chatBox.scrollHeight;
+            function createMessageElement(text, sender) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${sender}-message`;
+                
+                messageDiv.innerHTML = `
+                    <div class="message-avatar">
+                        <i class="fas fa-${sender === 'user' ? 'user' : 'robot'}"></i>
+                    </div>
+                    <div class="message-content">
+                        <pre>${text}</pre>
+                    </div>
+                `;
+                
+                return messageDiv;
             }
 
-        } catch (error) {
-            console.error('Error:', error);
-            botMessageElement.querySelector('pre').textContent = 'A connection error occurred.';
-        }
-    });
-
-    function createMessageElement(sender) {
-        const messageWrapper = document.createElement('div');
-        messageWrapper.classList.add('message', sender === 'user' ? 'user-message' : 'bot-message');
-        
-        const contentDiv = document.createElement('div');
-        contentDiv.classList.add('content');
-        
-        const preTag = document.createElement('pre');
-        contentDiv.appendChild(preTag);
-        messageWrapper.appendChild(contentDiv);
-        
-        return messageWrapper;
-    }
-
-    function appendMessage(message, sender) {
-        const messageElement = createMessageElement(sender);
-        messageElement.querySelector('pre').textContent = message;
-        chatBox.appendChild(messageElement);
-        chatBox.scrollTop = chatBox.scrollHeight;
-    }
-</script>
+            function createTypingIndicator() {
+                const typingDiv = document.createElement('div');
+                typingDiv.className = 'typing-indicator';
+                typingDiv.innerHTML = `
+                    <div class="message-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="typing-dots">
+                        <span class="typing-dot"></span>
+                        <span class="typing-dot"></span>
+                        <span class="typing-dot"></span>
+                    </div>
+                `;
+                return typingDiv;
+            }
+        });
+    </script>
 </body>
 </html>
-

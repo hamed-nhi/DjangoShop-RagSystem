@@ -1,0 +1,1384 @@
+{% comment %} <!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دستیار هوشمند</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #10b981;
+            --dark: #1f2937;
+            --light: #f9fafb;
+            --gray: #6b7280;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --user-bubble: #6366f1;
+            --bot-bubble: #f3f4f6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Vazirmatn, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fb;
+        }
+
+        .floating-chat {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 10000;
+        }
+
+        .chat-btn {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+            box-shadow: 0 6px 25px rgba(99, 102, 241, 0.5);
+            transition: all 0.3s ease;
+            position: relative;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .chat-btn:hover {
+            transform: scale(1.1) translateY(-5px);
+            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.6);
+        }
+
+        .chat-btn .badge {
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            background: var(--danger);
+            color: white;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
+        .chat-container {
+            position: absolute;
+            bottom: 85px;
+            right: 0;
+            width: 380px;
+            height: 500px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+
+        .chat-container.active {
+            display: flex;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .chat-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .chat-title img {
+            width: 30px;
+            height: 30px;
+        }
+
+        .chat-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .chat-btn-action {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+
+        .chat-btn-action:hover {
+            opacity: 1;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: var(--light);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            display: flex;
+            gap: 12px;
+            animation: messageAppear 0.3s ease;
+        }
+
+        @keyframes messageAppear {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 16px;
+        }
+
+        .user .message-avatar {
+            background: var(--user-bubble);
+            color: white;
+        }
+
+        .bot .message-avatar {
+            background: var(--dark);
+            color: white;
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .user .message-content {
+            background: var(--user-bubble);
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+
+        .bot .message-content {
+            background: var(--bot-bubble);
+            color: var(--dark);
+            border-bottom-left-radius: 5px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .typing-indicator.active {
+            display: flex;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--gray);
+            border-radius: 50%;
+            animation: typingAnimation 1.4s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(1) { animation-delay: 0s; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typingAnimation {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-5px); }
+        }
+
+        .chat-input-container {
+            padding: 15px;
+            background: white;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            gap: 12px;
+        }
+
+        .chat-input {
+            flex: 1;
+            border: 2px solid #e5e7eb;
+            padding: 12px 16px;
+            border-radius: 25px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .chat-input:focus {
+            border-color: var(--primary);
+        }
+
+        .chat-send {
+            width: 50px;
+            height: 50px;
+            border: none;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-send:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .chat-footer {
+            padding: 12px 20px;
+            background: #f8fafc;
+            border-top: 1px solid #e5e7eb;
+            text-align: center;
+            font-size: 12px;
+            color: var(--gray);
+        }
+
+        .full-chat-link {
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: color 0.3s ease;
+        }
+
+        .full-chat-link:hover {
+            color: var(--primary-dark);
+        }
+
+        /* اسکرول بار سفارشی */
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 3px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background: #9ca3af;
+        }
+
+        /* حالت موبایل */
+        @media (max-width: 480px) {
+            .floating-chat {
+                bottom: 20px;
+                right: 20px;
+            }
+
+            .chat-btn {
+                width: 60px;
+                height: 60px;
+                font-size: 24px;
+            }
+
+            .chat-container {
+                width: 90vw;
+                height: 70vh;
+                right: 5vw;
+                bottom: 75px;
+            }
+
+            .message-content {
+                max-width: 80%;
+            }
+        }
+
+        /* انیمیشن‌های اضافی */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .welcome-message {
+            text-align: center;
+            padding: 15px;
+            background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
+            border-radius: 12px;
+            margin-bottom: 15px;
+            animation: slideIn 0.5s ease;
+        }
+
+        .suggested-questions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .suggestion-chip {
+            background: #e0e7ff;
+            color: var(--primary-dark);
+            padding: 8px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .suggestion-chip:hover {
+            background: #c7d2fe;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+
+<div class="floating-chat" data-chat-url="{% url 'ai_assistant:chat_view' %}">
+    <div class="chat-btn" id="chat-toggle">
+        <i class="fas fa-comment-dots"></i>
+        <div class="badge" id="notification-badge" style="display: none;"></div>
+    </div>
+    
+    <div class="chat-container" id="chat-container">
+        <div class="chat-header">
+            <div class="chat-title">
+                <i class="fas fa-robot"></i>
+                دستیار هوشمند
+            </div>
+            <div class="chat-actions">
+                <button class="chat-btn-action" id="chat-minimize">
+                    <i class="fas fa-minus"></i>
+                </button>
+                <button class="chat-btn-action" id="chat-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="chat-messages" id="chat-messages">
+            <!-- پیام‌های اولیه اینجا قرار می‌گیرند -->
+            <div class="message bot">
+                <div class="message-avatar"><i class="fas fa-robot"></i></div>
+                <div class="message-content"><p>سلام! چطور می‌توانم کمکتان کنم؟</p></div>
+            </div>
+        </div>
+        
+        <div class="typing-indicator" id="typing-indicator">
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+        </div>
+        
+        <div class="chat-input-container">
+            <input type="text" class="chat-input" id="chat-input" placeholder="پیام خود را بنویسید..." autocomplete="off">
+            <button class="chat-send" id="chat-send">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+        
+        <div class="chat-footer">
+            <!-- تغییر: یک 'id' به این لینک اضافه شده است -->
+            <a href="{% url 'ai_assistant:chat_view' %}" id="full-chat-link" target="_blank" class="full-chat-link">
+                <i class="fas fa-external-link-alt"></i>
+                باز کردن چت کامل
+            </a>
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html> {% endcomment %}
+
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دستیار هوشمند</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #10b981;
+            --dark: #1f2937;
+            --light: #f9fafb;
+            --gray: #6b7280;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --user-bubble: #6366f1;
+            --bot-bubble: #f3f4f6;
+            --code-bg: #2d2d2d;
+            --table-header: #f0f4ff;
+            --table-border: #e5e7eb;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Vazirmatn, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fb;
+        }
+
+        .floating-chat {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 10000;
+        }
+        /* استایل‌های بهبود یافته برای محتوای ساختاریافته */
+.message-content h1, 
+.message-content h2, 
+.message-content h3 {
+    margin: 15px 0 10px 0;
+    color: var(--primary-dark);
+    line-height: 1.3;
+}
+
+.message-content p {
+    margin-bottom: 12px;
+    line-height: 1.6;
+}
+
+.message-content ul, 
+.message-content ol {
+    margin: 10px 0;
+    padding-right: 25px;
+}
+
+.message-content li {
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+.message-content code {
+    background-color: var(--code-bg);
+    color: #f8f8f2;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Fira Code', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace;
+    font-size: 0.9em;
+    direction: ltr;
+    display: inline-block;
+}
+
+.message-content pre {
+    background-color: var(--code-bg);
+    color: #f8f8f2;
+    padding: 15px;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 15px 0;
+    font-family: 'Fira Code', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace;
+    line-height: 1.4;
+    direction: ltr;
+    text-align: left;
+}
+
+.message-content pre code {
+    background: none;
+    padding: 0;
+    border-radius: 0;
+    font-size: 0.95em;
+}
+
+.message-content blockquote {
+    border-right: 4px solid var(--primary);
+    padding: 12px 20px 12px 0;
+    margin: 15px 0;
+    font-style: italic;
+    color: var(--gray);
+    background-color: #f9f9f9;
+    border-radius: 0 8px 8px 0;
+}
+
+.message-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 0.9em;
+}
+
+.message-content th, 
+.message-content td {
+    padding: 12px;
+    text-align: right;
+    border: 1px solid var(--table-border);
+}
+
+.message-content th {
+    background-color: var(--table-header);
+    font-weight: bold;
+    color: var(--primary-dark);
+}
+
+.message-content tr:nth-child(even) {
+    background-color: #f9fafb;
+}
+
+.message-content hr {
+    border: none;
+    height: 1px;
+    background-color: #e5e7eb;
+    margin: 20px 0;
+}
+
+.message-content strong {
+    font-weight: bold;
+    color: var(--dark);
+}
+
+.message-content em {
+    font-style: italic;
+}
+
+/* برای نمایش بهتر در موبایل */
+@media (max-width: 480px) {
+    .message-content table {
+        font-size: 0.8em;
+    }
+    
+    .message-content th, 
+    .message-content td {
+        padding: 8px;
+    }
+    
+    .message-content pre {
+        padding: 10px;
+        font-size: 0.85em;
+    }
+}
+
+        .chat-btn {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+            box-shadow: 0 6px 25px rgba(99, 102, 241, 0.5);
+            transition: all 0.3s ease;
+            position: relative;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .chat-btn:hover {
+            transform: scale(1.1) translateY(-5px);
+            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.6);
+        }
+
+        .chat-btn .badge {
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            background: var(--danger);
+            color: white;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
+        .chat-container {
+            position: absolute;
+            bottom: 85px;
+            right: 0;
+            width: 450px; /* افزایش عرض */
+            height:  500px;/* افزایش ارتفاع */
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+
+        .chat-container.active {
+            display: flex;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .chat-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .chat-title img {
+            width: 30px;
+            height: 30px;
+        }
+
+        .chat-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .chat-btn-action {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+
+        .chat-btn-action:hover {
+            opacity: 1;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: var(--light);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            display: flex;
+            gap: 12px;
+            animation: messageAppear 0.3s ease;
+        }
+
+        @keyframes messageAppear {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 16px;
+        }
+
+        .user .message-avatar {
+            background: var(--user-bubble);
+            color: white;
+        }
+
+        .bot .message-avatar {
+            background: var(--dark);
+            color: white;
+        }
+
+        .message-content {
+            max-width: 80%; /* افزایش عرض پیام‌ها */
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .user .message-content {
+            background: var(--user-bubble);
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+
+        .bot .message-content {
+            background: var(--bot-bubble);
+            color: var(--dark);
+            border-bottom-left-radius: 5px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        /* استایل‌های جدید برای محتوای ساختاریافته */
+        .message-content h1, 
+        .message-content h2, 
+        .message-content h3 {
+            margin: 10px 0;
+            color: var(--primary-dark);
+        }
+
+        .message-content p {
+            margin-bottom: 10px;
+        }
+
+        .message-content ul, 
+        .message-content ol {
+            margin: 10px 0;
+            padding-right: 20px;
+        }
+
+        .message-content li {
+            margin-bottom: 5px;
+        }
+
+        .message-content code {
+            background-color: var(--code-bg);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+
+        .message-content pre {
+            background-color: var(--code-bg);
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 10px 0;
+            font-family: monospace;
+            line-height: 1.4;
+        }
+
+        .message-content blockquote {
+            border-right: 4px solid var(--primary);
+            padding-right: 15px;
+            margin: 15px 0;
+            font-style: italic;
+            color: var(--gray);
+        }
+
+        .message-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        .message-content th, 
+        .message-content td {
+            padding: 10px;
+            text-align: right;
+            border: 1px solid var(--table-border);
+        }
+
+        .message-content th {
+            background-color: var(--table-header);
+            font-weight: bold;
+        }
+
+        .message-content tr:nth-child(even) {
+            background-color: #f9fafb;
+        }
+
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .typing-indicator.active {
+            display: flex;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--gray);
+            border-radius: 50%;
+            animation: typingAnimation 1.4s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(1) { animation-delay: 0s; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typingAnimation {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-5px); }
+        }
+
+        .chat-input-container {
+            padding: 15px;
+            background: white;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            gap: 12px;
+        }
+
+        .chat-input {
+            flex: 1;
+            border: 2px solid #e5e7eb;
+            padding: 12px 16px;
+            border-radius: 25px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .chat-input:focus {
+            border-color: var(--primary);
+        }
+
+        .chat-send {
+            width: 50px;
+            height: 50px;
+            border: none;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-send:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .chat-footer {
+            padding: 12px 20px;
+            background: #f8fafc;
+            border-top: 1px solid #e5e7eb;
+            text-align: center;
+            font-size: 12px;
+            color: var(--gray);
+        }
+
+        .full-chat-link {
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: color 0.3s ease;
+        }
+
+        .full-chat-link:hover {
+            color: var(--primary-dark);
+        }
+
+        /* اسکرول بار سفارشی */
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 3px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background: #9ca3af;
+        }
+
+        /* حالت موبایل */
+        @media (max-width: 480px) {
+            .floating-chat {
+                bottom: 20px;
+                right: 20px;
+            }
+
+            .chat-btn {
+                width: 60px;
+                height: 60px;
+                font-size: 24px;
+            }
+
+            .chat-container {
+                width: 90vw;
+                height: 70vh;
+                right: 5vw;
+                bottom: 75px;
+            }
+
+            .message-content {
+                max-width: 80%;
+            }
+        }
+
+        /* انیمیشن‌های اضافی */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .welcome-message {
+            text-align: center;
+            padding: 15px;
+            background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
+            border-radius: 12px;
+            margin-bottom: 15px;
+            animation: slideIn 0.5s ease;
+        }
+
+        .suggested-questions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .suggestion-chip {
+            background: #e0e7ff;
+            color: var(--primary-dark);
+            padding: 8px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .suggestion-chip:hover {
+            background: #c7d2fe;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+
+<div class="floating-chat" data-chat-url="{% url 'ai_assistant:chat_view' %}">
+    <div class="chat-btn" id="chat-toggle">
+        <i class="fas fa-comment-dots"></i>
+        <div class="badge" id="notification-badge" style="display: none;"></div>
+    </div>
+    
+    <div class="chat-container" id="chat-container">
+        <div class="chat-header">
+            <div class="chat-title">
+                <i class="fas fa-robot"></i>
+                دستیار هوشمند
+            </div>
+            <div class="chat-actions">
+                <button class="chat-btn-action" id="chat-minimize">
+                    <i class="fas fa-minus"></i>
+                </button>
+                <button class="chat-btn-action" id="chat-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="chat-messages" id="chat-messages">
+            <!-- پیام‌های اولیه اینجا قرار می‌گیرند -->
+            <div class="message bot">
+                <div class="message-avatar"><i class="fas fa-robot"></i></div>
+                <div class="message-content"><p>سلام! چطور می‌توانم کمکتان کنم؟</p></div>
+            </div>
+        </div>
+        
+        <div class="typing-indicator" id="typing-indicator">
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+        </div>
+        
+        <div class="chat-input-container">
+            <input type="text" class="chat-input" id="chat-input" placeholder="پیام خود را بنویسید..." autocomplete="off">
+            <button class="chat-send" id="chat-send">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+        
+        <div class="chat-footer">
+            <!-- تغییر: یک 'id' به این لینک اضافه شده است -->
+            <a href="{% url 'ai_assistant:chat_view' %}" id="full-chat-link" target="_blank" class="full-chat-link">
+                <i class="fas fa-external-link-alt"></i>
+                باز کردن چت کامل
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // --- پیدا کردن تمام عناصر مورد نیاز ---
+    const chatToggle = document.getElementById('chat-toggle');
+    const chatContainer = document.getElementById('chat-container');
+    const chatClose = document.getElementById('chat-close');
+    const chatMinimize = document.getElementById('chat-minimize');
+    const chatInput = document.getElementById('chat-input');
+    const chatSend = document.getElementById('chat-send');
+    const chatMessages = document.getElementById('chat-messages');
+    const typingIndicator = document.getElementById('typing-indicator');
+    const floatingChatDiv = document.querySelector('.floating-chat');
+    // --- جدید: پیدا کردن لینک صفحه کامل ---
+    const fullChatLink = document.getElementById('full-chat-link');
+
+    if (!chatToggle || !chatContainer || !floatingChatDiv) {
+        console.error('Chat widget essential elements not found. Script terminated.');
+        return;
+    }
+
+    let isChatOpen = false;
+    let isWaitingForResponse = false;
+    let chatUrl = '';
+    // --- جدید: متغیری برای ذخیره شناسه مکالمه ---
+    let currentWidgetConversationId = null;
+
+    // --- اعتبارسنجی URL ---
+    const chatUrlBase = floatingChatDiv.dataset.chatUrl;
+    if (!chatUrlBase || chatUrlBase === 'undefined' || chatUrlBase.trim() === '') {
+        console.error('ERROR: data-chat-url is not configured in the HTML.');
+        if (chatInput) {
+            chatInput.placeholder = 'چت غیرفعال است.';
+            chatInput.disabled = true;
+        }
+        if (chatSend) chatSend.disabled = true;
+    } else {
+        chatUrl = chatUrlBase; // آدرس پایه را ذخیره می‌کنیم
+    }
+
+    // --- اتصال رویدادها (Event Listeners) ---
+    chatToggle.addEventListener('click', toggleChat);
+    if (chatClose) chatClose.addEventListener('click', closeChat);
+    if (chatMinimize) chatMinimize.addEventListener('click', closeChat);
+    
+    async function toggleChat() {
+        if (!isChatOpen) {
+            await openChat();
+        } else {
+            closeChat();
+        }
+    }
+
+    async function openChat() {
+        chatContainer.classList.add('active');
+        isChatOpen = true;
+        if (chatInput) chatInput.focus();
+        
+        // اگر شناسه مکالمه را نداریم، آن را از سرور درخواست می‌کنیم
+        if (!currentWidgetConversationId) {
+            await initializeWidgetSession();
+        }
+    }
+
+    function closeChat() {
+        chatContainer.classList.remove('active');
+        isChatOpen = false;
+    }
+
+    // رویدادهای مربوط به ارسال پیام
+    if (chatSend && !chatSend.disabled) {
+        chatSend.addEventListener('click', sendMessage);
+    }
+    if (chatInput && !chatInput.disabled) {
+        chatInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') sendMessage();
+        });
+    }
+
+    // --- تابع جدید برای دریافت شناسه مکالمه ---
+    async function initializeWidgetSession() {
+        try {
+            // یک درخواست GET برای گرفتن یا ایجاد مکالمه ارسال می‌کنیم
+            const response = await fetch(`${chatUrl}?widget=true`, {
+                method: 'GET',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            });
+            if (!response.ok) throw new Error('Failed to initialize session');
+            const data = await response.json();
+            
+            currentWidgetConversationId = data.conversation_id;
+            console.log('Widget session initialized with ID:', currentWidgetConversationId);
+
+            // لینک صفحه کامل را با شناسه جدید به‌روزرسانی می‌کنیم
+            if (fullChatLink && currentWidgetConversationId) {
+                const baseUrl = chatUrl.endsWith('/') ? chatUrl : chatUrl + '/';
+                fullChatLink.href = `${baseUrl}${currentWidgetConversationId}/`;
+            }
+        } catch (error) {
+            console.error("Could not initialize widget session:", error);
+            addMessage('خطا در برقراری ارتباط اولیه با سرور.', 'bot');
+            if(chatInput) chatInput.disabled = true;
+            if(chatSend) chatSend.disabled = true;
+        }
+    }
+
+    // --- تغییر: تابع sendMessage اکنون از شناسه مکالمه استفاده می‌کند ---
+    async function sendMessage() {
+        const message = chatInput.value.trim();
+        if (!message || isWaitingForResponse) return;
+
+        if (!currentWidgetConversationId) {
+            await initializeWidgetSession();
+            if(!currentWidgetConversationId) {
+                 addMessage('خطا: ارتباط برقرار نشد. پنجره را بسته و دوباره باز کنید.', 'bot');
+                 return;
+            }
+        }
+
+        addMessage(message, 'user');
+        chatInput.value = '';
+        isWaitingForResponse = true;
+        if (typingIndicator) typingIndicator.classList.add('active');
+        scrollToBottom();
+
+        // آدرس URL برای ارسال پیام باید به مکالمه خاص اشاره کند
+        const postUrl = `${chatUrl}${currentWidgetConversationId}/?widget=true`;
+
+        try {
+            const response = await fetch(postUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': getCSRFToken(),
+                },
+                body: JSON.stringify({ message: message })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ error: 'خطای ناشناخته در سرور.' }));
+                addMessage(errorData.error || 'خطا در ارتباط با سرور.', 'bot');
+                throw new Error(`Server error: ${response.status}`);
+            }
+            
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            
+            const messageDiv = createMessageElement('bot');
+            const responseElement = messageDiv.querySelector('.streaming-response');
+            if (chatMessages) chatMessages.appendChild(messageDiv);
+            
+            let botResponse = '';
+            while (true) {
+                const { value, done } = await reader.read();
+                if (done) break;
+
+                const chunk = decoder.decode(value, { stream: true });
+                botResponse += chunk;
+                if (responseElement) responseElement.textContent = botResponse;
+                scrollToBottom();
+            }
+            
+            // پس از اتمام پاسخ، محتوای ساختاریافته را پردازش می‌کنیم
+            formatStructuredContent(responseElement);
+        } catch (error) {
+            console.error('Chat Error:', error.message);
+        } finally {
+            if (typingIndicator) typingIndicator.classList.remove('active');
+            isWaitingForResponse = false;
+        }
+    }
+    
+    function createMessageElement(sender) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${sender}`;
+        const contentHtml = sender === 'bot' ? '<div class="streaming-response"></div>' : '<div></div>';
+        messageDiv.innerHTML = `
+            <div class="message-avatar"><i class="fas fa-${sender === 'user' ? 'user' : 'robot'}"></i></div>
+            <div class="message-content">${contentHtml}</div>
+        `;
+        return messageDiv;
+    }
+    
+    function addMessage(text, sender) {
+        const messageDiv = createMessageElement(sender);
+        const contentDiv = messageDiv.querySelector('.message-content > div');
+        if (contentDiv) contentDiv.innerHTML = text;
+        if (chatMessages) {
+            chatMessages.appendChild(messageDiv);
+            scrollToBottom();
+        }
+    }
+
+function formatStructuredContent(element) {
+    if (!element) return;
+    
+    let content = element.innerHTML;
+    
+    // 1. تبدیل سرتیترها
+    content = content.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+    content = content.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+    content = content.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+    
+    // 2. تبدیل لیست‌ها (با پشتیبانی از لیست‌های چندسطری)
+    content = content.replace(/^[-*] (.*$)/gim, '<li>$1</li>');
+    content = content.replace(/(<li>.*<\/li>)(?=\s*<li>|$)/gims, '<ul>$1</ul>');
+    
+    // 3. تبدیل کد و بلوک‌های کد
+    content = content.replace(/`([^`]+)`/gim, '<code>$1</code>');
+    content = content.replace(/```(\w+)?\s([^`]+)```/gims, '<pre><code class="language-$1">$2</code></pre>');
+    content = content.replace(/```([^`]+)```/gims, '<pre><code>$1</code></pre>');
+    
+    // 4. تبدیل نقل قول
+    content = content.replace(/^> (.*$)/gim, '<blockquote>$1</blockquote>');
+    
+    // 5. تبدیل جداول (با پشتیبانی از جداول Markdown)
+    content = content.replace(/\|(.+)\|/g, function(match, row) {
+        const cells = row.split('|').filter(cell => cell.trim() !== '');
+        if (cells.length > 0) {
+            return '<tr><td>' + cells.join('</td><td>') + '</td></tr>';
+        }
+        return match;
+    });
+    
+    // 6. تبدیل خطوط افقی
+    content = content.replace(/^---$/gim, '<hr>');
+    
+    // 7. تبدیل متن پررنگ و مورب
+    content = content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    content = content.replace(/\*(.*?)\*/g, '<em>$1</em>');
+    
+    // 8. اضافه کردن پاراگراف‌ها برای متن‌های طولانی
+    content = content.replace(/([^\n<>])(\n)([^\n<>])/g, '$1<br>$3');
+    
+    element.innerHTML = content;
+}
+
+    function scrollToBottom() {
+        if (chatMessages) {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+    }
+
+    function getCSRFToken() {
+        const cookie = document.cookie.split('; ').find(row => row.startsWith('csrftoken='));
+        return cookie ? cookie.split('=')[1] : '';
+    }
+});
+</script>
+
+</body>
+</html>

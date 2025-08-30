@@ -20,6 +20,8 @@ class Conversation(models.Model):
     
     title = models.CharField(max_length=200, default="چت جدید")
     created_at = models.DateTimeField(auto_now_add=True)
+    is_widget = models.BooleanField(default=False)  # جدید
+
 
     def __str__(self):
         # We use str(self.user) to be compatible with any user model's __str__ method.

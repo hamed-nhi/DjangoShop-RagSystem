@@ -8,13 +8,12 @@ from . import hybrid_retriever
 from middlewares.middlewares import RequestMiddleware
 from typing import List, Optional
 from .global_services import hybrid_retriever
+import locale
 
-from typing import List, Optional
-from langchain_core.tools import tool
-from apps.products.models import Product
-from apps.orders.shop_card import ShopCart
-from .global_services import hybrid_retriever
-from middlewares.middlewares import RequestMiddleware
+try:
+    locale.setlocale(locale.LC_ALL, 'fa_IR.UTF-8')
+except locale.Error:
+    locale.setlocale(locale.LC_ALL, '')
 
 @tool
 def search_products(
@@ -35,7 +34,7 @@ def search_products(
     # --- New, Smarter Logic ---
     # If the user gives an upper limit but no lower limit, create a reasonable lower limit.
     if price_max and not price_min and not price_around:
-        # Assume the user wants products in the top 15% of their budget range.
+        # Assume the user wants products in the top 30% of their budget range.
         price_min = int(price_max * 0.85) 
         print(f"   -> 'price_max' without 'price_min' detected. Calculated new range: {price_min}-{price_max}")
 
@@ -75,28 +74,28 @@ def search_products(
 
         results = ["Here are the best matches found in your specified price range:\n"]
         for p in final_products:
-            results.append(f"- Name: {p.product_name} (ID: {p.id})\n  Price: {p.price} Toman")
+            results.append(f"- Name: {p.product_name} (ID: {p.id})\n  Price: {p.price} تومان")
         return "\n".join(results)
     except Exception as e:
         return f"An error occurred while searching for products: {e}"
 
 @tool
 def compare_products(product_ids: List[int]) -> str:
-    """Use this tool when the user explicitly asks to compare two or more products."""
-    print(f"--- Compare products tool invoked for products: {product_ids} ---")
+    """زمانی از این ابزار استفاده کن که کاربر صراحتاً درخواست مقایسه دو یا چند محصول را دارد."""
+    print(f"--- ابزار مقایسه فراخوانی شد برای محصولات: {product_ids} ---")
     if not product_ids or len(product_ids) < 2:
-        return "At least two product IDs are required for comparison."
+        return "برای مقایسه حداقل به دو شناسه محصول نیاز است."
     try:
         products = Product.objects.filter(id__in=product_ids).prefetch_related('product_features__feature')
         if products.count() != len(product_ids):
-            return "One or more products with the given IDs were not found."
+            return "یک یا چند محصول با شناسه‌های داده شده یافت نشد."
         all_features = set()
         product_data = {}
         for p in products:
             features = {pf.feature.feature_name: pf.value for pf in p.product_features.all()}
             product_data[p.id] = {'name': p.product_name, 'features': features}
             all_features.update(features.keys())
-        header = "| Feature | " + " | ".join([p.product_name[:20] for p in products]) + " |"
+        header = "| ویژگی | " + " | ".join([p.product_name[:20] for p in products]) + " |"
         separator = "|---|" * (len(products) + 1)
         rows = [header, separator]
         for feature in sorted(list(all_features)):
@@ -105,23 +104,23 @@ def compare_products(product_ids: List[int]) -> str:
                 value = product_data[p.id]['features'].get(feature, '---')
                 row += f" {value} |"
             rows.append(row)
-        return "Product Comparison Table:\n" + "\n".join(rows)
+        return "جدول مقایسه محصولات:\n" + "\n".join(rows)
     except Exception as e:
-        return f"An error occurred while comparing products: {e}"
+        return f"هنگام مقایسه محصولات خطایی رخ داد: {e}"
 
 @tool
 def add_to_cart(product_id: int) -> str:
-    """Use this tool when the user intends to buy and wants to add a product to their shopping cart."""
-    print(f"--- Add to cart tool invoked for product: {product_id} ---")
+    """زمانی از این ابزار استفاده کن که کاربر قصد خرید دارد و می‌خواهد محصولی را به سبد خرید اضافه کند."""
+    print(f"--- ابزار افزودن به سبد خرید فراخوانی شد برای محصول: {product_id} ---")
     try:
         request = RequestMiddleware(get_response=None).thread_local.current_request
         if not request:
-            return "System error: Could not access the shopping cart."
+            return "خطای سیستمی: امکان دسترسی به سبد خرید وجود ندارد."
         product = Product.objects.get(id=product_id)
         cart = ShopCart(request)
         cart.add(product, 1)
-        return f"Product '{product.product_name}' was successfully added to your cart."
+        return f"محصول '{product.product_name}' با موفقیت به سبد خرید شما اضافه شد."
     except Product.DoesNotExist:
-        return f"Product with ID {product_id} not found."
+        return f"محصولی با شناسه {product_id} یافت نشد."
     except Exception as e:
-        return f"An error occurred while adding the product to the cart: {e}"
+        return f"هنگام افزودن محصول به سبد خرید خطایی رخ داد: {e}"
