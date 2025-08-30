@@ -30,7 +30,9 @@
     {# Remove this line if you want to completely manage messages via JS #}
     {# If you keep it, standard Django messages will also show up. #}
     {% comment %} {% include "partials/messages.html" %} {% endcomment %} 
-
+<!-- در انتهای فایل main_template.html -->
+    
+    {% include 'ai_assistant/partials/chat_widget.html' %}
     {% block content %}{% endblock content %}
     {% include "partials/footer.html" %}
 
@@ -40,7 +42,8 @@
     <script src="{% static "js/number.js" %}"></script>
     <script src="{% static "js/main.js" %}"></script>
     <script src="{% static "vendor/nouislider/nouislider.min.js" %}"></script>
-    
+    <script src="{% static "js/chat_widget.js" %}"></script>
+
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     
     {# SweetAlert2 JS (optional, if you're using it, load it here) #}
