@@ -14,6 +14,47 @@ from langchain_core.messages import HumanMessage, AIMessage
 
 # تنظیم لاگر
 logger = logging.getLogger(__name__)
+from apps.products.models import Product
+import json
+
+# +++ ویوی جدید برای API +++
+@login_required
+@require_http_methods(["POST"])
+def get_product_details_api(request):
+    """
+    یک API داخلی برای دریافت اطلاعات تکمیلی محصولات (لینک و تصویر)
+    بر اساس لیستی از شناسه‌ها.
+    """
+    try:
+        data = json.loads(request.body)
+        product_ids = data.get('ids', [])
+
+        if not isinstance(product_ids, list):
+            return JsonResponse({'error': 'ورودی باید یک لیست از شناسه‌ها باشد.'}, status=400)
+
+        # حذف شناسه‌های تکراری و اطمینان از عددی بودن آنها
+        unique_ids = set(int(pid) for pid in product_ids)
+        
+        products = Product.objects.filter(id__in=unique_ids)
+        
+        response_data = {}
+        for product in products:
+            response_data[str(product.id)] = {
+                'url': product.get_absolute_url(),
+                'image_url': product.image_name.url if product.image_name else '',
+                'name': product.product_name,
+                'price': f"{product.price:,} تومان" # فرمت شده برای نمایش
+            }
+            
+        return JsonResponse(response_data)
+
+    except (json.JSONDecodeError, TypeError, ValueError):
+        return JsonResponse({'error': 'داده‌های ارسالی نامعتبر است.'}, status=400)
+    except Exception as e:
+        logger.error(f"Error in get_product_details_api: {e}")
+        return JsonResponse({'error': 'خطای داخلی سرور'}, status=500)
+
+
 
 def is_widget_request(request):
     """تشخیص درخواست ویجت"""

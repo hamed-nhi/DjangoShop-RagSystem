@@ -375,25 +375,75 @@
         ::-webkit-scrollbar-thumb:hover {
             background: var(--primary-color);
         }
+         /* +++ استایل‌های جدید برای کارت محصول +++ */
+        .message-content p {
+            margin: 0 0 10px 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        .message-content p:last-child {
+            margin-bottom: 0;
+        }
+        .product-card {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            margin: 10px 0;
+            background-color: var(--bg-light);
+            transition: box-shadow 0.3s ease;
+        }
+        .product-card:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .product-card-image {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 8px;
+            flex-shrink: 0;
+        }
+        .product-card-info {
+            display: flex;
+            flex-direction: column;
+        }
+        .product-card-info a {
+            font-weight: bold;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 15px;
+            transition: color 0.3s ease;
+        }
+        .product-card-info a:hover {
+            color: var(--primary-hover);
+        }
+        .product-card-info span {
+            font-size: 14px;
+            color: var(--text-dark);
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
     <div class="chat-app">
-        <!-- Sidebar -->
         <div class="sidebar">
             <div class="sidebar-header">
-                <a href="{% url 'ai_assistant:new_chat_view' %}" class="new-chat-btn">
-                    <i class="fas fa-plus"></i> چت جدید
-                </a>
+                <form action="{% url 'ai_assistant:new_chat_view' %}" method="post" id="new-chat-form">
+                    {% csrf_token %}
+                    <button type="submit" class="new-chat-btn">
+                        <i class="fas fa-plus"></i> چت جدید
+                    </button>
+                </form>
             </div>
-            
             <ul class="conversations-list">
                 {% for conv in user_conversations %}
                 <li class="conversation-item {% if conv.id|stringformat:'s' == active_conversation_id %}active{% endif %}">
                     <a href="{% url 'ai_assistant:chat_view_conversation' conv.id %}" class="conversation-link">
                         {{ conv.title }}
                     </a>
-                    <form action="{% url 'ai_assistant:delete_chat_view' conv.id %}" method="post" 
+                    <form action="{% url 'ai_assistant:delete_chat_view' conv.id %}" method="post"
                           onsubmit="return confirm('آیا از حذف این مکالمه مطمئن هستید؟');" class="delete-form">
                         {% csrf_token %}
                         <button type="submit" class="delete-btn" title="حذف مکالمه">
@@ -409,24 +459,18 @@
             </ul>
         </div>
 
-        <!-- Main Chat Area -->
         <div class="chat-main">
             <div class="chat-header">
-                <div class="ai-avatar">
-                    <i class="fas fa-robot"></i>
-                </div>
+                <div class="ai-avatar"><i class="fas fa-robot"></i></div>
                 <div class="chat-info">
                     <h2>هوشیار - دستیار خرید</h2>
                     <p>همراه شما در انتخاب بهترین لپ‌تاپ</p>
                 </div>
             </div>
-
             <div class="chat-messages" id="chat-messages">
                 {% if not current_chat_messages %}
                 <div class="message bot-message">
-                    <div class="message-avatar">
-                        <i class="fas fa-robot"></i>
-                    </div>
+                    <div class="message-avatar"><i class="fas fa-robot"></i></div>
                     <div class="message-content">
                         <pre>سلام! من هوشیار، دستیار هوشمند شما هستم. چطور می‌توانم در انتخاب و خرید لپ‌تاپ کمکتان کنم؟</pre>
                     </div>
@@ -434,9 +478,7 @@
                 {% else %}
                 {% for msg in current_chat_messages %}
                 <div class="message {% if msg.sender == 'user' %}user-message{% else %}bot-message{% endif %}">
-                    <div class="message-avatar">
-                        <i class="fas fa-{% if msg.sender == 'user' %}user{% else %}robot{% endif %}"></i>
-                    </div>
+                    <div class="message-avatar"><i class="fas fa-{% if msg.sender == 'user' %}user{% else %}robot{% endif %}"></i></div>
                     <div class="message-content">
                         <pre>{{ msg.content }}</pre>
                     </div>
@@ -444,10 +486,9 @@
                 {% endfor %}
                 {% endif %}
             </div>
-
             <form class="chat-input" id="chat-form">
                 {% csrf_token %}
-                <input type="text" class="message-input" id="message-input" 
+                <input type="text" class="message-input" id="message-input"
                        placeholder="پیام خود را بنویسید..." autocomplete="off">
                 <button type="submit" class="send-btn" id="send-button" disabled>
                     <i class="fas fa-paper-plane"></i>
@@ -457,111 +498,205 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const chatForm = document.getElementById('chat-form');
-            const messageInput = document.getElementById('message-input');
-            const sendButton = document.getElementById('send-button');
-            const chatMessages = document.getElementById('chat-messages');
-            const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    document.addEventListener('DOMContentLoaded', function() {
+        const chatForm = document.getElementById('chat-form');
+        const messageInput = document.getElementById('message-input');
+        const sendButton = document.getElementById('send-button');
+        const chatMessages = document.getElementById('chat-messages');
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        const newChatForm = document.getElementById('new-chat-form');
 
-            // Auto-scroll to bottom
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+        // +++ URL جدید برای API +++
+        const productDetailsApiUrl = "{% url 'ai_assistant:get_product_details_api' %}";
 
-            // Enable/disable send button based on input
-            messageInput.addEventListener('input', function() {
-                sendButton.disabled = messageInput.value.trim() === '';
-            });
+        // Auto-scroll to bottom
+        chatMessages.scrollTop = chatMessages.scrollHeight;
 
-            chatForm.addEventListener('submit', async function(e) {
-                e.preventDefault();
-                const userMessage = messageInput.value.trim();
-                if (userMessage === '') return;
+        // Enable/disable send button
+        messageInput.addEventListener('input', () => {
+            sendButton.disabled = messageInput.value.trim() === '';
+        });
 
-                // Add user message
-                addMessage(userMessage, 'user');
-                messageInput.value = '';
-                sendButton.disabled = true;
-
-                // Show typing indicator
-                const typingIndicator = createTypingIndicator();
-                chatMessages.appendChild(typingIndicator);
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-
-                try {
-                    const response = await fetch(window.location.pathname, {
-                        method: 'POST',
-                        headers: { 
-                            'Content-Type': 'application/json', 
-                            'X-CSRFToken': csrftoken 
-                        },
-                        body: JSON.stringify({ message: userMessage }),
-                    });
-
-                    // Remove typing indicator
-                    chatMessages.removeChild(typingIndicator);
-
-                    if (!response.ok) {
-                        throw new Error('Server error');
-                    }
-
-                    const reader = response.body.getReader();
-                    const decoder = new TextDecoder();
-                    let botMessageElement = createMessageElement('', 'bot');
-                    chatMessages.appendChild(botMessageElement);
-
-                    while (true) {
-                        const { value, done } = await reader.read();
-                        if (done) break;
-
-                        const chunk = decoder.decode(value);
-                        botMessageElement.querySelector('pre').textContent += chunk;
-                        chatMessages.scrollTop = chatMessages.scrollHeight;
-                    }
-
-                } catch (error) {
-                    console.error('Error:', error);
-                    addMessage('خطا در ارتباط با سرور. لطفاً دوباره تلاش کنید.', 'bot');
+        // Handle new chat button submit
+        newChatForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            fetch(this.action, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': csrftoken }
+            }).then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
                 }
             });
+        });
 
-            function addMessage(text, sender) {
-                const messageElement = createMessageElement(text, sender);
-                chatMessages.appendChild(messageElement);
+        chatForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const userMessage = messageInput.value.trim();
+            if (userMessage === '') return;
+
+            addMessage(userMessage, 'user');
+            messageInput.value = '';
+            sendButton.disabled = true;
+
+            const typingIndicator = createTypingIndicator();
+            chatMessages.appendChild(typingIndicator);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            try {
+                const response = await fetch(window.location.pathname, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken,
+                        'X-Requested-With': 'XMLHttpRequest' // Ensure it's seen as an AJAX call
+                    },
+                    body: JSON.stringify({ message: userMessage }),
+                });
+
+                chatMessages.removeChild(typingIndicator);
+
+                if (!response.ok) {
+                    throw new Error(`Server error: ${response.statusText}`);
+                }
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let botMessageElement = createMessageElement('', 'bot');
+                chatMessages.appendChild(botMessageElement);
+
+                const botPreElement = botMessageElement.querySelector('pre');
+                
+                while (true) {
+                    const { value, done } = await reader.read();
+                    if (done) break;
+                    const chunk = decoder.decode(value, { stream: true });
+                    botPreElement.textContent += chunk;
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }
+
+                // +++ فراخوانی تابع جدید برای غنی‌سازی پیام +++
+                await enrichProductMessage(botMessageElement);
+
+            } catch (error) {
+                console.error('Error:', error);
+                if(chatMessages.contains(typingIndicator)) {
+                    chatMessages.removeChild(typingIndicator);
+                }
+                addMessage('خطا در ارتباط با سرور. لطفاً دوباره تلاش کنید.', 'bot');
+            }
+        });
+
+        // +++ تابع اصلاح‌شده و هوشمندتر برای غنی‌سازی پیام +++
+        async function enrichProductMessage(botMessageElement) {
+            const messageContentDiv = botMessageElement.querySelector('.message-content');
+            // ممکن است تگ pre وجود نداشته باشد اگر قبلا تبدیل شده باشد
+            const preElement = messageContentDiv.querySelector('pre');
+            if (!preElement) return; 
+
+            const textContent = preElement.textContent;
+
+            // Regex انعطاف‌پذیرتر: به دنبال (ID: xxx) یا ID: xxx می‌گردد
+            const idMatches = [...textContent.matchAll(/\(ID: (\d+)\)|\bID: (\d+)/g)];
+            const productIds = idMatches.map(match => match[1] || match[2]);
+
+            if (productIds.length === 0) return;
+
+            try {
+                const response = await fetch(productDetailsApiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken,
+                    },
+                    body: JSON.stringify({ ids: [...new Set(productIds)] }), // ارسال شناسه‌های یکتا
+                });
+
+                if (!response.ok) throw new Error('Failed to fetch product details');
+                
+                const productsData = await response.json();
+
+                // متن را به خطوط جداگانه تقسیم کن
+                const lines = textContent.split('\n');
+                let newHtmlContent = '';
+
+                lines.forEach(line => {
+                    // Regex انعطاف‌پذیر برای پیدا کردن شناسه در خط
+                    const match = line.match(/\(ID: (\d+)\)|\bID: (\d+)/);
+                    
+                    // چک کن که آیا شناسه در خط وجود دارد و آیا اطلاعات آن را از API دریافت کرده‌ایم
+                    if (match && productsData[match[1] || match[2]]) {
+                        const id = match[1] || match[2];
+                        const product = productsData[id];
+                        
+                        // کارت HTML محصول را بساز
+                        newHtmlContent += `
+                            <div class="product-card">
+                                <img src="${product.image_url}" alt="${product.name}" class="product-card-image">
+                                <div class="product-card-info">
+                                    <a href="${product.url}" target="_blank">${product.name}</a>
+                                    <span>${product.price}</span>
+                                </div>
+                            </div>
+                        `;
+                    } else if (line.trim() !== '') {
+                        // برای خطوطی که محصول نیستند یا اطلاعاتشان موجود نیست، آنها را در تگ p قرار بده
+                        newHtmlContent += `<p>${line}</p>`;
+                    }
+                });
+
+                // محتوای جدید را جایگزین محتوای قبلی کن
+                messageContentDiv.innerHTML = newHtmlContent;
                 chatMessages.scrollTop = chatMessages.scrollHeight;
-            }
 
-            function createMessageElement(text, sender) {
-                const messageDiv = document.createElement('div');
-                messageDiv.className = `message ${sender}-message`;
-                
-                messageDiv.innerHTML = `
-                    <div class="message-avatar">
-                        <i class="fas fa-${sender === 'user' ? 'user' : 'robot'}"></i>
-                    </div>
-                    <div class="message-content">
-                        <pre>${text}</pre>
-                    </div>
-                `;
-                
-                return messageDiv;
+            } catch (error) {
+                console.error('Failed to enrich message:', error);
             }
+        }
 
-            function createTypingIndicator() {
-                const typingDiv = document.createElement('div');
-                typingDiv.className = 'typing-indicator';
-                typingDiv.innerHTML = `
-                    <div class="message-avatar">
-                        <i class="fas fa-robot"></i>
-                    </div>
+        function addMessage(text, sender) {
+            const messageElement = createMessageElement(text, sender);
+            chatMessages.appendChild(messageElement);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function createMessageElement(text, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}-message`;
+            messageDiv.innerHTML = `
+                <div class="message-avatar">
+                    <i class="fas fa-${sender === 'user' ? 'user' : 'robot'}"></i>
+                </div>
+                <div class="message-content">
+                    <pre>${text}</pre>
+                </div>`;
+            return messageDiv;
+        }
+
+        function createTypingIndicator() {
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message bot-message'; // برای هماهنگی ظاهری
+            typingDiv.innerHTML = `
+                 <div class="message-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="typing-indicator" style="align-self: auto; margin: 0;">
                     <div class="typing-dots">
                         <span class="typing-dot"></span>
                         <span class="typing-dot"></span>
                         <span class="typing-dot"></span>
                     </div>
-                `;
-                return typingDiv;
+                </div>`;
+            return typingDiv;
+        }
+
+        // +++ بعد از بارگذاری کامل صفحه، تمام پیام‌های ربات را برای غنی‌سازی چک کن +++
+        document.querySelectorAll('.bot-message').forEach(el => {
+            if(el.querySelector('.message-content pre')) { // فقط پیام‌هایی که محتوای متنی دارند
+                 enrichProductMessage(el);
             }
         });
+    });
     </script>
 </body>
 </html>
