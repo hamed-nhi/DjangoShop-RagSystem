@@ -8,45 +8,40 @@ from . import hybrid_retriever
 from middlewares.middlewares import RequestMiddleware
 from typing import List, Optional
 from .global_services import hybrid_retriever
-import locale
-
-try:
-    locale.setlocale(locale.LC_ALL, 'fa_IR.UTF-8')
-except locale.Error:
-    locale.setlocale(locale.LC_ALL, '')
 
 @tool
 def search_products(
-    query: str, 
-    price_min: Optional[int] = None, 
-    price_max: Optional[int] = None, 
+    query: str,
+    brand: Optional[str] = None,
+    price_min: Optional[int] = None,
+    price_max: Optional[int] = None,
     price_around: Optional[int] = None
 ) -> str:
     """
-    Searches for products based on text and optional price filters.
+    Searches for products based on text and optional filters.
     - query: The user's search text (e.g., 'Asus gaming laptop').
+    - brand: The specific brand requested by the user (e.g., 'Lenovo', 'HP'). Use this ONLY if the user explicitly names a brand. # +++ تغییر ۲: آموزش LLM
     - price_min: Use for explicit lower bounds like 'from 100 million'.
     - price_max: Use for explicit upper bounds like 'under 150 million'.
     - price_around: Use ONLY for ambiguous ranges like 'around 150 million'.
     """
-    print(f"--- Search tool invoked with: query='{query}', min={price_min}, max={price_max}, around={price_around} ---")
+    print(f"--- Search tool invoked with: query='{query}', brand_name='{brand}', min={price_min}, max={price_max}, around={price_around} ---")
 
-    # --- New, Smarter Logic ---
-    # If the user gives an upper limit but no lower limit, create a reasonable lower limit.
+    # --- Price Logic (بدون تغییر) ---
     if price_max and not price_min and not price_around:
-        # Assume the user wants products in the top 30% of their budget range.
-        price_min = int(price_max * 0.85) 
+        price_min = int(price_max * 0.85)
         print(f"   -> 'price_max' without 'price_min' detected. Calculated new range: {price_min}-{price_max}")
-
-    # Logic for 'price_around' remains the same
     elif price_around and not price_min and not price_max:
-        range_percent = 0.20  # +/- 20% range
+        range_percent = 0.20
         price_min = int(price_around * (1 - range_percent))
         price_max = int(price_around * (1 + range_percent))
         print(f"   -> 'price_around' detected. Calculated new range: {price_min}-{price_max}")
 
-    # Build the filter string for MeiliSearch
+    # +++ تغییر ۳: افزودن فیلتر برند به MeiliSearch +++
     filters = []
+    if brand:
+        # از دابل کوت برای مقادیر رشته‌ای در MeiliSearch استفاده می‌کنیم
+        filters.append(f"brand_name = '{brand}'")
     if price_min is not None:
         filters.append(f"price >= {price_min}")
     if price_max is not None:
@@ -57,22 +52,27 @@ def search_products(
         product_ids = hybrid_retriever.search(query, k=10, filters=meili_filter)
         if not product_ids:
             return "Unfortunately, no products were found with these specifications."
-            
+
         products_query = Product.objects.filter(id__in=product_ids)
 
-        # Final, strict price filtering
+        # +++ تغییر ۴: فیلترینگ نهایی و قطعی برای تضمین صحت نتایج +++
+        # این بخش تضمین می‌کند که هیچ محصولی از برند دیگر (که شاید از جستجوی معنایی آمده) در خروجی نباشد.
+        if brand:
+            # products_query = products_query.filter(brand__brand_title__iexact=brand)
+            products_query = products_query.filter(brand__brand_title__iexact=brand)
+
         if price_min is not None:
             products_query = products_query.filter(price__gte=price_min)
         if price_max is not None:
             products_query = products_query.filter(price__lte=price_max)
 
-        # Sort the final results by price descending to show the best options first
+        # مرتب‌سازی و محدود کردن نتایج (بدون تغییر)
         final_products = list(products_query.order_by('-price')[:5])
-        
-        if not final_products:
-             return "Unfortunately, no products were found with these specifications in the specified price range."
 
-        results = ["Here are the best matches found in your specified price range:\n"]
+        if not final_products:
+             return "Unfortunately, no products were found with these specifications in the specified filter range."
+
+        results = ["Here are the best matches found for your query:\n"]
         for p in final_products:
             results.append(f"- Name: {p.product_name} (ID: {p.id})\n  Price: {p.price} تومان")
         return "\n".join(results)
