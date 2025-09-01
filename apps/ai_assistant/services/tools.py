@@ -8,6 +8,7 @@ from . import hybrid_retriever
 from middlewares.middlewares import RequestMiddleware
 from typing import List, Optional
 from .global_services import hybrid_retriever
+from django.utils.html import strip_tags
 
 @tool
 def search_products(
@@ -124,3 +125,32 @@ def add_to_cart(product_id: int) -> str:
         return f"محصولی با شناسه {product_id} یافت نشد."
     except Exception as e:
         return f"هنگام افزودن محصول به سبد خرید خطایی رخ داد: {e}"
+
+
+
+@tool
+def get_product_details(product_id: int) -> str:
+    """
+    Use this tool to get all detailed specifications and features for a single, specific product ID.
+    This is useful when the user asks for more details, specifications, or information about one particular item.
+    - product_id: The unique identifier of the product to look up.
+    """
+    print(f"--- Get Product Details tool invoked for ID: {product_id} ---")
+    try:
+        product = Product.objects.prefetch_related('product_features__feature').get(id=product_id)
+
+        details = [f"Product Details for '{product.product_name}' (ID: {product.id}):\n"]
+        details.append(f"- Price: {product.price:,} تومان")
+        
+        features = product.product_features.all()
+        if features:
+            details.append("\n- Full Specifications:")
+            for pf in features:
+                details.append(f"  - {pf.feature.feature_name}: {pf.value}")
+        
+        return "\n".join(details)
+
+    except Product.DoesNotExist:
+        return f"Error: A product with ID {product_id} was not found."
+    except Exception as e:
+        return f"An error occurred while fetching product details: {e}"
