@@ -9,6 +9,9 @@ from middlewares.middlewares import RequestMiddleware
 from typing import List, Optional
 from .global_services import hybrid_retriever
 from django.utils.html import strip_tags
+# In apps/ai_assistant/services/tools.py
+
+# ... (other imports)
 
 @tool
 def search_products(
@@ -19,34 +22,32 @@ def search_products(
     price_around: Optional[int] = None
 ) -> str:
     """
-    Searches for products based on text and optional filters.
-    - query: The user's search text (e.g., 'Asus gaming laptop').
-    - brand: The specific brand requested by the user (e.g., 'Lenovo', 'HP'). Use this ONLY if the user explicitly names a brand. # +++ تغییر ۲: آموزش LLM
-    - price_min: Use for explicit lower bounds like 'from 100 million'.
-    - price_max: Use for explicit upper bounds like 'under 150 million'.
-    - price_around: Use ONLY for ambiguous ranges like 'around 150 million'.
+    Searches for products based on a text query and optional brand/price filters.
+    - query: The user's full search text, including any technical specs like RAM or GPU (e.g., 'gaming laptop with 16GB RAM').
+    - brand: The specific brand requested (e.g., 'Lenovo', 'HP').
+    - price_min: The minimum price.
+    - price_max: The maximum price.
+    - price_around: An approximate price.
     """
-    print(f"--- Search tool invoked with: query='{query}', brand_name='{brand}', min={price_min}, max={price_max}, around={price_around} ---")
+    print(f"--- Search tool invoked with: query='{query}', brand='{brand}', price_min='{price_min}', price_max='{price_max}' ---")
 
-    # --- Price Logic (بدون تغییر) ---
+    # --- Price Logic (No change) ---
     if price_max and not price_min and not price_around:
         price_min = int(price_max * 0.85)
-        print(f"   -> 'price_max' without 'price_min' detected. Calculated new range: {price_min}-{price_max}")
     elif price_around and not price_min and not price_max:
         range_percent = 0.20
         price_min = int(price_around * (1 - range_percent))
         price_max = int(price_around * (1 + range_percent))
-        print(f"   -> 'price_around' detected. Calculated new range: {price_min}-{price_max}")
 
-    # +++ تغییر ۳: افزودن فیلتر برند به MeiliSearch +++
+    # --- Simplified Filter Construction ---
     filters = []
     if brand:
-        # از دابل کوت برای مقادیر رشته‌ای در MeiliSearch استفاده می‌کنیم
-        filters.append(f"brand_name = '{brand}'")
+        filters.append(f"brand_name = '{brand.lower()}'")
     if price_min is not None:
         filters.append(f"price >= {price_min}")
     if price_max is not None:
         filters.append(f"price <= {price_max}")
+
     meili_filter = " AND ".join(filters) if filters else None
 
     try:
@@ -55,19 +56,15 @@ def search_products(
             return "Unfortunately, no products were found with these specifications."
 
         products_query = Product.objects.filter(id__in=product_ids)
-
-        # +++ تغییر ۴: فیلترینگ نهایی و قطعی برای تضمین صحت نتایج +++
-        # این بخش تضمین می‌کند که هیچ محصولی از برند دیگر (که شاید از جستجوی معنایی آمده) در خروجی نباشد.
+        
+        # --- Simplified Final Filtering ---
         if brand:
-            # products_query = products_query.filter(brand__brand_title__iexact=brand)
             products_query = products_query.filter(brand__brand_title__iexact=brand)
-
         if price_min is not None:
             products_query = products_query.filter(price__gte=price_min)
         if price_max is not None:
             products_query = products_query.filter(price__lte=price_max)
-
-        # مرتب‌سازی و محدود کردن نتایج (بدون تغییر)
+        
         final_products = list(products_query.order_by('-price')[:5])
 
         if not final_products:
