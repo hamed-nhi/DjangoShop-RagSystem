@@ -8,13 +8,21 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --ai-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --user-gradient: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            --bg-dark: #1a1a2e;
+            --bg-sidebar: #16213e;
+            --text-light: #e6e9f0;
+            --card-bg: #ffffff;
+            --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --shadow-hard: 0 4px 12px rgba(0, 0, 0, 0.15);
             --primary-color: #007bff;
             --primary-hover: #0056b3;
             --secondary-color: #6c757d;
             --success-color: #28a745;
             --bg-light: #f8f9fa;
-            --bg-dark: #343a40;
-            --text-light: #6c757d;
             --text-dark: #212529;
             --border-color: #dee2e6;
             --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
@@ -46,40 +54,127 @@
             box-shadow: var(--shadow);
             display: flex;
             overflow: hidden;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .sidebar {
-            width: 300px;
-            background: var(--bg-dark);
+            width: 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             display: flex;
             flex-direction: column;
-            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            overflow: hidden;
+            position: relative;
+            direction: rtl;
+        }
+        
+        .sidebar.expanded {
+            width: 280px;
         }
 
         .sidebar-header {
-            padding: 20px;
+            padding: 20px 15px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .new-chat-btn {
-            display: block;
-            width: 100%;
-            padding: 12px;
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 14px;
-            cursor: pointer;
-            text-align: center;
-            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-direction: row-reverse;
             transition: all 0.3s ease;
+
+        }
+        .sidebar:not(.expanded) .sidebar-header {
+            justify-content: center;
+            padding: 20px 10px;
+        }
+        .sidebar:not(.expanded) .new-chat-form {
+    display: none;
+}
+.sidebar.expanded .new-chat-form {
+    display: block;
+}
+
+        .menu-toggle {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: background 0.3s ease;
+            opacity: 1;
+    visibility: visible;
         }
 
+        .menu-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .new-chat-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    width: 45px;
+    height: 45px;
+    opacity: 1;
+    visibility: visible;
+}
+/* در حالت سایدبار جمع‌شده، دکمه را مخفی کنید */
+.sidebar:not(.expanded) .new-chat-btn {
+    opacity: 0;
+    visibility: hidden;
+    width: 0;
+    height: 0;
+    padding: 0;
+    margin: 0;
+}
+.sidebar.expanded .new-chat-btn {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    padding: 12px 15px;
+    opacity: 1;
+    visibility: visible;
+}
+
+        .new-chat-btn.expanded {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            padding: 12px 15px;
+        }
+        
+        .new-chat-btn i {
+            margin: 0;
+        }
+
+        .new-chat-btn.expanded i {
+            margin-left: 8px;
+        }
+        
         .new-chat-btn:hover {
             background: var(--primary-hover);
             transform: translateY(-2px);
+        }
+        .new-chat-btn span {
+            display: none;
+        }
+
+        .new-chat-btn.expanded span {
+            display: inline;
         }
 
         .conversations-list {
@@ -95,33 +190,69 @@
             padding: 12px;
             margin-bottom: 8px;
             border-radius: 8px;
-            transition: background 0.3s ease;
+            transition: all 0.3s ease;
             cursor: pointer;
+            white-space: nowrap;
+            overflow: hidden;
         }
-
+        
+        .chat-header::before {
+            content: "";
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: var(--success-color);
+            border-radius: 50%;
+            bottom: 15px;
+            right: 15px;
+            border: 2px solid white;
+        }
+        
         .conversation-item:hover {
             background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+            transition: all 0.3s ease;
         }
-
+                
         .conversation-item.active {
             background: var(--primary-color);
         }
 
         .conversation-link {
-            flex: 1;
             color: white;
             text-decoration: none;
-            white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            opacity: 0;
+            width: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .sidebar.expanded .conversation-link {
+            opacity: 1;
+            width: auto;
+            margin-right: 10px;
+        }
+        
+        .conversation-icon {
+            width: 30px;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
         }
 
         .delete-form {
-            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
-
+        
         .conversation-item:hover .delete-form {
-            display: block;
+            opacity: 1;
         }
 
         .delete-btn {
@@ -144,6 +275,28 @@
             flex-direction: column;
             background: var(--bg-light);
         }
+        
+        /* استایل برای حالت جمع شده */
+        .sidebar:not(.expanded) .conversation-item {
+            justify-content: center;
+            padding: 15px;
+        }
+        
+        .sidebar:not(.expanded) .conversation-item .conversation-link,
+        .sidebar:not(.expanded) .conversation-item .delete-form {
+            display: none;
+        }
+
+        .sidebar:not(.expanded) .conversation-item .conversation-icon {
+            margin: 0;
+        }
+
+        .conversations-list li[style] {
+            text-align: center;
+            padding: 20px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 12px;
+        }
 
         .chat-header {
             padding: 20px;
@@ -152,6 +305,7 @@
             display: flex;
             align-items: center;
             gap: 15px;
+            direction: rtl;
         }
 
         .ai-avatar {
@@ -183,9 +337,22 @@
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            padding: 25px;
+            gap: 25px;
+            direction: ltr;
         }
-
+        
+        .sidebar-header,
+        .conversations-list {
+            direction: rtl;
+            text-align: right;
+        }
+        
+        .bot-message {
+            align-self: flex-start;
+            flex-direction: row;
+        }
+        
         .message {
             display: flex;
             gap: 12px;
@@ -225,22 +392,29 @@
         }
 
         .message-content {
+            backdrop-filter: blur(5px);
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             padding: 16px;
             border-radius: 18px;
             line-height: 1.6;
             box-shadow: var(--shadow);
+            direction: rtl;
         }
 
         .user-message .message-content {
             background: var(--primary-color);
             color: white;
             border-bottom-right-radius: 4px;
+            border-bottom-left-radius: 18px;
         }
 
         .bot-message .message-content {
             background: white;
             color: var(--text-dark);
             border-bottom-left-radius: 4px;
+            border-bottom-right-radius: 18px;
+            direction: rtl;
         }
 
         .message-content pre {
@@ -248,16 +422,19 @@
             word-wrap: break-word;
             margin: 0;
             font-family: inherit;
-            font-size: 14px;
+            font-size: 13px;
+            direction: rtl;
         }
 
         .chat-input {
+            font-family: inherit;
             padding: 20px;
             background: white;
             border-top: 1px solid var(--border-color);
             display: flex;
             gap: 12px;
             align-items: center;
+            direction: rtl;
         }
 
         .message-input {
@@ -269,6 +446,8 @@
             outline: none;
             transition: border-color 0.3s ease;
             background: var(--bg-light);
+            font-family: inherit;
+
         }
 
         .message-input:focus {
@@ -360,7 +539,7 @@
 
         /* Scrollbar styling */
         ::-webkit-scrollbar {
-            width: 6px;
+            width: 8px;
         }
 
         ::-webkit-scrollbar-track {
@@ -370,23 +549,29 @@
         ::-webkit-scrollbar-thumb {
             background: var(--secondary-color);
             border-radius: 3px;
+            background: linear-gradient(transparent, var(--primary-color));
+            border-radius: 6px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
             background: var(--primary-color);
         }
-         /* +++ استایل‌های جدید برای کارت محصول +++ */
+        
+        /* +++ استایل‌های جدید برای کارت محصول +++ */
         .message-content p {
             margin: 0 0 10px 0;
             padding: 0;
             line-height: 1.6;
         }
+        
         .message-content p:last-child {
             margin-bottom: 0;
         }
+        
         .product-card {
+            transition: all 0.3s ease;
+            transform-origin: center;
             display: flex;
-            align-items: center;
             gap: 15px;
             padding: 12px;
             border: 1px solid var(--border-color);
@@ -394,10 +579,16 @@
             margin: 10px 0;
             background-color: var(--bg-light);
             transition: box-shadow 0.3s ease;
+            direction: rtl;
+            text-align: right;
         }
+        
         .product-card:hover {
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: var(--shadow-hard);
         }
+        
         .product-card-image {
             width: 70px;
             height: 70px;
@@ -405,10 +596,18 @@
             border-radius: 8px;
             flex-shrink: 0;
         }
+        
+        .new-chat-btn, .send-btn {
+            border-radius: 50px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
         .product-card-info {
             display: flex;
             flex-direction: column;
         }
+        
         .product-card-info a {
             font-weight: bold;
             color: var(--primary-color);
@@ -416,30 +615,78 @@
             font-size: 15px;
             transition: color 0.3s ease;
         }
+        
         .product-card-info a:hover {
             color: var(--primary-hover);
         }
+        
         .product-card-info span {
             font-size: 14px;
             color: var(--text-dark);
             margin-top: 5px;
         }
+        
+        @keyframes messageAppear {
+            0% { 
+                opacity: 0;
+                transform: translateY(20px) scale(0.95);
+            }
+            100% { 
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .message {
+            animation: messageAppear 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        @media (max-width: 768px) {
+            .chat-app {
+                border-radius: 0;
+                height: 100vh;
+                margin: 0;
+            }
+            
+            .sidebar {
+                position: absolute;
+                z-index: 100;
+                height: 100%;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .message {
+                max-width: 90%;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="chat-app">
-        <div class="sidebar">
+        <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <form action="{% url 'ai_assistant:new_chat_view' %}" method="post" id="new-chat-form">
-                    {% csrf_token %}
-                    <button type="submit" class="new-chat-btn">
-                        <i class="fas fa-plus"></i> چت جدید
-                    </button>
+                 <button class="menu-toggle" id="menu-toggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        <form action="{% url 'ai_assistant:new_chat_view' %}" method="post" id="new-chat-form">
+            {% csrf_token %}
+            <button type="submit" class="new-chat-btn" id="new-chat-btn">
+                <i class="fas fa-plus"></i>
+                <span>چت جدید</span>
+            </button>
                 </form>
             </div>
             <ul class="conversations-list">
                 {% for conv in user_conversations %}
                 <li class="conversation-item {% if conv.id|stringformat:'s' == active_conversation_id %}active{% endif %}">
+                    <div class="conversation-icon">
+                        <i class="fas fa-comment"></i>
+                    </div>
                     <a href="{% url 'ai_assistant:chat_view_conversation' conv.id %}" class="conversation-link">
                         {{ conv.title }}
                     </a>
@@ -452,8 +699,8 @@
                     </form>
                 </li>
                 {% empty %}
-                <li style="color: var(--text-light); padding: 20px; text-align: center;">
-                    هنوز مکالمه‌ای شروع نشده
+                <li style="color: rgba(255, 255, 255, 0.7); padding: 20px; text-align: center; font-size: 12px;">
+                    <i class="fas fa-comments"></i>
                 </li>
                 {% endfor %}
             </ul>
@@ -497,7 +744,7 @@
         </div>
     </div>
 
-    <script>
+<script>
     document.addEventListener('DOMContentLoaded', function() {
         const chatForm = document.getElementById('chat-form');
         const messageInput = document.getElementById('message-input');
@@ -505,9 +752,13 @@
         const chatMessages = document.getElementById('chat-messages');
         const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
         const newChatForm = document.getElementById('new-chat-form');
+        const sidebar = document.getElementById('sidebar');
+        const menuToggle = document.getElementById('menu-toggle');
+        const newChatBtn = document.getElementById('new-chat-btn');
 
         // +++ URL جدید برای API +++
         const productDetailsApiUrl = "{% url 'ai_assistant:get_product_details_api' %}";
+        let isExpanded = localStorage.getItem('sidebarExpanded') === 'true';
 
         // Auto-scroll to bottom
         chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -515,6 +766,51 @@
         // Enable/disable send button
         messageInput.addEventListener('input', () => {
             sendButton.disabled = messageInput.value.trim() === '';
+        });
+
+        // مقداردهی اولیه وضعیت سایدبار
+        if (isExpanded) {
+            sidebar.classList.add('expanded');
+            menuToggle.innerHTML = '<i class="fas fa-times"></i>';
+            newChatForm.style.display = 'block';
+        } else {
+            newChatForm.style.display = 'none';
+        }
+
+        // تابع برای toggle کردن سایدبار
+        function toggleSidebar() {
+            isExpanded = !isExpanded;
+            sidebar.classList.toggle('expanded', isExpanded);
+            
+            // تغییر آیکون منو
+            if (isExpanded) {
+                menuToggle.innerHTML = '<i class="fas fa-times"></i>';
+                newChatForm.style.display = 'block';
+            } else {
+                menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+                newChatForm.style.display = 'none';
+            }
+            
+            // ذخیره حالت در localStorage
+            localStorage.setItem('sidebarExpanded', isExpanded);
+        }
+
+        // رویداد کلیک برای منو
+        menuToggle.addEventListener('click', toggleSidebar);
+
+        // غیرفعال کردن کلیک روی دکمه چت جدید در حالت جمع شده
+        newChatBtn.addEventListener('click', function(e) {
+            if (!sidebar.classList.contains('expanded')) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        });
+
+        // بستن سایدبار وقتی روی محتوای اصلی کلیک می‌شود (فقط در موبایل)
+        document.querySelector('.chat-main').addEventListener('click', function() {
+            if (isExpanded && window.innerWidth <= 768) {
+                toggleSidebar();
+            }
         });
 
         // Handle new chat button submit
@@ -549,7 +845,7 @@
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRFToken': csrftoken,
-                        'X-Requested-With': 'XMLHttpRequest' // Ensure it's seen as an AJAX call
+                        'X-Requested-With': 'XMLHttpRequest'
                     },
                     body: JSON.stringify({ message: userMessage }),
                 });
@@ -590,7 +886,6 @@
         // +++ تابع اصلاح‌شده و هوشمندتر برای غنی‌سازی پیام +++
         async function enrichProductMessage(botMessageElement) {
             const messageContentDiv = botMessageElement.querySelector('.message-content');
-            // ممکن است تگ pre وجود نداشته باشد اگر قبلا تبدیل شده باشد
             const preElement = messageContentDiv.querySelector('pre');
             if (!preElement) return; 
 
@@ -609,7 +904,7 @@
                         'Content-Type': 'application/json',
                         'X-CSRFToken': csrftoken,
                     },
-                    body: JSON.stringify({ ids: [...new Set(productIds)] }), // ارسال شناسه‌های یکتا
+                    body: JSON.stringify({ ids: [...new Set(productIds)] }),
                 });
 
                 if (!response.ok) throw new Error('Failed to fetch product details');
@@ -675,7 +970,7 @@
 
         function createTypingIndicator() {
             const typingDiv = document.createElement('div');
-            typingDiv.className = 'message bot-message'; // برای هماهنگی ظاهری
+            typingDiv.className = 'message bot-message';
             typingDiv.innerHTML = `
                  <div class="message-avatar">
                     <i class="fas fa-robot"></i>
@@ -692,11 +987,11 @@
 
         // +++ بعد از بارگذاری کامل صفحه، تمام پیام‌های ربات را برای غنی‌سازی چک کن +++
         document.querySelectorAll('.bot-message').forEach(el => {
-            if(el.querySelector('.message-content pre')) { // فقط پیام‌هایی که محتوای متنی دارند
+            if(el.querySelector('.message-content pre')) {
                  enrichProductMessage(el);
             }
         });
     });
-    </script>
+</script>
 </body>
 </html>
