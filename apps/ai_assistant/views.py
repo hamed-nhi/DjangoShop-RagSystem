@@ -11,13 +11,10 @@ import logging
 from .models import Conversation, ChatMessage
 from .services.agent_core import run_agent_stream 
 from langchain_core.messages import HumanMessage, AIMessage
-
-# تنظیم لاگر
 logger = logging.getLogger(__name__)
 from apps.products.models import Product
 import json
 
-# +++ ویوی جدید برای API +++
 @login_required
 @require_http_methods(["POST"])
 def get_product_details_api(request):
@@ -53,8 +50,6 @@ def get_product_details_api(request):
     except Exception as e:
         logger.error(f"Error in get_product_details_api: {e}")
         return JsonResponse({'error': 'خطای داخلی سرور'}, status=500)
-
-
 
 def is_widget_request(request):
     """تشخیص درخواست ویجت"""
@@ -101,7 +96,6 @@ def get_or_create_conversation(request, conversation_id=None, widget_mode=False)
     
     # حالت ۳: اولین بازدید از ویجت یا صفحه کامل (ایجاد مکالمه کاملا جدید)
     return new_conversation(request, widget_mode)
-
 
 def new_conversation(request, widget_mode=False):
     """ایجاد یک مکالمه جدید"""

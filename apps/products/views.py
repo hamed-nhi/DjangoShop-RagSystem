@@ -277,10 +277,22 @@ def show_compare_list_view(request):
     context = {'products': products}
     return render(request, 'product_app/compare_list.html', context)
 
+# def compare_table_partial(request):
+#     compare_list_obj = CompareProduct(request)
+#     products = compare_list_obj.get_products()
+#     features = Feature.objects.filter(productfeature__product__in=products).distinct()
+#     context = {'products': products, 'features': features}
+#     return render(request, "product_app/partials/compare_table.html", context)
 def compare_table_partial(request):
     compare_list_obj = CompareProduct(request)
     products = compare_list_obj.get_products()
-    features = Feature.objects.filter(productfeature__product__in=products).distinct()
+    
+    features = Feature.objects.filter(
+        productfeature__product__in=products
+    ).exclude(
+        feature_name='Rating' # Exclude 'Rating' feature
+    ).distinct()
+
     context = {'products': products, 'features': features}
     return render(request, "product_app/partials/compare_table.html", context)
 

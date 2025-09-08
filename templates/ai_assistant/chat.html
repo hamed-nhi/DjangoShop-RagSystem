@@ -883,72 +883,66 @@
             }
         });
 
-        // +++ تابع اصلاح‌شده و هوشمندتر برای غنی‌سازی پیام +++
-        async function enrichProductMessage(botMessageElement) {
-            const messageContentDiv = botMessageElement.querySelector('.message-content');
-            const preElement = messageContentDiv.querySelector('pre');
-            if (!preElement) return; 
+async function enrichProductMessage(botMessageElement) {
+    const messageContentDiv = botMessageElement.querySelector('.message-content');
+    const preElement = messageContentDiv.querySelector('pre');
+    if (!preElement) return; 
 
-            const textContent = preElement.textContent;
+    const textContent = preElement.textContent;
 
-            // Regex انعطاف‌پذیرتر: به دنبال (ID: xxx) یا ID: xxx می‌گردد
-            const idMatches = [...textContent.matchAll(/\(ID: (\d+)\)|\bID: (\d+)/g)];
-            const productIds = idMatches.map(match => match[1] || match[2]);
+    // Regex نهایی و ساده شده
+    const idMatches = [...textContent.matchAll(/^-?\s*(\d+)\s*\|/gm)];
+    const productIds = idMatches.map(match => match[1]);
 
-            if (productIds.length === 0) return;
+    if (productIds.length === 0) return;
 
-            try {
-                const response = await fetch(productDetailsApiUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': csrftoken,
-                    },
-                    body: JSON.stringify({ ids: [...new Set(productIds)] }),
-                });
+    try {
+        const response = await fetch(productDetailsApiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken,
+            },
+            body: JSON.stringify({ ids: [...new Set(productIds)] }),
+        });
 
-                if (!response.ok) throw new Error('Failed to fetch product details');
+        if (!response.ok) throw new Error('Failed to fetch product details');
+        
+        const productsData = await response.json();
+        const lines = textContent.split('\n');
+        let newHtmlContent = '';
+
+        lines.forEach(line => {
+            const match = line.match(/^-?\s*(\d+)\s*\|/);
+            
+            // --- تغییر اصلی اینجاست ---
+            if (match && productsData[match[1]]) {
+                const id = match[1];
+                const product = productsData[id];
                 
-                const productsData = await response.json();
-
-                // متن را به خطوط جداگانه تقسیم کن
-                const lines = textContent.split('\n');
-                let newHtmlContent = '';
-
-                lines.forEach(line => {
-                    // Regex انعطاف‌پذیر برای پیدا کردن شناسه در خط
-                    const match = line.match(/\(ID: (\d+)\)|\bID: (\d+)/);
-                    
-                    // چک کن که آیا شناسه در خط وجود دارد و آیا اطلاعات آن را از API دریافت کرده‌ایم
-                    if (match && productsData[match[1] || match[2]]) {
-                        const id = match[1] || match[2];
-                        const product = productsData[id];
-                        
-                        // کارت HTML محصول را بساز
-                        newHtmlContent += `
-                            <div class="product-card">
-                                <img src="${product.image_url}" alt="${product.name}" class="product-card-image">
-                                <div class="product-card-info">
-                                    <a href="${product.url}" target="_blank">${product.name}</a>
-                                    <span>${product.price}</span>
-                                </div>
-                            </div>
-                        `;
-                    } else if (line.trim() !== '') {
-                        // برای خطوطی که محصول نیستند یا اطلاعاتشان موجود نیست، آنها را در تگ p قرار بده
-                        newHtmlContent += `<p>${line}</p>`;
-                    }
-                });
-
-                // محتوای جدید را جایگزین محتوای قبلی کن
-                messageContentDiv.innerHTML = newHtmlContent;
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-
-            } catch (error) {
-                console.error('Failed to enrich message:', error);
+                // حالا فقط کارت محصول را اضافه می‌کنیم و خط اصلی را حذف می‌کنیم
+                newHtmlContent += `
+                    <div class="product-card">
+                        <img src="${product.image_url}" alt="${product.name}" class="product-card-image">
+                        <div class="product-card-info">
+                            <a href="${product.url}" target="_blank">${product.name}</a>
+                            <span>${product.price}</span>
+                        </div>
+                    </div>
+                `;
+            } else if (line.trim() !== '') {
+                // خطوط دیگر (که محصول نیستند) را نگه می‌داریم
+                newHtmlContent += `<p>${line}</p>`;
             }
-        }
+        });
 
+        messageContentDiv.innerHTML = newHtmlContent;
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    } catch (error) {
+        console.error('Failed to enrich message:', error);
+    }
+}
         function addMessage(text, sender) {
             const messageElement = createMessageElement(text, sender);
             chatMessages.appendChild(messageElement);

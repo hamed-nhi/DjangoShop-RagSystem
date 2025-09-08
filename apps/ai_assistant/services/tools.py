@@ -9,9 +9,6 @@ from middlewares.middlewares import RequestMiddleware
 from typing import List, Optional
 from .global_services import hybrid_retriever
 from django.utils.html import strip_tags
-# In apps/ai_assistant/services/tools.py
-
-# ... (other imports)
 
 @tool
 def search_products(

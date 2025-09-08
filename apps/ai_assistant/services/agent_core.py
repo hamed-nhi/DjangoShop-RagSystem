@@ -5,10 +5,26 @@ from langchain_openai import ChatOpenAI
 from langchain.agents import AgentExecutor, create_tool_calling_agent
 from langchain_core.prompts import ChatPromptTemplate
 from . import tools
-
+from dotenv import load_dotenv
+import os
 # 1. LLM Settings
 
-llm = ChatOpenAI(model="gpt-5-nano", temperature=0.7)
+
+load_dotenv()
+print("="*50)
+print(f"کلید API که برنامه در حال استفاده از آن است: {os.getenv('OPENAI_API_KEY')}")
+print("="*50)
+# +++++++++++++++++++++++++++++++++++++
+
+# 1. LLM Settings
+# llm = ChatOpenAI(model="gpt-5-nano", temperature=0.7)
+
+llm = ChatOpenAI(
+    model="gpt-5-nano",
+    temperature=0.7,
+    api_key="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"
+)
+
 
 # 2. Tool Collection
 langchain_tools = [
@@ -19,6 +35,7 @@ langchain_tools = [
 ]
 
 # 3. Final, Intent-Focused System Prompt
+
 system_prompt = """
 You are "Hushyar", an expert AI sales assistant for an online laptop store.
 Your primary goal is to help users find and purchase laptops from this store's inventory.
@@ -63,8 +80,27 @@ Your primary goal is to help users find and purchase laptops from this store's i
 **Strict Output Formatting and Guidance Rules:**
 
 1.  **DO NOT repeat the raw output from the tools.** Your role is to interpret the tool's output and present it in a clean, user-friendly, and summarized format.
+
 2.  When presenting products, list **ALL** product results cleanly, one per line, without interruptions.
+    
+    # +++ NEW CRITICAL RULE: PRODUCT LISTING FORMAT +++
+    # When you list products from a search, you MUST follow this exact format for each product line:
+    # - [PRODUCT_ID] | [PRODUCT_NAME] — [PRICE]
+    #
+    # Correct Example:
+    # - 934 | Lenovo V14 Laptop — 35,799,000 تومان
+    #
+    # Incorrect Examples (DO NOT USE THESE FORMATS):
+    # - Lenovo Laptop (ID: 934)
+    # - ID 934: Lenovo Laptop
+    # - 934 — Lenovo Laptop
+    #
+    # You MUST use the pipe "|" separator between the ID and the name.
+    # Do not add any other text or labels like "ID:". This format is for the system to parse.
+    # +++ END OF NEW RULE +++
+
 3.  **AFTER** the complete list of products, you MUST provide a brief analysis explaining WHY these products are a good match for the user's specific request (e.g., why they are suitable for 'lawyering' or 'GIS work'). Highlight 1-2 key models and their strengths.
+
 4.  **FINALLY, guide the user for the next step.** End your response by clearly explaining how they can proceed. For example:
     "حالا چه کاری برایتان انجام دهم؟ می‌توانید با اشاره به **جایگاه در لیست** (مثلاً `اولی و سومی`) یا **شناسه عددی** (`مقایسه ۴۵ و ۲۷۳`)، محصولات را برای مقایسه یا خرید انتخاب کنید."
 

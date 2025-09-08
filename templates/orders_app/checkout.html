@@ -9,7 +9,8 @@
 <div class="site">
     <div class="site__body">
         <div class="page-header">
-            <div class="page-header__container container">
+            <div class="page-header__container container"><tbody class="checkout__totals-products">
+
                 <div class="page-header__breadcrumb">
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
@@ -150,49 +151,63 @@
                                             <th>جمع کل</th>
                                         </tr>
                                     </thead>
-                                    <tbody class="checkout__totals-products">
-                                        {% for item in shop_cart %}
-                                        <tr>
-                                            <td>{{item.product}}</td>
-                                            <td>{{item.qty}}</td>
-                                            <td style="white-space: nowrap;">{{item.total_price | intcomma}} تومان</td>
-                                        </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                    <tbody class="checkout__totals-subtotals">
-                                        <tr>
-                                            <th colspan="2">جمع جزء</th>
-                                            <td style="white-space: nowrap;">{{total_price | intcomma}} تومان</td>
-                                        </tr>
-                                        <tr>
-                                            <th colspan="2">حمل و نقل</th>
-                                            <td style="white-space: nowrap;">{{delivery | intcomma}} تومان</td>
-                                        </tr>
-                                        <tr>
-                                            <th colspan="2">مالیات</th>
-                                            <td style="white-space: nowrap;">{{tax | intcomma}} تومان</td>
-                                        </tr>
-                                        {% if discount_percentage_applied > 0 %}
-                                        <tr>
-                                            <th colspan="2">
-                                                <span style="font-weight: bold; color: #dc3545;">
-                                                    تخفیف (<span style="color: #dc3545;">{{ discount_percentage_applied }}%</span>)
-                                                </span>
-                                            </th>
-                                            <td style="white-space: nowrap;">
-                                                <span style="font-weight: bold; color: #dc3545;">
-                                                    - {{ discount_amount_applied | intcomma }} تومان
-                                                </span>
-                                            </td>
-                                        </tr>
-                                        {% endif %}
-                                    </tbody>
-                                    <tfoot class="checkout__totals-footer">
-                                        <tr>
-                                            <th colspan="2">جمع کل نهایی</th>
-                                            <td style="white-space: nowrap;">{{grand_total | intcomma}} تومان</td>
-                                        </tr>
-                                    </tfoot>
+                             <tbody class="checkout__totals-products">
+    {% for item in shop_cart %}
+    <tr>
+        <td>
+            {# تغییر نهایی: نام محصول به صفحه خودش لینک شد #}
+            <a href="{{ item.product.get_absolute_url }}">
+                <span class="short-name">{{ item.product|truncatewords:5 }}</span>
+                <span class="full-name" style="display:none;">{{ item.product }}</span>
+            </a>
+            
+            {% if item.product.name|wordcount > 5 %}
+                <a href="#" class="toggle-name" style="font-size: 0.8em; color: #007bff; text-decoration: none; display: block;">...بیشتر</a>
+            {% endif %}
+        </td>
+        <td>{{item.qty}}</td>
+        <td style="white-space: nowrap;">{{item.total_price|floatformat:0|intcomma}} تومان</td>
+    </tr>
+    {% endfor %}
+</tbody>
+
+<tbody class="checkout__totals-subtotals">
+    <tr>
+        <th colspan="2">جمع جزء</th>
+        {# تغییر ۲: حذف اعشار از قیمت‌ها #}
+        <td style="white-space: nowrap;">{{total_price|floatformat:0|intcomma}} تومان</td>
+    </tr>
+    <tr>
+        <th colspan="2">حمل و نقل</th>
+        <td style="white-space: nowrap;">{{delivery|floatformat:0|intcomma}} تومان</td>
+    </tr>
+    <tr>
+        <th colspan="2">مالیات</th>
+        <td style="white-space: nowrap;">{{tax|floatformat:0|intcomma}} تومان</td>
+    </tr>
+    {% if discount_percentage_applied > 0 %}
+    <tr>
+        <th colspan="2">
+            <span style="font-weight: bold; color: #dc3545;">
+                تخفیف (<span style="color: #dc3545;">{{ discount_percentage_applied }}%</span>)
+            </span>
+        </th>
+        <td style="white-space: nowrap;">
+            <span style="font-weight: bold; color: #dc3545;">
+                - {{ discount_amount_applied|floatformat:0|intcomma }} تومان
+            </span>
+        </td>
+    </tr>
+    {% endif %}
+</tbody>
+
+<tfoot class="checkout__totals-footer">
+    <tr>
+        <th colspan="2">جمع کل نهایی</th>
+        {# تغییر ۲: حذف اعشار از قیمت‌ها #}
+        <td style="white-space: nowrap;">{{grand_total|floatformat:0|intcomma}} تومان</td>
+    </tr>
+</tfoot>
                                 </table>
 
                                 <form action="{% url "orders:apply_coupon" order_id=order.id %}" method="post" style="display: flex; justify-content:center">
@@ -208,6 +223,36 @@
         </div>
     </div>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // پیدا کردن تمام لینک‌های "بیشتر/کمتر"
+    const toggleLinks = document.querySelectorAll('.toggle-name');
+
+    toggleLinks.forEach(link => {
+        link.addEventListener('click', function(event) {
+            // جلوگیری از رفرش شدن صفحه
+            event.preventDefault();
+
+            // پیدا کردن نزدیک‌ترین ردیف والد (td)
+            const td = this.closest('td');
+            const shortName = td.querySelector('.short-name');
+            const fullName = td.querySelector('.full-name');
+
+            // نمایش نام کامل و مخفی کردن نام کوتاه (و برعکس)
+            shortName.style.display = shortName.style.display === 'none' ? 'inline' : 'none';
+            fullName.style.display = fullName.style.display === 'none' ? 'inline' : 'none';
+
+            // تغییر متن لینک
+            if (this.textContent.includes('بیشتر')) {
+                this.textContent = 'کمتر';
+            } else {
+                this.textContent = '...بیشتر';
+            }
+        });
+    });
+});
+</script>
+
 {% endblock content %}
 
 

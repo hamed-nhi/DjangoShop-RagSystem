@@ -1,34 +1,53 @@
+{% comment %}
+    accounts_app/partials/show_last_orders.html
+{% endcomment %}
 
-                                 {% load humanize %}
+{% load jalali_tags humanize %}
 
-
-								<div class="dashboard__orders card">
-									<div class="card-header">
-										<h5>سفارشات اخیر</h5></div>
-									<div class="card-divider"></div>
-									<div class="card-table">
-										<div class="table-responsive-sm">
-											<table>
-												<thead>
-													<tr>
-														<th>سفارش</th>
-														<th>تاریخ</th>
-														<th>وضعیت</th>
-														<th>جمع کل</th>
-													</tr>
-												</thead>
-												<tbody>
-                                                    {% for order in orders%}
-													<tr>
-														<td><a href="">{{order.id}}</a></td>
-														<td>{{order.register_date}}</td>
-														<td>{{order.order_state}}</td>
-														<td>{{order.grand_total|intcomma}}</td>
-													</tr>
-                                                    {% endfor %}
-												</tbody>
-											</table>
-										</div>
-									</div>
-								</div>
-							{% comment %} </div>  {% endcomment %}
+<div class="dashboard__orders card">
+    <div class="card-header">
+        <h5>سفارشات اخیر</h5>
+    </div>
+    <div class="card-divider"></div>
+    <div class="card-table">
+        <div class="table-responsive-sm">
+            <table>
+                <thead>
+                    <tr>
+                        <th>سفارش</th>
+                        <th>تاریخ</th>
+                        <th>وضعیت</th>
+                        <th>جمع کل</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td>
+                            <a href="#">{{ order.id }}</a>
+                        </td>
+                        <td>
+                            {# تغییر از jformat به to_jalali #}
+                            {{ order.register_date|to_jalali:"%Y/%m/%d" }}	
+                        </td>
+                        <td>
+                            {% if order.order_state %}
+                                {{ order.order_state.order_state_title }}
+                            {% else %}
+                                <span style="color: #ff9800;">در صف انتظار</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {{ order.total_price|floatformat:0|intcomma }} تومان
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" style="text-align: center;">شما هنوز سفارشی ثبت نکرده‌اید.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
