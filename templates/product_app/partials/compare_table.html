@@ -2,13 +2,13 @@
 {% load humanize %}
 {% load product_tags %}
 
-{% block title %}مقایسه محصولات{% endblock title %}
+{% comment %} {% block title %}مقایسه محصولات{% endblock title %} {% endcomment %}
 
 {% block content %}
-<div class="container my-5" dir:rtl>
-   {% csrf_token %} <h2 class="mb-4 text-center font-weight-bold">مقایسه محصولات</h2>
+<div class="container my-5" dir="rtl">
+    {% csrf_token %} 
+    <h2 class="mb-4 text-center font-weight-bold">مقایسه محصولات</h2>
     
-    <!-- دکمه کنترلی -->
     <div class="text-center mb-3">
         <button id="toggleDifferences" class="btn btn-outline-primary btn-sm ripple">نمایش تفاوت‌ها</button>
     </div>
@@ -22,7 +22,6 @@
                     <th>
                         <a class="compare-table__product-link" href="{{ product.get_absolute_url }}">
                             <div class="compare-table__product-image">
-                                
                                 <img src="{{ product.image_name.url }}" alt="{{ product.product_name }}">
                             </div>
                             <div class="compare-table__product-name">{{ product.product_name }}</div>
@@ -65,11 +64,13 @@
                     {% endfor %}
                 </tr>
                 {% endfor %}
-                 {% comment %} ++++++++++ بخش جدید: تحلیل هوش مصنوعی ++++++++++ {% endcomment %}
+                
+                {% comment %} ++++++++++ بخش تحلیل هوش مصنوعی ++++++++++ {% endcomment %}
                 {% if products|length > 1 %}
                 <tr class="compare-table__row--ai">
                     <td class="feature-name">تحلیل هوش مصنوعی</td>
                     <td colspan="{{ products|length }}" class="text-center">
+                        
                         <button id="ai-analysis-btn" 
                                 class="btn btn-info btn-sm ripple" 
                                 data-product-ids="[{% for p in products %}{{ p.id }}{% if not forloop.last %},{% endif %}{% endfor %}]">
@@ -77,11 +78,24 @@
                         </button>
                         
                         <div id="ai-spinner" class="spinner-border spinner-border-sm text-primary d-none" role="status">
-                            <span class="sr-only" style="dir:rtl;";>در حال پردازش...</span>
+                            
+                            <span class="sr-only">در حال پردازش...</span>
                         </div>
+                        <div id="ai-loading-animation" class="d-none mt-3">
+        <p style="font-size: 1rem; color: #555;">هوش مصنوعی در حال تحلیل است، لطفاً شکیبا باشید...</p>
+        <div class="typing-dots">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+    {% comment %} <div id="ai-analysis-result" dir="rtl"></div> {% endcomment %}
 
-                        <div id="ai-analysis-result" class="mt-3 text-right" style="white-space: pre-wrap; dir:rtl;">
-                            </div>
+                        {% comment %} <div id="ai-analysis-result" class="mt-3 text-right" style="white-space: pre-wrap;"> {% endcomment %}
+                        {% comment %} <div id="ai-analysis-result" class="mt-3 text-right" style="white-space: pre-wrap;" dir="rtl"> {% endcomment %}
+                            <div id="ai-analysis-result" class="mt-3 text-right" style="white-space: pre-wrap;" dir="rtl">
+    {% comment %} </div> {% endcomment %}
+                        </div>
                     </td>
                 </tr>
                 {% endif %}
@@ -117,20 +131,6 @@
     --compare-header-bg: rgba(255, 255, 255, 0.6);
     --compare-highlight-bg: rgba(240, 248, 255, 0.6);
 }
-.product-image-container {
-    width: 300px; /* اندازه استاندارد قاب */
-    height: 300px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden; /* جلوگیری از بیرون زدن تصویر */
-}
-
-.product-image-container img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain; /* حفظ نسبت تصویر */
-}
 .table-responsive-container {
     overflow-x: auto;
     border: 1px solid var(--compare-border-color);
@@ -140,34 +140,28 @@
     -webkit-backdrop-filter: blur(10px);
     animation: fadeSlide 0.6s ease forwards;
 }
-
 .compare-table {
     width: 100%;
     border-collapse: collapse;
     text-align: center;
     font-size: 1rem;
 }
-
-.compare-table th,
-.compare-table td {
+.compare-table th, .compare-table td {
     padding: 1rem;
     border-bottom: 1px solid var(--compare-border-color);
     transition: background 0.3s;
 }
-
 .compare-table thead th {
     border-bottom: 3px solid var(--compare-primary-color);
     font-weight: 700;
     background: rgba(255,255,255,0.8);
 }
-
 .compare-table .feature-name {
     background-color: var(--compare-header-bg);
     font-weight: 600;
     text-align: right;
     border-right: 1px solid var(--compare-border-color);
 }
-
 .compare-table__product-image img {
     max-width: 140px;
     border-radius: 8px;
@@ -177,16 +171,12 @@
     transform: scale(1.08);
     box-shadow: 0 8px 18px rgba(52,152,219,0.4);
 }
-
 .compare-table tbody tr:hover {
     background-color: var(--compare-highlight-bg);
 }
-
 .compare-table__row--actions {
     background-color: rgba(248, 249, 250, 0.8);
 }
-
-/* Ripple effect for buttons */
 .ripple {
     position: relative;
     overflow: hidden;
@@ -205,20 +195,91 @@
     opacity: 1;
     transition: 0s;
 }
-
-/* Highlight different cells */
 .diff-highlight {
     background-color: rgba(255, 235, 59, 0.3) !important;
 }
-
-/* Animation */
 @keyframes fadeSlide {
     from { opacity: 0; transform: translateY(15px); }
     to { opacity: 1; transform: translateY(0); }
 }
+#ai-analysis-result {
+    direction: rtl; /* برای مرورگر مشخص می‌کند محتوا راست‌چین است */
+    text-align: justify; /* محتوا را justify می‌کند */
+    background-color: rgba(248, 250, 252, 0.7);
+    border-radius: 8px;
+    border: 1px solid var(--compare-border-color);
+    padding: 1.5rem;
+    line-height: 1.8;
+    color: #333;
+    font-size: 0.95rem; /* کمی کوچکتر برای خوانایی بهتر */
 
 
-/* Mobile view */
+}
+#ai-analysis-result p {
+    text-align: justify; /* پاراگراف‌ها را justify می‌کند */
+    margin-bottom: 1rem;
+}
+#ai-analysis-result h3 {
+    font-size: 1.5rem; /* بزرگتر برای تیترهای اصلی */
+    color: var(--compare-primary-color);
+    border-bottom: 2px solid var(--compare-primary-color);
+    padding-bottom: 0.5rem;
+    margin-top: 2rem; /* فاصله بیشتر از بالا */
+    margin-bottom: 1.2rem;
+    text-align: right; /* تیتر را راست‌چین می‌کند */
+}
+
+#ai-analysis-result h4 {
+    font-size: 1.2rem; /* کوچکتر از h3 */
+    color: #2c3e50;
+    margin-top: 1.5rem;
+    margin-bottom: 0.8rem;
+    text-align: right; /* تیتر را راست‌چین می‌کند */
+}
+
+
+
+#ai-analysis-result ul {
+    list-style-type: none; /* بولت پیش‌فرض را حذف می‌کنیم */
+    padding-right: 0; /* حذف padding پیش‌فرض برای همراستایی کامل */
+    text-align: right; /* متن لیست راست چین باشد */
+}
+
+#ai-analysis-result ul li {
+    padding-bottom: 0.75rem; /* کمی فاصله بیشتر برای خوانایی */
+    /* دیگر نیازی به padding-right و position: relative نیست چون ایموجی در خود متن است */
+}
+
+
+
+#ai-analysis-result ol {
+    padding-right: 1.5rem; /* برای لیست‌های عددی */
+    text-align: justify;
+}
+
+#ai-analysis-result table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+    direction: rtl; /* برای جدول هم dir="rtl" اعمال شود */
+}
+
+#ai-analysis-result th,
+#ai-analysis-result td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: right; /* محتوای سلول‌ها راست‌چین شود */
+}
+
+#ai-analysis-result th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+#ai-analysis-result strong {
+    color: #2980b9;
+}
 @media (max-width: 768px) {
     .compare-table, .compare-table thead, .compare-table tbody, .compare-table th, .compare-table td, .compare-table tr {
         display: block;
@@ -252,160 +313,212 @@
         display: none;
     }
 }
-/* این کد را به انتهای تگ <style> اضافه کنید */
 
-#ai-analysis-result {
-    direction: rtl;
-    text-align: right;
+#ai-loading-animation {
+    padding: 2rem 1rem;
     background-color: rgba(248, 250, 252, 0.7);
     border-radius: 8px;
     border: 1px solid var(--compare-border-color);
-    padding: 1.5rem;
-    line-height: 1.8;
-    color: #333;
 }
 
-#ai-analysis-result h3 {
-    font-size: 1.25rem;
-    color: var(--compare-primary-color);
-    border-bottom: 2px solid var(--compare-primary-color);
-    padding-bottom: 0.5rem;
-    margin-top: 1.5rem;
-    margin-bottom: 1rem;
+.typing-dots {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1rem;
 }
 
-#ai-analysis-result h4 {
-    font-size: 1.1rem;
-    color: #2c3e50;
-    margin-top: 1.2rem;
-    margin-bottom: 0.8rem;
+.typing-dots span {
+    width: 10px;
+    height: 10px;
+    margin: 0 5px;
+    background-color: var(--compare-primary-color);
+    border-radius: 50%;
+    opacity: 0.4;
+    animation: pulse 1.4s infinite ease-in-out;
 }
 
-#ai-analysis-result ul {
-    list-style-type: '✓ '; /* A nice checkmark bullet */
-    padding-right: 20px;
+/* This creates the delayed pulsing effect */
+.typing-dots span:nth-child(2) {
+    animation-delay: 0.2s;
 }
 
-#ai-analysis-result li {
-    padding-bottom: 0.5rem;
+.typing-dots span:nth-child(3) {
+    animation-delay: 0.4s;
 }
 
-#ai-analysis-result strong {
-    color: #2980b9;
+@keyframes pulse {
+    0%, 80%, 100% {
+        transform: scale(0.8);
+        opacity: 0.4;
+    }
+    40% {
+        transform: scale(1.2);
+        opacity: 1;
+    }
 }
 </style>
-
 
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
+
     // =======================================================
-    // بخش تحلیل هوش مصنوعی
+    // تابع برای مدیریت تحلیل هوشمند
     // =======================================================
-    
-    // این ۴ خط جا افتاده بود
+function setupAIAnalysis() {
     const analysisBtn = document.getElementById('ai-analysis-btn');
-    if (analysisBtn) {
-        const resultDiv = document.getElementById('ai-analysis-result');
-        const spinner = document.getElementById('ai-spinner');
-        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    if (!analysisBtn) return;
 
-        analysisBtn.addEventListener('click', async function() {
-            this.disabled = true;
-            spinner.classList.remove('d-none');
-            resultDiv.innerHTML = '';
+    // Get references to all the elements we need to control
+    const resultDiv = document.getElementById('ai-analysis-result');
+    const loadingDiv = document.getElementById('ai-loading-animation');
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    analysisBtn.addEventListener('click', async function() {
+        // --- Show loading animation and hide the button ---
+        loadingDiv.classList.remove('d-none');
+        analysisBtn.classList.add('d-none');
+        resultDiv.innerHTML = ''; // Clear previous results
+        
+        const productIds = JSON.parse(this.dataset.productIds);
+        
+        try {
+            const response = await fetch("{% url 'ai_assistant:ai_compare_view' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken,
+                },
+                body: JSON.stringify({ product_ids: productIds })
+            });
+
+            if (!response.ok) throw new Error(`Server error: ${response.statusText}`);
+
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder("utf-8");
             let fullResponseText = '';
+            let isFirstChunk = true;
 
-            const productIds = JSON.parse(this.dataset.productIds);
-            const prompt = `
-من در حال مقایسه محصولات با شناسه‌های ${JSON.stringify(productIds)} هستم.
-یک تحلیل کامل و تخصصی از این محصولات ارائه بده. برای قالب‌بندی پاسخ از Markdown استفاده کن (برای عناوین از ### و برای لیست‌ها از - استفاده کن).
-تحلیل تو باید شامل این موارد باشد:
-1.  نقاط قوت و ضعف کلیدی هر محصول.
-2.  مقایسه محصولات از نظر کارایی، ارزش خرید و کاربری‌های خاص (بازی، برنامه‌نویسی، گرافیک).
-3.  یک جمع‌بندی نهایی که کدام محصول برای چه نوع کاربری مناسب‌تر است.
-مهم: پاسخ تو باید فقط و فقط شامل تحلیل و مقایسه باشد. هیچ‌گونه سوال، پیشنهاد برای مراحل بعدی، یا متن‌های اضافی مانند "حالا چه کاری برایتان انجام بدهм؟" را در پاسخ خود نیاور.
-`;
-            
-            try {
-                const response = await fetch("{% url 'ai_assistant:chat_view' %}", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': csrftoken,
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    body: JSON.stringify({ message: prompt })
-                });
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
 
-                if (!response.ok) throw new Error(`Server error: ${response.statusText}`);
-
-                const reader = response.body.getReader();
-                const decoder = new TextDecoder("utf-8");
-
-                while (true) {
-                    const { done, value } = await reader.read();
-                    if (done) break;
-                    fullResponseText += decoder.decode(value, {stream: true});
+                // --- Hide the loading animation on the FIRST chunk ---
+                if (isFirstChunk) {
+                    loadingDiv.classList.add('d-none');
+                    isFirstChunk = false;
                 }
                 
+                const chunk = decoder.decode(value, {stream: true});
+                fullResponseText += chunk;
                 resultDiv.innerHTML = marked.parse(fullResponseText);
-
-            } catch (error) {
-                console.error("AI Assistant Error:", error);
-                resultDiv.innerHTML = `<div class="alert alert-danger">متاسفانه در ارتباط با سرور خطایی رخ داد.</div>`;
-            } finally {
-                this.disabled = false;
-                spinner.classList.add('d-none');
             }
-        });
-    }
-    
+
+        } catch (error) {
+            console.error("AI Compare Error:", error);
+            resultDiv.innerHTML = `<div class="alert alert-danger">An error occurred while communicating with the server.</div>`;
+        } finally {
+            // --- Ensure loading is hidden and the button is shown again ---
+            loadingDiv.classList.add('d-none');
+            analysisBtn.classList.remove('d-none');
+            analysisBtn.disabled = false;
+        }
+    });
+}
 
     // =======================================================
-    // کدهای اصلی شما (بدون هیچ تغییری)
+    // تابع برای دکمه نمایش تفاوت‌ها
     // =======================================================
-    const toggleBtn = document.getElementById("toggleDifferences");
-    if (toggleBtn) {
+    function setupToggleDifferences() {
+        const toggleBtn = document.getElementById("toggleDifferences");
+        if (!toggleBtn) return;
+
         toggleBtn.addEventListener("click", function() {
             const rows = document.querySelectorAll(".compare-table tbody tr");
-            let showingDifferences = this.classList.toggle("active");
-            this.textContent = showingDifferences ? "نمایش همه ویژگی‌ها" : "نمایش فقط تفاوت‌ها";
+            const isShowingDifferences = this.classList.toggle("active");
+            this.textContent = isShowingDifferences ? "نمایش همه ویژگی‌ها" : "نمایش فقط تفاوت‌ها";
 
             rows.forEach(row => {
-                const cells = [...row.querySelectorAll("td:not(.feature-name)")];
-                const values = cells.map(td => td.innerText.trim());
-                const isDifferent = new Set(values).size > 1;
+                if (row.classList.contains('compare-table__row--actions') || row.classList.contains('compare-table__row--ai')) {
+                    return; // از این ردیف‌ها صرف نظر کن
+                }
 
-                if (showingDifferences) {
-                    if (!isDifferent) row.classList.add("d-none");
-                    else row.classList.add("diff-highlight");
+                const cells = Array.from(row.querySelectorAll("td:not(.feature-name)"));
+                if (cells.length < 2) return;
+
+                const firstValue = cells[0].innerText.trim();
+                const allSame = cells.every(td => td.innerText.trim() === firstValue);
+
+                if (isShowingDifferences) {
+                    row.style.display = allSame ? 'none' : '';
+                    if (!allSame) {
+                        row.classList.add("diff-highlight");
+                    }
                 } else {
-                    row.classList.remove("d-none", "diff-highlight");
+                    row.style.display = '';
+                    row.classList.remove("diff-highlight");
                 }
             });
         });
     }
 
-    // حذف محصول با انیمیشن (کد اصلی شما)
-    document.querySelectorAll(".remove-product").forEach(btn => {
-        btn.addEventListener("click", function() {
-            const id = this.dataset.id;
-            const colIndex = [...this.closest("tr").children].indexOf(this.closest("td"));
-            document.querySelectorAll(`.compare-table tr`).forEach(tr => {
-                const cell = tr.children[colIndex];
-                if (cell) {
-                    cell.style.transition = "all 0.3s ease";
-                    cell.style.opacity = "0";
-                    cell.style.transform = "scale(0.9)";
-                    setTimeout(() => cell.remove(), 300);
+    
+    // =======================================================
+    // FINAL CORRECTED VERSION OF THE DELETE FUNCTION
+    // =======================================================
+    function setupRemoveProduct() {
+        document.querySelectorAll(".remove-product").forEach(btn => {
+            btn.addEventListener("click", async function() { // <-- Made this async
+                const id = this.dataset.id;
+                const td = this.closest('td');
+                if (!td) return;
+
+                // --- Part 1: Visually remove the column (this part is correct) ---
+                const colIndex = Array.from(td.parentNode.children).indexOf(td);
+                const table = this.closest('.compare-table');
+                table.querySelectorAll('tr').forEach(tr => {
+                    if (tr.children[colIndex]) {
+                        const cell = tr.children[colIndex];
+                        cell.style.transition = "all 0.3s ease";
+                        cell.style.opacity = "0";
+                        cell.style.transform = "scale(0.9)";
+                        setTimeout(() => cell.remove(), 300);
+                    }
+                });
+
+                // --- Part 2: Tell the server to delete the product (NEW PART) ---
+                const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                try {
+                    const response = await fetch("{% url 'products:remove_from_compare' %}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrftoken,
+                        },
+                        body: JSON.stringify({ product_id: id })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.status === 'success') {
+                        console.log('Product successfully removed from the server.');
+                        // You can optionally update the compare list icon/count here
+                    } else {
+                        console.error('Server error while removing product:', data.message);
+                    }
+                } catch (error) {
+                    console.error('Network error while removing product:', error);
                 }
             });
-            // این تابع باید در جای دیگری تعریف شده باشد
-            // deleteFromCompareList(id); 
         });
-    });
+    }
+
+    // --- Run all setup functions when the page loads ---
+    setupAIAnalysis();
+    setupToggleDifferences();
+    setupRemoveProduct();
 });
 </script>
 {% endblock content %}

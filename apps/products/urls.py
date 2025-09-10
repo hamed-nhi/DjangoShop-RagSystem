@@ -24,7 +24,10 @@ urlpatterns = [
     
     # URLs for the AJAX functions
     path('add_to_compare_list/', views.add_to_compare_list, name='add_to_compare_list'),
-    path('delete_from_compare_list/', views.delete_from_compare_list, name='delete_from_compare_list'),
+    # path('delete_from_compare_list/', views.delete_from_compare_list, name='delete_from_compare_list'),
+    # path('delete_from_compare_list/', views.delete_from_compare_list, name='remove_from_compare'),
+    path('delete_from_compare_list/', views.delete_from_compare_list, name='remove_from_compare'),
+
     path('status_of_compare_list/', views.status_of_compare_list, name='status_of_compare_list'),
     path('all_product_groups/', views.AllProductGroupsView.as_view(), name='all_product_groups'), 
     path('best_selling_products/', views.get_best_selling_products, name='best_selling_products'),
