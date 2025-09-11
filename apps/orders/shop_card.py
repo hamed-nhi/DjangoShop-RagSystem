@@ -72,7 +72,9 @@ class ShopCart:
 
     # =====================================================================
     def save(self):
-        self.session.modified = True
+        # self.session.modified = True
+        self.session.save()
+
 
     def __iter__(self):
         list_ids = self.shop_cart.keys()

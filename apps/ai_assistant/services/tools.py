@@ -28,17 +28,17 @@ def search_products(
     """
     print(f"--- Search tool invoked with: query='{query}', brand='{brand}', price_min='{price_min}', price_max='{price_max}' ---")
 
-    # --- Price Logic (No change) ---
-    if price_max and not price_min and not price_around:
-        price_min = int(price_max * 0.85)
-    elif price_around and not price_min and not price_max:
+    # --- Price Logic ---
+    if price_around is not None and price_min is None and price_max is None:
         range_percent = 0.20
         price_min = int(price_around * (1 - range_percent))
         price_max = int(price_around * (1 + range_percent))
+    elif price_max is not None and price_min is None and price_around is None:
+        price_min = int(price_max * 0.85)
 
     # --- Simplified Filter Construction ---
     filters = []
-    if brand:
+    if brand is not None and brand != 'None':
         filters.append(f"brand_name = '{brand.lower()}'")
     if price_min is not None:
         filters.append(f"price >= {price_min}")
@@ -55,7 +55,7 @@ def search_products(
         products_query = Product.objects.filter(id__in=product_ids)
         
         # --- Simplified Final Filtering ---
-        if brand:
+        if brand is not None and brand != 'None':
             products_query = products_query.filter(brand__brand_title__iexact=brand)
         if price_min is not None:
             products_query = products_query.filter(price__gte=price_min)
@@ -65,7 +65,7 @@ def search_products(
         final_products = list(products_query.order_by('-price')[:5])
 
         if not final_products:
-             return "Unfortunately, no products were found with these specifications in the specified filter range."
+            return "Unfortunately, no products were found with these specifications in the specified filter range."
 
         results = ["Here are the best matches found for your query:\n"]
         for p in final_products:
@@ -73,6 +73,7 @@ def search_products(
         return "\n".join(results)
     except Exception as e:
         return f"An error occurred while searching for products: {e}"
+
 
 @tool
 def compare_products(product_ids: List[int]) -> str:
@@ -105,20 +106,35 @@ def compare_products(product_ids: List[int]) -> str:
 
 @tool
 def add_to_cart(product_id: int) -> str:
-    """زمانی از این ابزار استفاده کن که کاربر قصد خرید دارد و می‌خواهد محصولی را به سبد خرید اضافه کند."""
-    print(f"--- ابزار افزودن به سبد خرید فراخوانی شد برای محصول: {product_id} ---")
+    """Use this tool when the user intends to buy and wants to add a product to the shopping cart."""
+    print(f"--- Add to cart tool called for product: {product_id} ---")
     try:
-        request = RequestMiddleware(get_response=None).thread_local.current_request
+        # Get the current request using the verified method
+        temp_middleware_instance = RequestMiddleware(get_response=None)
+        request = getattr(temp_middleware_instance.thread_local, 'current_request', None)
+        
         if not request:
-            return "خطای سیستمی: امکان دسترسی به سبد خرید وجود ندارد."
+            return "System Error: Cannot access the shopping cart because the request context was not found."
+
+        # Find the product
         product = Product.objects.get(id=product_id)
+        
+        # Initialize the cart with the retrieved request
         cart = ShopCart(request)
-        cart.add(product, 1)
-        return f"محصول '{product.product_name}' با موفقیت به سبد خرید شما اضافه شد."
+        
+        # ▼▼▼ THIS IS THE DEFINITIVE FIX ▼▼▼
+        # Use the correct method name from your ShopCart class
+        cart.add_to_shop_cart(product=product, qty=1)
+        
+        return f"The product '{product.product_name}' was successfully added to your cart."
+    
     except Product.DoesNotExist:
-        return f"محصولی با شناسه {product_id} یافت نشد."
+        return f"A product with ID {product_id} was not found."
+    
     except Exception as e:
-        return f"هنگام افزودن محصول به سبد خرید خطایی رخ داد: {e}"
+        # Log the full error for debugging
+        print(f"An unexpected error occurred in add_to_cart: {e}")
+        return f"An error occurred while adding the product to the cart: {e}"
 
 
 

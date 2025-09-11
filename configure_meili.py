@@ -22,7 +22,6 @@ def main():
         'brand_name', 
         'price',
         'average_score',
-        'tags',
         'processor_brand',
         'ram_memory',
         'primary_storage_capacity',
