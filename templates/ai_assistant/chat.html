@@ -1,986 +1,1019 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>دستیار هوشمند - فروشگاه آیکو</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/font-face.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/font-face.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌟</text></svg>"
+    />
+
     <style>
-        :root {
-            --bg-primary: #ffffff;
-            --bg-secondary: #f8f9fa;
-            --bg-tertiary: #e9ecef;
-            --bg-card: #ffffff;
-            --text-primary: #212529;
-            --text-secondary: #6c757d;
-            --accent-primary: #007bff;
-            --accent-secondary: #0056b3;
-            --accent-gradient: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
-            --ai-gradient: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
-            --user-gradient: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
-            --border-color: #dee2e6;
-            --success: #28a745;
-            --danger: #dc3545;
-            --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.08);
-            --shadow-hard: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
+      :root {
+        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        --ai-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        --user-gradient: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+        --bg-dark: #1a1a2e;
+        --bg-sidebar: #16213e;
+        --text-light: #e6e9f0;
+        --card-bg: #ffffff;
+        --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.1);
+        --shadow-hard: 0 4px 12px rgba(0, 0, 0, 0.15);
+        --primary-color: #007bff;
+        --primary-hover: #0056b3;
+        --secondary-color: #6c757d;
+        --success-color: #28a745;
+        --bg-light: #f8f9fa;
+        --text-dark: #212529;
+        --border-color: #dee2e6;
+        --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        --gradient: linear-gradient(135deg, #007bff, #0056b3);
+      }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-        body {
-            font-family: Vazir, sans-serif;
-            background: #f5f7f9;
-            color: var(--text-primary);
-            min-height: 100vh;
-            overflow: hidden;
-        }
+      body {
+        font-family: Vazir, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+      }
 
+      .chat-app {
+        width: 100%;
+        max-width: 1200px;
+        height: 90vh;
+        background: white;
+        border-radius: 20px;
+        box-shadow: var(--shadow);
+        display: flex;
+        overflow: hidden;
+        backdrop-filter: blur(10px);
+        background: rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .sidebar {
+        width: 80px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        display: flex;
+        flex-direction: column;
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+        overflow: hidden;
+        position: relative;
+        direction: rtl;
+      }
+
+      .sidebar.expanded {
+        width: 280px;
+      }
+
+      .sidebar-header {
+        padding: 20px 15px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-direction: row-reverse;
+        transition: all 0.3s ease;
+      }
+      .sidebar:not(.expanded) .sidebar-header {
+        justify-content: center;
+        padding: 20px 10px;
+      }
+      .sidebar:not(.expanded) .new-chat-form {
+        display: none;
+      }
+      .sidebar.expanded .new-chat-form {
+        display: block;
+      }
+
+      .menu-toggle {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 20px;
+        cursor: pointer;
+        padding: 8px;
+        border-radius: 50%;
+        transition: background 0.3s ease;
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .menu-toggle:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .new-chat-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 12px;
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        width: 45px;
+        height: 45px;
+        opacity: 1;
+        visibility: visible;
+      }
+      /* در حالت سایدبار جمع‌شده، دکمه را مخفی کنید */
+      .sidebar:not(.expanded) .new-chat-btn {
+        opacity: 0;
+        visibility: hidden;
+        width: 0;
+        height: 0;
+        padding: 0;
+        margin: 0;
+      }
+      .sidebar.expanded .new-chat-btn {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+        padding: 12px 15px;
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .new-chat-btn.expanded {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+        padding: 12px 15px;
+      }
+
+      .new-chat-btn i {
+        margin: 0;
+      }
+
+      .new-chat-btn.expanded i {
+        margin-left: 8px;
+      }
+
+      .new-chat-btn:hover {
+        background: var(--primary-hover);
+        transform: translateY(-2px);
+      }
+      .new-chat-btn span {
+        display: none;
+      }
+
+      .new-chat-btn.expanded span {
+        display: inline;
+      }
+
+      .conversations-list {
+        flex: 1;
+        overflow-y: auto;
+        padding: 10px;
+      }
+
+      .conversation-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px;
+        margin-bottom: 8px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+
+      .chat-header::before {
+        content: "";
+        position: absolute;
+        width: 12px;
+        height: 12px;
+        background: var(--success-color);
+        border-radius: 50%;
+        bottom: 15px;
+        right: 15px;
+        border: 2px solid white;
+      }
+
+      .conversation-item:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateX(5px);
+        transition: all 0.3s ease;
+      }
+
+      .conversation-item.active {
+        background: var(--primary-color);
+      }
+
+      .conversation-link {
+        color: white;
+        text-decoration: none;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        opacity: 0;
+        width: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .sidebar.expanded .conversation-link {
+        opacity: 1;
+        width: auto;
+        margin-right: 10px;
+      }
+
+      .conversation-icon {
+        width: 30px;
+        height: 30px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        flex-shrink: 0;
+      }
+
+      .delete-form {
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .conversation-item:hover .delete-form {
+        opacity: 1;
+      }
+
+      .delete-btn {
+        background: none;
+        border: none;
+        color: #dc3545;
+        cursor: pointer;
+        padding: 5px;
+        border-radius: 4px;
+        transition: background 0.3s ease;
+      }
+
+      .delete-btn:hover {
+        background: rgba(220, 53, 69, 0.1);
+      }
+
+      .chat-main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        background: var(--bg-light);
+      }
+
+      /* استایل برای حالت جمع شده */
+      .sidebar:not(.expanded) .conversation-item {
+        justify-content: center;
+        padding: 15px;
+      }
+
+      .sidebar:not(.expanded) .conversation-item .conversation-link,
+      .sidebar:not(.expanded) .conversation-item .delete-form {
+        display: none;
+      }
+
+      .sidebar:not(.expanded) .conversation-item .conversation-icon {
+        margin: 0;
+      }
+
+      .conversations-list li[style] {
+        text-align: center;
+        padding: 20px;
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 12px;
+      }
+
+      .chat-header {
+        padding: 20px;
+        background: white;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        direction: rtl;
+      }
+
+      .ai-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: var(--gradient);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 20px;
+      }
+
+      .chat-info h2 {
+        font-size: 18px;
+        margin-bottom: 4px;
+        color: var(--text-dark);
+      }
+
+      .chat-info p {
+        font-size: 14px;
+        color: var(--text-light);
+      }
+
+      .chat-messages {
+        flex: 1;
+        padding: 20px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        padding: 25px;
+        gap: 25px;
+        direction: ltr;
+      }
+
+      .sidebar-header,
+      .conversations-list {
+        direction: rtl;
+        text-align: right;
+      }
+
+      .bot-message {
+        align-self: flex-start;
+        flex-direction: row;
+      }
+
+      .message {
+        display: flex;
+        gap: 12px;
+        max-width: 80%;
+        animation: fadeIn 0.3s ease;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .user-message {
+        align-self: flex-end;
+        flex-direction: row-reverse;
+      }
+
+      .message-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 16px;
+      }
+
+      .user-message .message-avatar {
+        background: var(--primary-color);
+        color: white;
+      }
+
+      .bot-message .message-avatar {
+        background: var(--secondary-color);
+        color: white;
+      }
+
+      .message-content {
+        backdrop-filter: blur(5px);
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 16px;
+        border-radius: 18px;
+        line-height: 1.6;
+        box-shadow: var(--shadow);
+        direction: rtl;
+      }
+
+      .user-message .message-content {
+        background: var(--primary-color);
+        color: white;
+        border-bottom-right-radius: 4px;
+        border-bottom-left-radius: 18px;
+      }
+
+      .bot-message .message-content {
+        background: white;
+        color: var(--text-dark);
+        border-bottom-left-radius: 4px;
+        border-bottom-right-radius: 18px;
+        direction: rtl;
+      }
+
+      .message-content pre {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        margin: 0;
+        font-family: inherit;
+        font-size: 14px;
+        direction: rtl;
+      }
+
+      .chat-input {
+        font-family: inherit;
+        padding: 20px;
+        background: white;
+        border-top: 1px solid var(--border-color);
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        direction: rtl;
+      }
+
+      .message-input {
+        flex: 1;
+        border: 2px solid var(--border-color);
+        padding: 14px 20px;
+        border-radius: 25px;
+        font-size: 14px;
+        outline: none;
+        transition: border-color 0.3s ease;
+        background: var(--bg-light);
+        font-family: inherit;
+      }
+
+      .message-input:focus {
+        border-color: var(--primary-color);
+        background: white;
+      }
+
+      .send-btn {
+        width: 50px;
+        height: 50px;
+        border: none;
+        background: var(--gradient);
+        color: white;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .send-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+      }
+
+      .send-btn:disabled {
+        background: var(--secondary-color);
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .typing-indicator {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 16px;
+        background: white;
+        border-radius: 18px;
+        box-shadow: var(--shadow);
+        align-self: flex-start;
+        margin-bottom: 10px;
+      }
+
+      .typing-dots {
+        display: flex;
+        gap: 4px;
+      }
+
+      .typing-dot {
+        width: 8px;
+        height: 8px;
+        background: var(--text-light);
+        border-radius: 50%;
+        animation: typing 1.4s infinite;
+      }
+
+      .typing-dot:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .typing-dot:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+
+      @keyframes typing {
+        0%,
+        60%,
+        100% {
+          transform: translateY(0);
+        }
+        30% {
+          transform: translateY(-4px);
+        }
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
         .chat-app {
-            width: 100%;
-            height: 100vh;
-            display: flex;
-            overflow: hidden;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+          flex-direction: column;
+          height: 100vh;
+          border-radius: 0;
         }
 
         .sidebar {
-            width: 80px;
-            background: var(--bg-secondary);
-            display: flex;
-            flex-direction: column;
-            border-left: 1px solid var(--border-color);
-            transition: all 0.3s ease;
-            overflow: hidden;
-            z-index: 10;
-        }
-        
-        .sidebar.expanded {
-            width: 280px;
-        }
-
-        .sidebar-header {
-            padding: 20px 15px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-direction: row-reverse;
-            transition: all 0.3s ease;
-            background: white;
-        }
-        
-        .sidebar:not(.expanded) .sidebar-header {
-            justify-content: center;
-            padding: 20px 10px;
-        }
-        
-        .sidebar:not(.expanded) .new-chat-form {
-            display: none;
-        }
-        
-        .sidebar.expanded .new-chat-form {
-            display: block;
-        }
-
-        .menu-toggle {
-            background: none;
-            border: none;
-            color: var(--text-primary);
-            font-size: 20px;
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 50%;
-            transition: background 0.3s ease;
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .menu-toggle:hover {
-            background: rgba(0, 0, 0, 0.05);
-        }
-        
-        .new-chat-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 12px;
-            background: var(--accent-gradient);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            width: 45px;
-            height: 45px;
-            opacity: 1;
-            visibility: visible;
-        }
-        
-        .sidebar:not(.expanded) .new-chat-btn {
-            opacity: 0;
-            visibility: hidden;
-            width: 0;
-            height: 0;
-            padding: 0;
-            margin: 0;
-        }
-        
-        .sidebar.expanded .new-chat-btn {
-            width: 100%;
-            height: auto;
-            border-radius: 8px;
-            padding: 12px 15px;
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .new-chat-btn.expanded {
-            width: 100%;
-            height: auto;
-            border-radius: 8px;
-            padding: 12px 15px;
-        }
-        
-        .new-chat-btn i {
-            margin: 0;
-        }
-
-        .new-chat-btn.expanded i {
-            margin-left: 8px;
-        }
-        
-        .new-chat-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-soft);
-        }
-        
-        .new-chat-btn span {
-            display: none;
-        }
-
-        .new-chat-btn.expanded span {
-            display: inline;
-        }
-
-        .conversations-list {
-            flex: 1;
-            overflow-y: auto;
-            padding: 10px;
-        }
-
-        .conversation-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 12px;
-            margin-bottom: 8px;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            white-space: nowrap;
-            overflow: hidden;
-            background: white;
-            border: 1px solid var(--border-color);
-        }
-        
-        .conversation-item:hover {
-            background: #f1f3f5;
-            transform: translateX(5px);
-        }
-                
-        .conversation-item.active {
-            background: var(--accent-primary);
-            color: white;
-        }
-
-        .conversation-link {
-            color: var(--text-primary);
-            text-decoration: none;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            opacity: 0;
-            width: 0;
-            transition: opacity 0.3s ease;
-        }
-        
-        .conversation-item.active .conversation-link {
-            color: white;
-        }
-        
-        .sidebar.expanded .conversation-link {
-            opacity: 1;
-            width: auto;
-            margin-right: 10px;
-        }
-        
-        .conversation-icon {
-            width: 30px;
-            height: 30px;
-            background: rgba(0, 0, 0, 0.05);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            flex-shrink: 0;
-            color: var(--text-primary);
-        }
-
-        .conversation-item.active .conversation-icon {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-        }
-
-        .delete-form {
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        
-        .conversation-item:hover .delete-form {
-            opacity: 1;
-        }
-
-        .delete-btn {
-            background: none;
-            border: none;
-            color: var(--danger);
-            cursor: pointer;
-            padding: 5px;
-            border-radius: 4px;
-            transition: background 0.3s ease;
-        }
-
-        .delete-btn:hover {
-            background: rgba(220, 53, 69, 0.1);
-        }
-
-        .chat-main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: var(--bg-primary);
-        }
-        
-        /* استایل برای حالت جمع شده */
-        .sidebar:not(.expanded) .conversation-item {
-            justify-content: center;
-            padding: 15px;
-        }
-        
-        .sidebar:not(.expanded) .conversation-item .conversation-link,
-        .sidebar:not(.expanded) .conversation-item .delete-form {
-            display: none;
-        }
-
-        .sidebar:not(.expanded) .conversation-item .conversation-icon {
-            margin: 0;
-        }
-
-        .conversations-list li[style] {
-            text-align: center;
-            padding: 20px;
-            color: var(--text-secondary);
-            font-size: 12px;
-        }
-
-        .chat-header {
-            padding: 15px 20px;
-            background: white;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            direction: rtl;
-            position: relative;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
-        }
-
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .header-right {
-            display: flex;
-            align-items: center;
-        }
-
-        .ai-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: var(--ai-gradient);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 20px;
-        }
-
-        .chat-info h2 {
-            font-size: 18px;
-            margin-bottom: 4px;
-            color: var(--text-primary);
-        }
-
-        .chat-info p {
-            font-size: 14px;
-            color: var(--text-secondary);
-        }
-
-        .chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            padding: 25px;
-            gap: 25px;
-            direction: ltr;
-            background: #f8f9fa;
-        }
-        
-        .sidebar-header,
-        .conversations-list {
-            direction: rtl;
-            text-align: right;
-        }
-        
-        .bot-message {
-            align-self: flex-start;
-            flex-direction: row;
-        }
-        
-        .message {
-            display: flex;
-            gap: 12px;
-            max-width: 80%;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .user-message {
-            align-self: flex-end;
-            flex-direction: row-reverse;
-        }
-
-        .message-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            font-size: 16px;
-        }
-
-        .user-message .message-avatar {
-            background: var(--user-gradient);
-            color: white;
-        }
-
-        .bot-message .message-avatar {
-            background: var(--ai-gradient);
-            color: white;
-        }
-
-        .message-content {
-            background: white;
-            border: 1px solid var(--border-color);
-            padding: 16px;
-            border-radius: 18px;
-            line-height: 1.6;
-            box-shadow: var(--shadow-soft);
-            direction: rtl;
-        }
-
-        .user-message .message-content {
-            background: var(--accent-primary);
-            color: white;
-            border-bottom-right-radius: 4px;
-            border-bottom-left-radius: 18px;
-        }
-
-        .bot-message .message-content {
-            background: white;
-            color: var(--text-primary);
-            border-bottom-left-radius: 4px;
-            border-bottom-right-radius: 18px;
-            direction: rtl;
-        }
-
-        .message-content pre {
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            margin: 0;
-            font-family: inherit;
-            font-size: 14px;
-            direction: rtl;
-        }
-
-        .chat-input {
-            font-family: inherit;
-            padding: 20px;
-            background: white;
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            direction: rtl;
-        }
-
-        .message-input {
-            flex: 1;
-            border: 2px solid var(--border-color);
-            padding: 14px 20px;
-            border-radius: 25px;
-            font-size: 14px;
-            outline: none;
-            transition: border-color 0.3s ease;
-            background: white;
-            font-family: inherit;
-            color: var(--text-primary);
-        }
-
-        .message-input:focus {
-            border-color: var(--accent-primary);
-            background: white;
-        }
-
-        .send-btn {
-            width: 50px;
-            height: 50px;
-            border: none;
-            background: var(--accent-gradient);
-            color: white;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .send-btn:hover {
-            transform: scale(1.05);
-            box-shadow: var(--shadow-soft);
-        }
-
-        .send-btn:disabled {
-            background: var(--bg-tertiary);
-            color: var(--text-secondary);
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .typing-indicator {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 12px 16px;
-            background: white;
-            border-radius: 18px;
-            box-shadow: var(--shadow-soft);
-            align-self: flex-start;
-            margin-bottom: 10px;
-            border: 1px solid var(--border-color);
-        }
-
-        .typing-dots {
-            display: flex;
-            gap: 4px;
-        }
-
-        .typing-dot {
-            width: 8px;
-            height: 8px;
-            background: var(--text-secondary);
-            border-radius: 50%;
-            animation: typing 1.4s infinite;
-        }
-
-        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
-        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
-
-        @keyframes typing {
-            0%, 60%, 100% { transform: translateY(0); }
-            30% { transform: translateY(-4px); }
-        }
-
-        /* +++ استایل‌های جدید برای کارت محصول +++ */
-        .message-content p {
-            margin: 0 0 10px 0;
-            padding: 0;
-            line-height: 1.6;
-            font-size: 14px;
-            font-family: inherit;
-        }
-        
-        .message-content p:last-child {
-            margin-bottom: 0;
-        }
-        
-        .product-card {
-            transition: all 0.3s ease;
-            transform-origin: center;
-            display: flex;
-            gap: 15px;
-            padding: 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            margin: 10px 0;
-            background-color: white;
-            transition: box-shadow 0.3s ease;
-            direction: rtl;
-            text-align: right;
-        }
-        
-        .product-card:hover {
-            box-shadow: var(--shadow-hard);
-            transform: translateY(-5px) scale(1.02);
-        }
-        
-        .product-card-image {
-            width: 70px;
-            height: 70px;
-            object-fit: cover;
-            border-radius: 8px;
-            flex-shrink: 0;
-        }
-        
-        .new-chat-btn, .send-btn {
-            border-radius: 50px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
-
-        .product-card-info {
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .product-card-info a {
-            font-weight: bold;
-            color: var(--accent-primary);
-            text-decoration: none;
-            font-size: 15px;
-            transition: color 0.3s ease;
-        }
-        
-        .product-card-info a:hover {
-            color: var(--accent-secondary);
-        }
-        
-        .product-card-info span {
-            font-size: 14px;
-            color: var(--text-primary);
-            margin-top: 5px;
-        }
-        
-        @keyframes messageAppear {
-            0% { 
-                opacity: 0;
-                transform: translateY(20px) scale(0.95);
-            }
-            100% { 
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
+          width: 100%;
+          height: 200px;
+          border-left: none;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .message {
-            animation: messageAppear 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-        
-        .back-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            padding: 8px 14px;
-            background: white;
-            border-radius: 25px;
-            color: var(--accent-primary);
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            border: 1px solid var(--border-color);
+          max-width: 90%;
         }
 
-        .back-btn i {
-            font-size: 16px;
+        body {
+          padding: 0;
+        }
+      }
+
+      /* Scrollbar styling */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: var(--bg-light);
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: var(--secondary-color);
+        border-radius: 3px;
+        background: linear-gradient(transparent, var(--primary-color));
+        border-radius: 6px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--primary-color);
+      }
+
+      /* +++ استایل‌های جدید برای کارت محصول +++ */
+      .message-content p {
+        margin: 0 0 10px 0;
+        padding: 0;
+        line-height: 1.6;
+        font-size: 14px; /* این خط اضافه شده است */
+        font-family: inherit; /* برای اطمینان از یکسان بودن فونت */
+      }
+
+      .message-content p:last-child {
+        margin-bottom: 0;
+      }
+
+      .product-card {
+        transition: all 0.3s ease;
+        transform-origin: center;
+        display: flex;
+        gap: 15px;
+        padding: 12px;
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        margin: 10px 0;
+        background-color: var(--bg-light);
+        transition: box-shadow 0.3s ease;
+        direction: rtl;
+        text-align: right;
+      }
+
+      .product-card:hover {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        transform: translateY(-5px) scale(1.02);
+        box-shadow: var(--shadow-hard);
+      }
+
+      .product-card-image {
+        width: 70px;
+        height: 70px;
+        object-fit: cover;
+        border-radius: 8px;
+        flex-shrink: 0;
+      }
+
+      .new-chat-btn,
+      .send-btn {
+        border-radius: 50px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+      }
+
+      .product-card-info {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .product-card-info a {
+        font-weight: bold;
+        color: var(--primary-color);
+        text-decoration: none;
+        font-size: 15px;
+        transition: color 0.3s ease;
+      }
+
+      .product-card-info a:hover {
+        color: var(--primary-hover);
+      }
+
+      .product-card-info span {
+        font-size: 14px;
+        color: var(--text-dark);
+        margin-top: 5px;
+      }
+
+      @keyframes messageAppear {
+        0% {
+          opacity: 0;
+          transform: translateY(20px) scale(0.95);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      .message {
+        animation: messageAppear 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+
+      @media (max-width: 768px) {
+        .chat-app {
+          border-radius: 0;
+          height: 100vh;
+          margin: 0;
         }
 
-        .back-btn:hover {
-            background: var(--accent-primary);
-            color: white;
+        .sidebar {
+          position: absolute;
+          z-index: 100;
+          height: 100%;
+          transform: translateX(-100%);
+          transition: transform 0.3s ease;
         }
 
-        /* Scrollbar styling */
-        ::-webkit-scrollbar {
-            width: 8px;
+        .sidebar.active {
+          transform: translateX(0);
         }
 
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
+        .message {
+          max-width: 90%;
         }
+      }
 
-        ::-webkit-scrollbar-thumb {
-            background: #c1c1c1;
-            border-radius: 6px;
-        }
+      .back-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px; /* فاصله بین آیکون و متن */
+        padding: 8px 14px;
+        background: var(--bg-light);
+        border-radius: 25px;
+        color: var(--primary-color);
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: 1px solid var(--border-color);
+      }
 
-        ::-webkit-scrollbar-thumb:hover {
-            background: #a8a8a8;
-        }
+      .back-btn i {
+        font-size: 16px;
+      }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .chat-app {
-                flex-direction: column;
-                height: 100vh;
-            }
-            
-            .sidebar {
-                width: 100%;
-                height: 60px;
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                z-index: 100;
-                border-left: none;
-                border-top: 1px solid var(--border-color);
-            }
-            
-            .sidebar.expanded {
-                height: 100%;
-                width: 100%;
-            }
-            
-            .sidebar:not(.expanded) .conversations-list {
-                display: none;
-            }
-            
-            .sidebar-header {
-                padding: 15px;
-                border-bottom: none;
-            }
-            
-            .message {
-                max-width: 90%;
-            }
-            
-            .chat-messages {
-                padding-bottom: 80px;
-            }
-            
-            .chat-input {
-                padding-bottom: 70px;
-            }
-            
-            .chat-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-                padding: 10px 15px;
-            }
-            
-            .header-left, .header-right {
-                width: 100%;
-                justify-content: space-between;
-            }
-            
-            .ai-avatar {
-                width: 40px;
-                height: 40px;
-                font-size: 16px;
-            }
-            
-            .chat-info h2 {
-                font-size: 16px;
-            }
-            
-            .chat-info p {
-                font-size: 12px;
-            }
-        }
+      .back-btn:hover {
+        background: var(--primary-color);
+        color: white;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="chat-app">
-        <div class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                 <button class="menu-toggle" id="menu-toggle">
+      <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <button class="menu-toggle" id="menu-toggle">
             <i class="fas fa-bars"></i>
-        </button>
-        <form action="{% url 'ai_assistant:new_chat_view' %}" method="post" id="new-chat-form">
+          </button>
+          <form
+            action="{% url 'ai_assistant:new_chat_view' %}"
+            method="post"
+            id="new-chat-form"
+          >
             {% csrf_token %}
             <button type="submit" class="new-chat-btn" id="new-chat-btn">
-                <i class="fas fa-plus"></i>
-                <span>چت جدید</span>
+              <i class="fas fa-plus"></i>
+              <span>چت جدید</span>
             </button>
-                </form>
-            </div>
-            <ul class="conversations-list">
-                {% for conv in user_conversations %}
-                <li class="conversation-item {% if conv.id|stringformat:'s' == active_conversation_id %}active{% endif %}">
-                    <div class="conversation-icon">
-                        <i class="fas fa-comment"></i>
-                    </div>
-                    <a href="{% url 'ai_assistant:chat_view_conversation' conv.id %}" class="conversation-link">
-                        {{ conv.title }}
-                    </a>
-                    <form action="{% url 'ai_assistant:delete_chat_view' conv.id %}" method="post"
-                          onsubmit="return confirm('آیا از حذف این مکالمه مطمئن هستید؟');" class="delete-form">
-                        {% csrf_token %}
-                        <button type="submit" class="delete-btn" title="حذف مکالمه">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </form>
-                </li>
-                {% empty %}
-                <li style="color: var(--text-secondary); padding: 20px; text-align: center; font-size: 12px;">
-                    <i class="fas fa-comments"></i>
-                </li>
-                {% endfor %}
-            </ul>
+          </form>
         </div>
-
-        <div class="chat-main">
-            <div class="chat-header">
-                <div class="header-left">
-                    <div class="ai-avatar"><i class="fas fa-robot"></i></div>
-                    <div class="chat-info">
-                        <h2>هوشیار - دستیار خرید</h2>
-                        <p>همراه شما در انتخاب بهترین لپ‌تاپ</p>
-                    </div>
-                </div>
-                <div class="header-right">
-                    <a href="{% url 'main:index' %}" class="back-btn">
-                        <i class="fas fa-home"></i>
-                        <span>بازگشت به خانه</span>
-                    </a>
-                </div>
+        <ul class="conversations-list">
+          {% for conv in user_conversations %}
+          <li
+            class="conversation-item {% if conv.id|stringformat:'s' == active_conversation_id %}active{% endif %}"
+          >
+            <div class="conversation-icon">
+              <i class="fas fa-comment"></i>
             </div>
-            <div class="chat-messages" id="chat-messages">
-                {% if not current_chat_messages %}
-                <div class="message bot-message">
-                    <div class="message-avatar"><i class="fas fa-robot"></i></div>
-                    <div class="message-content">
-                        <pre>سلام! من هوشیار، دستیار هوشمند شما هستم. چطور می‌توانم در انتخاب و خرید لپ‌تاپ کمکتان کنم؟</pre>
-                    </div>
-                </div>
-                {% else %}
-                {% for msg in current_chat_messages %}
-                <div class="message {% if msg.sender == 'user' %}user-message{% else %}bot-message{% endif %}">
-                    <div class="message-avatar"><i class="fas fa-{% if msg.sender == 'user' %}user{% else %}robot{% endif %}"></i></div>
-                    <div class="message-content">
-                        <pre>{{ msg.content }}</pre>
-                    </div>
-                </div>
-                {% endfor %}
-                {% endif %}
-            </div>
-            <form class="chat-input" id="chat-form">
-                {% csrf_token %}
-                <input type="text" class="message-input" id="message-input"
-                       placeholder="پیام خود را بنویسید..." autocomplete="off">
-                <button type="submit" class="send-btn" id="send-button" disabled>
-                    <i class="fas fa-paper-plane"></i>
-                </button>
+            <a
+              href="{% url 'ai_assistant:chat_view_conversation' conv.id %}"
+              class="conversation-link"
+            >
+              {{ conv.title }}
+            </a>
+            <form
+              action="{% url 'ai_assistant:delete_chat_view' conv.id %}"
+              method="post"
+              onsubmit="return confirm('آیا از حذف این مکالمه مطمئن هستید؟');"
+              class="delete-form"
+            >
+              {% csrf_token %}
+              <button type="submit" class="delete-btn" title="حذف مکالمه">
+                <i class="fas fa-trash"></i>
+              </button>
             </form>
+          </li>
+          {% empty %}
+          <li
+            style="
+              color: rgba(255, 255, 255, 0.7);
+              padding: 20px;
+              text-align: center;
+              font-size: 12px;
+            "
+          >
+            <i class="fas fa-comments"></i>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <div class="chat-main">
+        <div class="chat-header">
+          <a href="{% url 'main:index' %}" class="back-btn">
+            <i class="fas fa-home"></i>
+            <span>خانه</span>
+          </a>
+          <div class="ai-avatar"><i class="fas fa-robot"></i></div>
+          <div class="chat-info">
+            <h2>هوشیار - دستیار خرید</h2>
+            <p>همراه شما در انتخاب بهترین لپ‌تاپ</p>
+          </div>
         </div>
+        <div class="chat-messages" id="chat-messages">
+          {% if not current_chat_messages %}
+          <div class="message bot-message">
+            <div class="message-avatar"><i class="fas fa-robot"></i></div>
+            <div class="message-content">
+              <pre>
+سلام! من هوشیار، دستیار هوشمند شما هستم. چطور می‌توانم در انتخاب و خرید لپ‌تاپ کمکتان کنم؟</pre
+              >
+            </div>
+          </div>
+          {% else %} {% for msg in current_chat_messages %}
+          <div
+            class="message {% if msg.sender == 'user' %}user-message{% else %}bot-message{% endif %}"
+          >
+            <div class="message-avatar">
+              <i
+                class="fas fa-{% if msg.sender == 'user' %}user{% else %}robot{% endif %}"
+              ></i>
+            </div>
+            <div class="message-content">
+              <pre>{{ msg.content }}</pre>
+            </div>
+          </div>
+          {% endfor %} {% endif %}
+        </div>
+        <form class="chat-input" id="chat-form">
+          {% csrf_token %}
+          <input
+            type="text"
+            class="message-input"
+            id="message-input"
+            placeholder="پیام خود را بنویسید..."
+            autocomplete="off"
+          />
+          <button type="submit" class="send-btn" id="send-button" disabled>
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </form>
+      </div>
     </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const chatForm = document.getElementById('chat-form');
-        const messageInput = document.getElementById('message-input');
-        const sendButton = document.getElementById('send-button');
-        const chatMessages = document.getElementById('chat-messages');
-        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-        const newChatForm = document.getElementById('new-chat-form');
-        const sidebar = document.getElementById('sidebar');
-        const menuToggle = document.getElementById('menu-toggle');
-        const newChatBtn = document.getElementById('new-chat-btn');
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const chatForm = document.getElementById("chat-form");
+        const messageInput = document.getElementById("message-input");
+        const sendButton = document.getElementById("send-button");
+        const chatMessages = document.getElementById("chat-messages");
+        const csrftoken = document.querySelector(
+          "[name=csrfmiddlewaretoken]"
+        ).value;
+        const newChatForm = document.getElementById("new-chat-form");
+        const sidebar = document.getElementById("sidebar");
+        const menuToggle = document.getElementById("menu-toggle");
+        const newChatBtn = document.getElementById("new-chat-btn");
 
         // +++ URL جدید برای API +++
-        const productDetailsApiUrl = "{% url 'ai_assistant:get_product_details_api' %}";
-        let isExpanded = localStorage.getItem('sidebarExpanded') === 'true';
+        const productDetailsApiUrl =
+          "{% url 'ai_assistant:get_product_details_api' %}";
+        let isExpanded = localStorage.getItem("sidebarExpanded") === "true";
 
         // Auto-scroll to bottom
         chatMessages.scrollTop = chatMessages.scrollHeight;
 
         // Enable/disable send button
-        messageInput.addEventListener('input', () => {
-            sendButton.disabled = messageInput.value.trim() === '';
+        messageInput.addEventListener("input", () => {
+          sendButton.disabled = messageInput.value.trim() === "";
         });
 
         // مقداردهی اولیه وضعیت سایدبار
         if (isExpanded) {
-            sidebar.classList.add('expanded');
-            menuToggle.innerHTML = '<i class="fas fa-times"></i>';
-            newChatForm.style.display = 'block';
+          sidebar.classList.add("expanded");
+          menuToggle.innerHTML = '<i class="fas fa-times"></i>';
+          newChatForm.style.display = "block";
         } else {
-            newChatForm.style.display = 'none';
+          newChatForm.style.display = "none";
         }
 
         // تابع برای toggle کردن سایدبار
         function toggleSidebar() {
-            isExpanded = !isExpanded;
-            sidebar.classList.toggle('expanded', isExpanded);
-            
-            // تغییر آیکون منو
-            if (isExpanded) {
-                menuToggle.innerHTML = '<i class="fas fa-times"></i>';
-                newChatForm.style.display = 'block';
-            } else {
-                menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
-                newChatForm.style.display = 'none';
-            }
-            
-            // ذخیره حالت در localStorage
-            localStorage.setItem('sidebarExpanded', isExpanded);
+          isExpanded = !isExpanded;
+          sidebar.classList.toggle("expanded", isExpanded);
+
+          // تغییر آیکون منو
+          if (isExpanded) {
+            menuToggle.innerHTML = '<i class="fas fa-times"></i>';
+            newChatForm.style.display = "block";
+          } else {
+            menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+            newChatForm.style.display = "none";
+          }
+
+          // ذخیره حالت در localStorage
+          localStorage.setItem("sidebarExpanded", isExpanded);
         }
 
         // رویداد کلیک برای منو
-        menuToggle.addEventListener('click', toggleSidebar);
+        menuToggle.addEventListener("click", toggleSidebar);
 
         // غیرفعال کردن کلیک روی دکمه چت جدید در حالت جمع شده
-        newChatBtn.addEventListener('click', function(e) {
-            if (!sidebar.classList.contains('expanded')) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
+        newChatBtn.addEventListener("click", function (e) {
+          if (!sidebar.classList.contains("expanded")) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
         });
 
         // بستن سایدبار وقتی روی محتوای اصلی کلیک می‌شود (فقط در موبایل)
-        document.querySelector('.chat-main').addEventListener('click', function() {
+        document
+          .querySelector(".chat-main")
+          .addEventListener("click", function () {
             if (isExpanded && window.innerWidth <= 768) {
-                toggleSidebar();
+              toggleSidebar();
             }
-        });
+          });
 
         // Handle new chat button submit
-        newChatForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            fetch(this.action, {
-                method: 'POST',
-                headers: { 'X-CSRFToken': csrftoken }
-            }).then(response => {
-                if (response.redirected) {
-                    window.location.href = response.url;
-                }
-            });
-        });
-
-        chatForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const userMessage = messageInput.value.trim();
-            if (userMessage === '') return;
-
-            addMessage(userMessage, 'user');
-            messageInput.value = '';
-            sendButton.disabled = true;
-
-            const typingIndicator = createTypingIndicator();
-            chatMessages.appendChild(typingIndicator);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-
-            try {
-                const response = await fetch(window.location.pathname, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': csrftoken,
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    body: JSON.stringify({ message: userMessage }),
-                });
-
-                chatMessages.removeChild(typingIndicator);
-
-                if (!response.ok) {
-                    throw new Error(`Server error: ${response.statusText}`);
-                }
-
-                const reader = response.body.getReader();
-                const decoder = new TextDecoder();
-                let botMessageElement = createMessageElement('', 'bot');
-                chatMessages.appendChild(botMessageElement);
-
-                const botPreElement = botMessageElement.querySelector('pre');
-                
-                while (true) {
-                    const { value, done } = await reader.read();
-                    if (done) break;
-                    const chunk = decoder.decode(value, { stream: true });
-                    botPreElement.textContent += chunk;
-                    chatMessages.scrollTop = chatMessages.scrollHeight;
-                }
-
-                // +++ فراخوانی تابع جدید برای غنی‌سازی پیام +++
-                await enrichProductMessage(botMessageElement);
-
-            } catch (error) {
-                console.error('Error:', error);
-                if(chatMessages.contains(typingIndicator)) {
-                    chatMessages.removeChild(typingIndicator);
-                }
-                addMessage('خطا در ارتباط با سرور. لطفاً دوباره تلاش کنید.', 'bot');
+        newChatForm.addEventListener("submit", function (e) {
+          e.preventDefault();
+          fetch(this.action, {
+            method: "POST",
+            headers: { "X-CSRFToken": csrftoken },
+          }).then((response) => {
+            if (response.redirected) {
+              window.location.href = response.url;
             }
+          });
         });
 
-async function enrichProductMessage(botMessageElement) {
-    const messageContentDiv = botMessageElement.querySelector('.message-content');
-    const preElement = messageContentDiv.querySelector('pre');
-    if (!preElement) return; 
+        chatForm.addEventListener("submit", async function (e) {
+          e.preventDefault();
+          const userMessage = messageInput.value.trim();
+          if (userMessage === "") return;
 
-    const textContent = preElement.textContent;
+          addMessage(userMessage, "user");
+          messageInput.value = "";
+          sendButton.disabled = true;
 
-    // Regex نهایی و ساده شده
-    const idMatches = [...textContent.matchAll(/^-?\s*(\d+)\s*\|/gm)];
-    const productIds = idMatches.map(match => match[1]);
+          const typingIndicator = createTypingIndicator();
+          chatMessages.appendChild(typingIndicator);
+          chatMessages.scrollTop = chatMessages.scrollHeight;
 
-    if (productIds.length === 0) return;
+          try {
+            const response = await fetch(window.location.pathname, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrftoken,
+                "X-Requested-With": "XMLHttpRequest",
+              },
+              body: JSON.stringify({ message: userMessage }),
+            });
 
-    try {
-        const response = await fetch(productDetailsApiUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrftoken,
-            },
-            body: JSON.stringify({ ids: [...new Set(productIds)] }),
+            chatMessages.removeChild(typingIndicator);
+
+            if (!response.ok) {
+              throw new Error(`Server error: ${response.statusText}`);
+            }
+
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let botMessageElement = createMessageElement("", "bot");
+            chatMessages.appendChild(botMessageElement);
+
+            const botPreElement = botMessageElement.querySelector("pre");
+
+            while (true) {
+              const { value, done } = await reader.read();
+              if (done) break;
+              const chunk = decoder.decode(value, { stream: true });
+              botPreElement.textContent += chunk;
+              chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            // +++ فراخوانی تابع جدید برای غنی‌سازی پیام +++
+            await enrichProductMessage(botMessageElement);
+          } catch (error) {
+            console.error("Error:", error);
+            if (chatMessages.contains(typingIndicator)) {
+              chatMessages.removeChild(typingIndicator);
+            }
+            addMessage("خطا در ارتباط با سرور. لطفاً دوباره تلاش کنید.", "bot");
+          }
         });
 
-        if (!response.ok) throw new Error('Failed to fetch product details');
-        
-        const productsData = await response.json();
-        const lines = textContent.split('\n');
-        let newHtmlContent = '';
+        async function enrichProductMessage(botMessageElement) {
+          const messageContentDiv =
+            botMessageElement.querySelector(".message-content");
+          const preElement = messageContentDiv.querySelector("pre");
+          if (!preElement) return;
 
-        lines.forEach(line => {
-            const match = line.match(/^-?\s*(\d+)\s*\|/);
-            
-            // --- تغییر اصلی اینجاست ---
-            if (match && productsData[match[1]]) {
+          const textContent = preElement.textContent;
+
+          // Regex نهایی و ساده شده
+          const idMatches = [...textContent.matchAll(/^-?\s*(\d+)\s*\|/gm)];
+          const productIds = idMatches.map((match) => match[1]);
+
+          if (productIds.length === 0) return;
+
+          try {
+            const response = await fetch(productDetailsApiUrl, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrftoken,
+              },
+              body: JSON.stringify({ ids: [...new Set(productIds)] }),
+            });
+
+            if (!response.ok)
+              throw new Error("Failed to fetch product details");
+
+            const productsData = await response.json();
+            const lines = textContent.split("\n");
+            let newHtmlContent = "";
+
+            lines.forEach((line) => {
+              const match = line.match(/^-?\s*(\d+)\s*\|/);
+
+              // --- تغییر اصلی اینجاست ---
+              if (match && productsData[match[1]]) {
                 const id = match[1];
                 const product = productsData[id];
-                
+
                 // حالا فقط کارت محصول را اضافه می‌کنیم و خط اصلی را حذف می‌کنیم
                 newHtmlContent += `
                     <div class="product-card">
@@ -991,42 +1024,43 @@ async function enrichProductMessage(botMessageElement) {
                         </div>
                     </div>
                 `;
-            } else if (line.trim() !== '') {
+              } else if (line.trim() !== "") {
                 // خطوط دیگر (که محصول نیستند) را نگه می‌داریم
                 newHtmlContent += `<p>${line}</p>`;
-            }
-        });
+              }
+            });
 
-        messageContentDiv.innerHTML = newHtmlContent;
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-
-    } catch (error) {
-        console.error('Failed to enrich message:', error);
-    }
-}
-        function addMessage(text, sender) {
-            const messageElement = createMessageElement(text, sender);
-            chatMessages.appendChild(messageElement);
+            messageContentDiv.innerHTML = newHtmlContent;
             chatMessages.scrollTop = chatMessages.scrollHeight;
+          } catch (error) {
+            console.error("Failed to enrich message:", error);
+          }
+        }
+        function addMessage(text, sender) {
+          const messageElement = createMessageElement(text, sender);
+          chatMessages.appendChild(messageElement);
+          chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
         function createMessageElement(text, sender) {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${sender}-message`;
-            messageDiv.innerHTML = `
+          const messageDiv = document.createElement("div");
+          messageDiv.className = `message ${sender}-message`;
+          messageDiv.innerHTML = `
                 <div class="message-avatar">
-                    <i class="fas fa-${sender === 'user' ? 'user' : 'robot'}"></i>
+                    <i class="fas fa-${
+                      sender === "user" ? "user" : "robot"
+                    }"></i>
                 </div>
                 <div class="message-content">
                     <pre>${text}</pre>
                 </div>`;
-            return messageDiv;
+          return messageDiv;
         }
 
         function createTypingIndicator() {
-            const typingDiv = document.createElement('div');
-            typingDiv.className = 'message bot-message';
-            typingDiv.innerHTML = `
+          const typingDiv = document.createElement("div");
+          typingDiv.className = "message bot-message";
+          typingDiv.innerHTML = `
                  <div class="message-avatar">
                     <i class="fas fa-robot"></i>
                 </div>
@@ -1037,16 +1071,1131 @@ async function enrichProductMessage(botMessageElement) {
                         <span class="typing-dot"></span>
                     </div>
                 </div>`;
-            return typingDiv;
+          return typingDiv;
         }
 
         // +++ بعد از بارگذاری کامل صفحه، تمام پیام‌های ربات را برای غنی‌سازی چک کن +++
-        document.querySelectorAll('.bot-message').forEach(el => {
-            if(el.querySelector('.message-content pre')) {
-                 enrichProductMessage(el);
-            }
+        document.querySelectorAll(".bot-message").forEach((el) => {
+          if (el.querySelector(".message-content pre")) {
+            enrichProductMessage(el);
+          }
         });
-    });
-</script>
-</body>
+      });
+    </script>
+  </body>
 </html>
+{% comment %} <!DOCTYPE html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>دستیار هوشمند - فروشگاه آیکو</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/font-face.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      :root {
+        --bg-primary: #ffffff;
+        --bg-secondary: #f8f9fa;
+        --bg-tertiary: #e9ecef;
+        --bg-card: #ffffff;
+        --text-primary: #212529;
+        --text-secondary: #6c757d;
+        --accent-primary: #007bff;
+        --accent-secondary: #0056b3;
+        --accent-gradient: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+        --ai-gradient: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+        --user-gradient: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+        --border-color: #dee2e6;
+        --success: #28a745;
+        --danger: #dc3545;
+        --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.08);
+        --shadow-hard: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: Vazir, sans-serif;
+        background: #f5f7f9;
+        color: var(--text-primary);
+        min-height: 100vh;
+        overflow: hidden;
+      }
+
+      .chat-app {
+        width: 100%;
+        height: 100vh;
+        display: flex;
+        overflow: hidden;
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+      }
+
+      .sidebar {
+        width: 80px;
+        background: var(--bg-secondary);
+        display: flex;
+        flex-direction: column;
+        border-left: 1px solid var(--border-color);
+        transition: all 0.3s ease;
+        overflow: hidden;
+        z-index: 10;
+      }
+
+      .sidebar.expanded {
+        width: 280px;
+      }
+
+      .sidebar-header {
+        padding: 20px 15px;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-direction: row-reverse;
+        transition: all 0.3s ease;
+        background: white;
+      }
+
+      .sidebar:not(.expanded) .sidebar-header {
+        justify-content: center;
+        padding: 20px 10px;
+      }
+
+      .sidebar:not(.expanded) .new-chat-form {
+        display: none;
+      }
+
+      .sidebar.expanded .new-chat-form {
+        display: block;
+      }
+
+      .menu-toggle {
+        background: none;
+        border: none;
+        color: var(--text-primary);
+        font-size: 20px;
+        cursor: pointer;
+        padding: 8px;
+        border-radius: 50%;
+        transition: background 0.3s ease;
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .menu-toggle:hover {
+        background: rgba(0, 0, 0, 0.05);
+      }
+
+      .new-chat-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 12px;
+        background: var(--accent-gradient);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        width: 45px;
+        height: 45px;
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .sidebar:not(.expanded) .new-chat-btn {
+        opacity: 0;
+        visibility: hidden;
+        width: 0;
+        height: 0;
+        padding: 0;
+        margin: 0;
+      }
+
+      .sidebar.expanded .new-chat-btn {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+        padding: 12px 15px;
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .new-chat-btn.expanded {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+        padding: 12px 15px;
+      }
+
+      .new-chat-btn i {
+        margin: 0;
+      }
+
+      .new-chat-btn.expanded i {
+        margin-left: 8px;
+      }
+
+      .new-chat-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-soft);
+      }
+
+      .new-chat-btn span {
+        display: none;
+      }
+
+      .new-chat-btn.expanded span {
+        display: inline;
+      }
+
+      .conversations-list {
+        flex: 1;
+        overflow-y: auto;
+        padding: 10px;
+      }
+
+      .conversation-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px;
+        margin-bottom: 8px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        white-space: nowrap;
+        overflow: hidden;
+        background: white;
+        border: 1px solid var(--border-color);
+      }
+
+      .conversation-item:hover {
+        background: #f1f3f5;
+        transform: translateX(5px);
+      }
+
+      .conversation-item.active {
+        background: var(--accent-primary);
+        color: white;
+      }
+
+      .conversation-link {
+        color: var(--text-primary);
+        text-decoration: none;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        opacity: 0;
+        width: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .conversation-item.active .conversation-link {
+        color: white;
+      }
+
+      .sidebar.expanded .conversation-link {
+        opacity: 1;
+        width: auto;
+        margin-right: 10px;
+      }
+
+      .conversation-icon {
+        width: 30px;
+        height: 30px;
+        background: rgba(0, 0, 0, 0.05);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        flex-shrink: 0;
+        color: var(--text-primary);
+      }
+
+      .conversation-item.active .conversation-icon {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+      }
+
+      .delete-form {
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .conversation-item:hover .delete-form {
+        opacity: 1;
+      }
+
+      .delete-btn {
+        background: none;
+        border: none;
+        color: var(--danger);
+        cursor: pointer;
+        padding: 5px;
+        border-radius: 4px;
+        transition: background 0.3s ease;
+      }
+
+      .delete-btn:hover {
+        background: rgba(220, 53, 69, 0.1);
+      }
+
+      .chat-main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        background: var(--bg-primary);
+      }
+
+      /* استایل برای حالت جمع شده */
+      .sidebar:not(.expanded) .conversation-item {
+        justify-content: center;
+        padding: 15px;
+      }
+
+      .sidebar:not(.expanded) .conversation-item .conversation-link,
+      .sidebar:not(.expanded) .conversation-item .delete-form {
+        display: none;
+      }
+
+      .sidebar:not(.expanded) .conversation-item .conversation-icon {
+        margin: 0;
+      }
+
+      .conversations-list li[style] {
+        text-align: center;
+        padding: 20px;
+        color: var(--text-secondary);
+        font-size: 12px;
+      }
+
+      .chat-header {
+        padding: 15px 20px;
+        background: white;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        direction: rtl;
+        position: relative;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+      }
+
+      .header-left {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .header-right {
+        display: flex;
+        align-items: center;
+      }
+
+      .ai-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: var(--ai-gradient);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 20px;
+      }
+
+      .chat-info h2 {
+        font-size: 18px;
+        margin-bottom: 4px;
+        color: var(--text-primary);
+      }
+
+      .chat-info p {
+        font-size: 14px;
+        color: var(--text-secondary);
+      }
+
+      .chat-messages {
+        flex: 1;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        padding: 25px;
+        gap: 25px;
+        direction: ltr;
+        background: #f8f9fa;
+      }
+
+      .sidebar-header,
+      .conversations-list {
+        direction: rtl;
+        text-align: right;
+      }
+
+      .bot-message {
+        align-self: flex-start;
+        flex-direction: row;
+      }
+
+      .message {
+        display: flex;
+        gap: 12px;
+        max-width: 80%;
+        animation: fadeIn 0.3s ease;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .user-message {
+        align-self: flex-end;
+        flex-direction: row-reverse;
+      }
+
+      .message-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 16px;
+      }
+
+      .user-message .message-avatar {
+        background: var(--user-gradient);
+        color: white;
+      }
+
+      .bot-message .message-avatar {
+        background: var(--ai-gradient);
+        color: white;
+      }
+
+      .message-content {
+        background: white;
+        border: 1px solid var(--border-color);
+        padding: 16px;
+        border-radius: 18px;
+        line-height: 1.6;
+        box-shadow: var(--shadow-soft);
+        direction: rtl;
+      }
+
+      .user-message .message-content {
+        background: var(--accent-primary);
+        color: white;
+        border-bottom-right-radius: 4px;
+        border-bottom-left-radius: 18px;
+      }
+
+      .bot-message .message-content {
+        background: white;
+        color: var(--text-primary);
+        border-bottom-left-radius: 4px;
+        border-bottom-right-radius: 18px;
+        direction: rtl;
+      }
+
+      .message-content pre {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        margin: 0;
+        font-family: inherit;
+        font-size: 14px;
+        direction: rtl;
+      }
+
+      .chat-input {
+        font-family: inherit;
+        padding: 20px;
+        background: white;
+        border-top: 1px solid var(--border-color);
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        direction: rtl;
+      }
+
+      .message-input {
+        flex: 1;
+        border: 2px solid var(--border-color);
+        padding: 14px 20px;
+        border-radius: 25px;
+        font-size: 14px;
+        outline: none;
+        transition: border-color 0.3s ease;
+        background: white;
+        font-family: inherit;
+        color: var(--text-primary);
+      }
+
+      .message-input:focus {
+        border-color: var(--accent-primary);
+        background: white;
+      }
+
+      .send-btn {
+        width: 50px;
+        height: 50px;
+        border: none;
+        background: var(--accent-gradient);
+        color: white;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .send-btn:hover {
+        transform: scale(1.05);
+        box-shadow: var(--shadow-soft);
+      }
+
+      .send-btn:disabled {
+        background: var(--bg-tertiary);
+        color: var(--text-secondary);
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .typing-indicator {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 16px;
+        background: white;
+        border-radius: 18px;
+        box-shadow: var(--shadow-soft);
+        align-self: flex-start;
+        margin-bottom: 10px;
+        border: 1px solid var(--border-color);
+      }
+
+      .typing-dots {
+        display: flex;
+        gap: 4px;
+      }
+
+      .typing-dot {
+        width: 8px;
+        height: 8px;
+        background: var(--text-secondary);
+        border-radius: 50%;
+        animation: typing 1.4s infinite;
+      }
+
+      .typing-dot:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .typing-dot:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+
+      @keyframes typing {
+        0%,
+        60%,
+        100% {
+          transform: translateY(0);
+        }
+        30% {
+          transform: translateY(-4px);
+        }
+      }
+
+      /* +++ استایل‌های جدید برای کارت محصول +++ */
+      .message-content p {
+        margin: 0 0 10px 0;
+        padding: 0;
+        line-height: 1.6;
+        font-size: 14px;
+        font-family: inherit;
+      }
+
+      .message-content p:last-child {
+        margin-bottom: 0;
+      }
+
+      .product-card {
+        transition: all 0.3s ease;
+        transform-origin: center;
+        display: flex;
+        gap: 15px;
+        padding: 12px;
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        margin: 10px 0;
+        background-color: white;
+        transition: box-shadow 0.3s ease;
+        direction: rtl;
+        text-align: right;
+      }
+
+      .product-card:hover {
+        box-shadow: var(--shadow-hard);
+        transform: translateY(-5px) scale(1.02);
+      }
+
+      .product-card-image {
+        width: 70px;
+        height: 70px;
+        object-fit: cover;
+        border-radius: 8px;
+        flex-shrink: 0;
+      }
+
+      .new-chat-btn,
+      .send-btn {
+        border-radius: 50px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+      }
+
+      .product-card-info {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .product-card-info a {
+        font-weight: bold;
+        color: var(--accent-primary);
+        text-decoration: none;
+        font-size: 15px;
+        transition: color 0.3s ease;
+      }
+
+      .product-card-info a:hover {
+        color: var(--accent-secondary);
+      }
+
+      .product-card-info span {
+        font-size: 14px;
+        color: var(--text-primary);
+        margin-top: 5px;
+      }
+
+      @keyframes messageAppear {
+        0% {
+          opacity: 0;
+          transform: translateY(20px) scale(0.95);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      .message {
+        animation: messageAppear 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+
+      .back-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 8px 14px;
+        background: white;
+        border-radius: 25px;
+        color: var(--accent-primary);
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: 1px solid var(--border-color);
+      }
+
+      .back-btn i {
+        font-size: 16px;
+      }
+
+      .back-btn:hover {
+        background: var(--accent-primary);
+        color: white;
+      }
+
+      /* Scrollbar styling */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 6px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .chat-app {
+          flex-direction: column;
+          height: 100vh;
+        }
+
+        .sidebar {
+          width: 100%;
+          height: 60px;
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          z-index: 100;
+          border-left: none;
+          border-top: 1px solid var(--border-color);
+        }
+
+        .sidebar.expanded {
+          height: 100%;
+          width: 100%;
+        }
+
+        .sidebar:not(.expanded) .conversations-list {
+          display: none;
+        }
+
+        .sidebar-header {
+          padding: 15px;
+          border-bottom: none;
+        }
+
+        .message {
+          max-width: 90%;
+        }
+
+        .chat-messages {
+          padding-bottom: 80px;
+        }
+
+        .chat-input {
+          padding-bottom: 70px;
+        }
+
+        .chat-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 10px;
+          padding: 10px 15px;
+        }
+
+        .header-left,
+        .header-right {
+          width: 100%;
+          justify-content: space-between;
+        }
+
+        .ai-avatar {
+          width: 40px;
+          height: 40px;
+          font-size: 16px;
+        }
+
+        .chat-info h2 {
+          font-size: 16px;
+        }
+
+        .chat-info p {
+          font-size: 12px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="chat-app">
+      <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <button class="menu-toggle" id="menu-toggle">
+            <i class="fas fa-bars"></i>
+          </button>
+          <form
+            action="{% url 'ai_assistant:new_chat_view' %}"
+            method="post"
+            id="new-chat-form"
+          >
+            {% csrf_token %}
+            <button type="submit" class="new-chat-btn" id="new-chat-btn">
+              <i class="fas fa-plus"></i>
+              <span>چت جدید</span>
+            </button>
+          </form>
+        </div>
+        <ul class="conversations-list">
+          {% for conv in user_conversations %}
+          <li
+            class="conversation-item {% if conv.id|stringformat:'s' == active_conversation_id %}active{% endif %}"
+          >
+            <div class="conversation-icon">
+              <i class="fas fa-comment"></i>
+            </div>
+            <a
+              href="{% url 'ai_assistant:chat_view_conversation' conv.id %}"
+              class="conversation-link"
+            >
+              {{ conv.title }}
+            </a>
+            <form
+              action="{% url 'ai_assistant:delete_chat_view' conv.id %}"
+              method="post"
+              onsubmit="return confirm('آیا از حذف این مکالمه مطمئن هستید؟');"
+              class="delete-form"
+            >
+              {% csrf_token %}
+              <button type="submit" class="delete-btn" title="حذف مکالمه">
+                <i class="fas fa-trash"></i>
+              </button>
+            </form>
+          </li>
+          {% empty %}
+          <li
+            style="
+              color: var(--text-secondary);
+              padding: 20px;
+              text-align: center;
+              font-size: 12px;
+            "
+          >
+            <i class="fas fa-comments"></i>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <div class="chat-main">
+        <div class="chat-header">
+          <div class="header-left">
+            <div class="ai-avatar"><i class="fas fa-robot"></i></div>
+            <div class="chat-info">
+              <h2>هوشیار - دستیار خرید</h2>
+              <p>همراه شما در انتخاب بهترین لپ‌تاپ</p>
+            </div>
+          </div>
+          <div class="header-right">
+            <a href="{% url 'main:index' %}" class="back-btn">
+              <i class="fas fa-home"></i>
+              <span>بازگشت به خانه</span>
+            </a>
+          </div>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+          {% if not current_chat_messages %}
+          <div class="message bot-message">
+            <div class="message-avatar"><i class="fas fa-robot"></i></div>
+            <div class="message-content">
+              <pre>
+سلام! من هوشیار، دستیار هوشمند شما هستم. چطور می‌توانم در انتخاب و خرید لپ‌تاپ کمکتان کنم؟</pre
+              >
+            </div>
+          </div>
+          {% else %} {% for msg in current_chat_messages %}
+          <div
+            class="message {% if msg.sender == 'user' %}user-message{% else %}bot-message{% endif %}"
+          >
+            <div class="message-avatar">
+              <i
+                class="fas fa-{% if msg.sender == 'user' %}user{% else %}robot{% endif %}"
+              ></i>
+            </div>
+            <div class="message-content">
+              <pre>{{ msg.content }}</pre>
+            </div>
+          </div>
+          {% endfor %} {% endif %}
+        </div>
+        <form class="chat-input" id="chat-form">
+          {% csrf_token %}
+          <input
+            type="text"
+            class="message-input"
+            id="message-input"
+            placeholder="پیام خود را بنویسید..."
+            autocomplete="off"
+          />
+          <button type="submit" class="send-btn" id="send-button" disabled>
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const chatForm = document.getElementById("chat-form");
+        const messageInput = document.getElementById("message-input");
+        const sendButton = document.getElementById("send-button");
+        const chatMessages = document.getElementById("chat-messages");
+        const csrftoken = document.querySelector(
+          "[name=csrfmiddlewaretoken]"
+        ).value;
+        const newChatForm = document.getElementById("new-chat-form");
+        const sidebar = document.getElementById("sidebar");
+        const menuToggle = document.getElementById("menu-toggle");
+        const newChatBtn = document.getElementById("new-chat-btn");
+
+        // +++ URL جدید برای API +++
+        const productDetailsApiUrl =
+          "{% url 'ai_assistant:get_product_details_api' %}";
+        let isExpanded = localStorage.getItem("sidebarExpanded") === "true";
+
+        // Auto-scroll to bottom
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        // Enable/disable send button
+        messageInput.addEventListener("input", () => {
+          sendButton.disabled = messageInput.value.trim() === "";
+        });
+
+        // مقداردهی اولیه وضعیت سایدبار
+        if (isExpanded) {
+          sidebar.classList.add("expanded");
+          menuToggle.innerHTML = '<i class="fas fa-times"></i>';
+          newChatForm.style.display = "block";
+        } else {
+          newChatForm.style.display = "none";
+        }
+
+        // تابع برای toggle کردن سایدبار
+        function toggleSidebar() {
+          isExpanded = !isExpanded;
+          sidebar.classList.toggle("expanded", isExpanded);
+
+          // تغییر آیکون منو
+          if (isExpanded) {
+            menuToggle.innerHTML = '<i class="fas fa-times"></i>';
+            newChatForm.style.display = "block";
+          } else {
+            menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+            newChatForm.style.display = "none";
+          }
+
+          // ذخیره حالت در localStorage
+          localStorage.setItem("sidebarExpanded", isExpanded);
+        }
+
+        // رویداد کلیک برای منو
+        menuToggle.addEventListener("click", toggleSidebar);
+
+        // غیرفعال کردن کلیک روی دکمه چت جدید در حالت جمع شده
+        newChatBtn.addEventListener("click", function (e) {
+          if (!sidebar.classList.contains("expanded")) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+        });
+
+        // بستن سایدبار وقتی روی محتوای اصلی کلیک می‌شود (فقط در موبایل)
+        document
+          .querySelector(".chat-main")
+          .addEventListener("click", function () {
+            if (isExpanded && window.innerWidth <= 768) {
+              toggleSidebar();
+            }
+          });
+
+        // Handle new chat button submit
+        newChatForm.addEventListener("submit", function (e) {
+          e.preventDefault();
+          fetch(this.action, {
+            method: "POST",
+            headers: { "X-CSRFToken": csrftoken },
+          }).then((response) => {
+            if (response.redirected) {
+              window.location.href = response.url;
+            }
+          });
+        });
+
+        chatForm.addEventListener("submit", async function (e) {
+          e.preventDefault();
+          const userMessage = messageInput.value.trim();
+          if (userMessage === "") return;
+
+          addMessage(userMessage, "user");
+          messageInput.value = "";
+          sendButton.disabled = true;
+
+          const typingIndicator = createTypingIndicator();
+          chatMessages.appendChild(typingIndicator);
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+
+          try {
+            const response = await fetch(window.location.pathname, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrftoken,
+                "X-Requested-With": "XMLHttpRequest",
+              },
+              body: JSON.stringify({ message: userMessage }),
+            });
+
+            chatMessages.removeChild(typingIndicator);
+
+            if (!response.ok) {
+              throw new Error(`Server error: ${response.statusText}`);
+            }
+
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let botMessageElement = createMessageElement("", "bot");
+            chatMessages.appendChild(botMessageElement);
+
+            const botPreElement = botMessageElement.querySelector("pre");
+
+            while (true) {
+              const { value, done } = await reader.read();
+              if (done) break;
+              const chunk = decoder.decode(value, { stream: true });
+              botPreElement.textContent += chunk;
+              chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            // +++ فراخوانی تابع جدید برای غنی‌سازی پیام +++
+            await enrichProductMessage(botMessageElement);
+          } catch (error) {
+            console.error("Error:", error);
+            if (chatMessages.contains(typingIndicator)) {
+              chatMessages.removeChild(typingIndicator);
+            }
+            addMessage("خطا در ارتباط با سرور. لطفاً دوباره تلاش کنید.", "bot");
+          }
+        });
+
+        async function enrichProductMessage(botMessageElement) {
+          const messageContentDiv =
+            botMessageElement.querySelector(".message-content");
+          const preElement = messageContentDiv.querySelector("pre");
+          if (!preElement) return;
+
+          const textContent = preElement.textContent;
+
+          // Regex نهایی و ساده شده
+          const idMatches = [...textContent.matchAll(/^-?\s*(\d+)\s*\|/gm)];
+          const productIds = idMatches.map((match) => match[1]);
+
+          if (productIds.length === 0) return;
+
+          try {
+            const response = await fetch(productDetailsApiUrl, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrftoken,
+              },
+              body: JSON.stringify({ ids: [...new Set(productIds)] }),
+            });
+
+            if (!response.ok)
+              throw new Error("Failed to fetch product details");
+
+            const productsData = await response.json();
+            const lines = textContent.split("\n");
+            let newHtmlContent = "";
+
+            lines.forEach((line) => {
+              const match = line.match(/^-?\s*(\d+)\s*\|/);
+
+              // --- تغییر اصلی اینجاست ---
+              if (match && productsData[match[1]]) {
+                const id = match[1];
+                const product = productsData[id];
+
+                // حالا فقط کارت محصول را اضافه می‌کنیم و خط اصلی را حذف می‌کنیم
+                newHtmlContent += `
+                    <div class="product-card">
+                        <img src="${product.image_url}" alt="${product.name}" class="product-card-image">
+                        <div class="product-card-info">
+                            <a href="${product.url}" target="_blank">${product.name}</a>
+                            <span>${product.price}</span>
+                        </div>
+                    </div>
+                `;
+              } else if (line.trim() !== "") {
+                // خطوط دیگر (که محصول نیستند) را نگه می‌داریم
+                newHtmlContent += `<p>${line}</p>`;
+              }
+            });
+
+            messageContentDiv.innerHTML = newHtmlContent;
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+          } catch (error) {
+            console.error("Failed to enrich message:", error);
+          }
+        }
+        function addMessage(text, sender) {
+          const messageElement = createMessageElement(text, sender);
+          chatMessages.appendChild(messageElement);
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function createMessageElement(text, sender) {
+          const messageDiv = document.createElement("div");
+          messageDiv.className = `message ${sender}-message`;
+          messageDiv.innerHTML = `
+                <div class="message-avatar">
+                    <i class="fas fa-${
+                      sender === "user" ? "user" : "robot"
+                    }"></i>
+                </div>
+                <div class="message-content">
+                    <pre>${text}</pre>
+                </div>`;
+          return messageDiv;
+        }
+
+        function createTypingIndicator() {
+          const typingDiv = document.createElement("div");
+          typingDiv.className = "message bot-message";
+          typingDiv.innerHTML = `
+                 <div class="message-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="typing-indicator" style="align-self: auto; margin: 0;">
+                    <div class="typing-dots">
+                        <span class="typing-dot"></span>
+                        <span class="typing-dot"></span>
+                        <span class="typing-dot"></span>
+                    </div>
+                </div>`;
+          return typingDiv;
+        }
+
+        // +++ بعد از بارگذاری کامل صفحه، تمام پیام‌های ربات را برای غنی‌سازی چک کن +++
+        document.querySelectorAll(".bot-message").forEach((el) => {
+          if (el.querySelector(".message-content pre")) {
+            enrichProductMessage(el);
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
+{% endcomment %}
