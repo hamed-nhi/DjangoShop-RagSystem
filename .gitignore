@@ -4,3 +4,5 @@ media/
 configure_meili.py
 reindex_meilisearch.py
 apps/product/management
+staticfiles
+ai_data
