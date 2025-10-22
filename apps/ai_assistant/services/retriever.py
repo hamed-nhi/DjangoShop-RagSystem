@@ -48,34 +48,15 @@ class HybridRetriever:
             results.append({'id': doc['id'], 'score': doc.get('_rankingScore', 1.0)})
         return results
 
-    def search(self, query_text, k=5, filters: str = None, sort: str = None):
+    def search(self, query_text, k=5, filters: str = None):
         """
-        Executes a weighted hybrid search using the RRF algorithm.
-        - If sort='price_asc' or 'price_desc', MeiliSearch alone is used for efficiency and accuracy.
-        - Otherwise, use weighted fusion of FAISS + MeiliSearch.
+        Executes a weighted hybrid search using the RRF algorithm to prioritize keyword-based results.
         """
         print("\n" + "="*60)
-        print(f"HYBRID RETRIEVER ACTIVATED | Query: '{query_text}' | Sort: {sort}")
+        print(f"WEIGHTED HYBRID RETRIEVER ACTIVATED | Query: '{query_text}'")
         print("="*60)
 
-        # --- Special case: sorted search by price ---
-        if sort in ['price_asc', 'price_desc']:
-            meili_sort = [f"price:{'asc' if sort=='price_asc' else 'desc'}"]
-            start_meili = time.perf_counter()
-            search_results = self.meili_index.search(query_text, {
-                'limit': k,
-                'filter': filters,
-                'sort': meili_sort
-            })
-            end_meili = time.perf_counter()
-
-            final_ids = [doc['id'] for doc in search_results['hits']]
-            print(f"-> [TIMER] MeiliSearch (sorted by price) took: {end_meili - start_meili:.4f} seconds")
-            print(f"-> [LOG] Final Sorted IDs by Price: {final_ids}")
-            print("="*60 + "\n")
-            return final_ids[:k]
-
-        # --- Normal hybrid search with weighted RRF fusion ---
+        # --- 1. Execute both searches concurrently ---
         start_faiss = time.perf_counter()
         faiss_results = self._search_faiss(query_text, k=20)
         end_faiss = time.perf_counter()
@@ -84,6 +65,7 @@ class HybridRetriever:
         meili_results = self._search_meilisearch(query_text, k=20, filters=filters)
         end_meili = time.perf_counter()
 
+        # --- Log raw results ---
         faiss_ids = [res['id'] for res in faiss_results]
         meili_ids = [res['id'] for res in meili_results]
         print(f"-> [TIMER] Faiss Search took: {end_faiss - start_faiss:.4f} seconds")
@@ -91,29 +73,30 @@ class HybridRetriever:
         print(f"-> [TIMER] MeiliSearch took: {end_meili - start_meili:.4f} seconds")
         print(f"   [LOG] Raw MeiliSearch IDs: {meili_ids}")
 
-        # --- Fuse results with weighted RRF ---
+        # --- 2. Fuse results with weighted RRF ---
         fused_scores = {}
         rrf_k = 60
-        MEILI_WEIGHT = 2.25
-        FAISS_WEIGHT = 0.75
 
+        # Give more weight to MeiliSearch (keyword-based) results
+        MEILI_WEIGHT = 2.0  # <-- Key change
+        FAISS_WEIGHT = 1.0  # <-- Key change
+
+        # Process MeiliSearch results with a higher weight
         for i, doc in enumerate(meili_results):
             doc_id = doc['id']
             fused_scores.setdefault(doc_id, 0)
             fused_scores[doc_id] += MEILI_WEIGHT * (1 / (rrf_k + i + 1))
 
+        # Process Faiss results with a standard weight
         for i, doc in enumerate(faiss_results):
             doc_id = doc['id']
             fused_scores.setdefault(doc_id, 0)
             fused_scores[doc_id] += FAISS_WEIGHT * (1 / (rrf_k + i + 1))
-
-        # --- Sort by fused score ---
+            
         reranked_results = sorted(fused_scores.items(), key=lambda item: item[1], reverse=True)
-        final_ids = [doc_id for doc_id, score in reranked_results]
-
-        # --- Limit to top-k ---
-        final_ids = final_ids[:k]
-
-        print(f"-> [LOG] Final Fused IDs (Weighted) : {final_ids}")
+        final_ids = [doc_id for doc_id, score in reranked_results[:k]]
+        
+        print(f"-> [LOG] Final Fused IDs (Weighted): {final_ids}")
         print("="*60 + "\n")
+        
         return final_ids

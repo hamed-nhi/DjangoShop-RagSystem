@@ -19,10 +19,10 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # DEBUG is read from the .env file. The value will be 'True' or 'False' as a string.
 # DEBUG = os.environ.get('DEBUG') == 'False'
 # DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
-DEBUG = False
+DEBUG = True
 
-# ALLOWED_HOSTS = []
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = ['*']
 
 
 # --- Application definition ---

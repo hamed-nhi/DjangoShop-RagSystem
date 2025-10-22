@@ -888,130 +888,118 @@ textarea.form-control.is-invalid,
 
 /* ShopCart start */
 
-/* Main table container with unique class */
-.sc-table {
-	width: 100%;
-	border-collapse: collapse;
-	margin: 100px 0;
-	font-size: 1em;
-	box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-	direction: rtl;
-}
+    /* Main table container with unique class */
+    .sc-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 100px 0;
+        font-size: 1em;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        direction: rtl;
+    }
 
-/* Table header */
-.sc-table thead tr {
-	background-color: #337ab7;
-	color: #ffffff;
-	text-align: center;
-	font-weight: bold;
-}
+    /* Table header */
+    .sc-table thead tr {
+        background-color: #337ab7;
+        color: #ffffff;
+        text-align: center;
+        font-weight: bold;
+    }
 
-/* Table cells (th and td) */
-.sc-table th,
-.sc-table td {
-	padding: 12px 15px;
-	text-align: center;
-	vertical-align: middle;
-}
+    /* Table cells (th and td) */
+    .sc-table th,
+    .sc-table td {
+        padding: 12px 15px;
+        text-align: center;
+        vertical-align: middle;
+    }
 
-/* Table body rows */
-.sc-table tbody tr {
-	border-bottom: 1px solid #dddddd;
-}
+    /* Table body rows */
+    .sc-table tbody tr {
+        border-bottom: 1px solid #dddddd;
+    }
 
-/* Zebra striping for even rows */
-.sc-table tbody tr:nth-of-type(even) {
-	background-color: #f3f3f3;
-}
+    /* Zebra striping for even rows */
+    .sc-table tbody tr:nth-of-type(even) {
+        background-color: #f3f3f3;
+    }
 
-/* Hover effect for rows */
-.sc-table tbody tr:hover {
-	background-color: #e9ecef;
-}
+    /* Hover effect for rows */
+    .sc-table tbody tr:hover {
+        background-color: #e9ecef;
+    }
 
-/* Last row border color */
-.sc-table tbody tr:last-of-type {
-	border-bottom: 2px solid #337ab7;
-}
+    /* Last row border color */
+    .sc-table tbody tr:last-of-type {
+        border-bottom: 2px solid #337ab7;
+    }
 
-/* Product image */
-.sc-table img {
-	width: 70px;
-	height: auto;
-	border-radius: 5px;
-}
+    /* Product image */
+    .sc-table img {
+        width: 70px;
+        height: auto;
+        border-radius: 5px;
+    }
 
-/* Delete icon link with unique class */
-.sc-delete-icon {
-	cursor: pointer;
-	color: #d9534f;
-	font-size: 1.2em;
-}
+    /* Delete icon link with unique class */
+    .sc-delete-icon {
+        cursor: pointer;
+        color: #d9534f;
+        font-size: 1.2em;
+    }
 
-.sc-delete-icon:hover {
-	color: #c9302c;
-}
+    .sc-delete-icon:hover {
+        color: #c9302c;
+    }
 
-/* Empty cart message with unique class */
-.sc-empty-message {
-	text-align: center;
-	padding: 40px;
-	font-size: 1.5em;
-	color: #666;
-	direction: rtl;
-}
+    /* Empty cart message with unique class */
+    .sc-empty-message {
+        text-align: center;
+        padding: 40px;
+        font-size: 1.5em;
+        color: #666;
+        direction: rtl;
+    }
 
 
-.sc-product-link,
-.sc-product-link:hover {
-	text-decoration: none;
-	/* حذف زیرخط */
-	color: inherit;
-	/* ارث‌بری رنگ از والد (مشکی می‌شود) */
-}
+	  .sc-product-link, .sc-product-link:hover {
+        text-decoration: none; /* حذف زیرخط */
+        color: inherit;      /* ارث‌بری رنگ از والد (مشکی می‌شود) */
+    }
 
 /* ShopCart End */
 
-.checked {
-	color: orange
+.checked{
+	color : orange
 }
 
 
 
 /* Base styles for favorite icons */
 .product-card__wishlist i.fa {
-	transition: color 0.3s ease-in-out, transform 0.2s ease-in-out;
-	/* Smooth transition for color and size changes */
-	font-size: 1.2em;
-	/* Slightly larger icon */
+    transition: color 0.3s ease-in-out, transform 0.2s ease-in-out; /* Smooth transition for color and size changes */
+    font-size: 1.2em; /* Slightly larger icon */
 }
 
 /* Styles for favorited state (solid heart) */
 .favorited-icon {
-	color: #ff4d4f !important;
-	/* A vibrant red color for active favorites */
+    color: #ff4d4f !important; /* A vibrant red color for active favorites */
 }
 
 /* Styles for unfavorited state (broken heart) */
 .unfavorited-icon {
-	color: #8c8c8c !important;
-	/* A subtle gray for inactive favorites */
+    color: #8c8c8c !important; /* A subtle gray for inactive favorites */
 }
 
 /* Hover effect for both states */
 .favorited-icon:hover {
-	color: #cc0000 !important;
-	/* Darker red on hover for favorited */
-	transform: scale(1.15);
-	/* Slightly bigger on hover */
-	cursor: pointer;
-	/* Indicates it's clickable */
+    color: #cc0000 !important; /* Darker red on hover for favorited */
+    transform: scale(1.15); /* Slightly bigger on hover */
+    cursor: pointer; /* Indicates it's clickable */
 }
 
 .unfavorited-icon:hover {
-	color: #595959 !important;
-	/* Darker gray on hover for unfavorited */
-	transform: scale(1.15);
-	/* Slightly bigger on hover */
-	cursor: pointer;
+    color: #595959 !important; /* Darker gray on hover for unfavorited */
+    transform: scale(1.15); /* Slightly bigger on hover */
+    cursor: pointer;
 }

@@ -4,9 +4,7 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
 from django.db.models import Q, Count, Min, Max
-from django.http import JsonResponse
-from django.views.decorators.http import require_http_methods
-import json
+
 from .compare import CompareProduct
 from .filters import ProductFilter
 from .models import FeatureValue, Product, ProductGroup, Brand, Feature
@@ -279,22 +277,10 @@ def show_compare_list_view(request):
     context = {'products': products}
     return render(request, 'product_app/compare_list.html', context)
 
-# def compare_table_partial(request):
-#     compare_list_obj = CompareProduct(request)
-#     products = compare_list_obj.get_products()
-#     features = Feature.objects.filter(productfeature__product__in=products).distinct()
-#     context = {'products': products, 'features': features}
-#     return render(request, "product_app/partials/compare_table.html", context)
 def compare_table_partial(request):
     compare_list_obj = CompareProduct(request)
     products = compare_list_obj.get_products()
-    
-    features = Feature.objects.filter(
-        productfeature__product__in=products
-    ).exclude(
-        feature_name='Rating' # Exclude 'Rating' feature
-    ).distinct()
-
+    features = Feature.objects.filter(productfeature__product__in=products).distinct()
     context = {'products': products, 'features': features}
     return render(request, "product_app/partials/compare_table.html", context)
 
@@ -311,31 +297,12 @@ def add_to_compare_list(request):
     result = compare_list.add(product_id=product_id, product_group_id=product_group_id)
     return JsonResponse(result)
 
-# def delete_from_compare_list(request):
-#     product_id = request.GET.get('productId')
-#     if product_id:
-#         compare_list = CompareProduct(request)
-#         compare_list.delete(product_id=product_id)
-#     return compare_table_partial(request)
-@require_http_methods(["POST"])
 def delete_from_compare_list(request):
-    """
-    Handles POST requests from JavaScript to remove a product from the compare list.
-    """
-    try:
-        data = json.loads(request.body)
-        product_id = data.get('product_id')
-
-        if product_id:
-            compare_list = CompareProduct(request)
-            compare_list.delete(product_id=str(product_id))
-            return JsonResponse({'status': 'success', 'message': 'Product removed successfully.'})
-        else:
-            return JsonResponse({'status': 'error', 'message': 'Product ID not provided.'}, status=400)
-
-    except Exception as e:
-        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
-
+    product_id = request.GET.get('productId')
+    if product_id:
+        compare_list = CompareProduct(request)
+        compare_list.delete(product_id=product_id)
+    return compare_table_partial(request)
 
 
 

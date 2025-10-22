@@ -6,7 +6,10 @@
     <title>
         {% block title %}{% endblock title %}
     </title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌟</text></svg>">
+    {% comment %} <link rel="icon" type="image/png" href="{% static "images/favicon.png" %}"> {% endcomment %}
+   
+    {% comment %} <link rel="icon" type="image/png" href="{{ MEDIA_URL }}images/favicon3.png"> {% endcomment %}
+    {% comment %} <link rel="icon" type="image/png" href="{{ MEDIA_URL }}images/favicon3.png?v={% now 'U' %}"> {% endcomment %}
     <link rel="stylesheet" href="{% static "vendor/bootstrap-4.5.3/css/bootstrap.min.css" %}">
     <link rel="stylesheet" href="{% static "vendor/owl-carousel-2.3.4/assets/owl.carousel.min.css" %} ">
     <link rel="stylesheet" href="{% static "css/style.css" %}">

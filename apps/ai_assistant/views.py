@@ -1,6 +1,5 @@
-# apps/ai_assistant/views.py 
-from .services.agent_core import llm 
-from .services.comparison_formatter import comparison_prompt 
+# apps/ai_assistant/views.py (نسخه نهایی و اصلاح شده)
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse, StreamingHttpResponse
 from django.contrib.auth.decorators import login_required
@@ -12,10 +11,13 @@ import logging
 from .models import Conversation, ChatMessage
 from .services.agent_core import run_agent_stream 
 from langchain_core.messages import HumanMessage, AIMessage
+
+# تنظیم لاگر
 logger = logging.getLogger(__name__)
 from apps.products.models import Product
 import json
 
+# +++ ویوی جدید برای API +++
 @login_required
 @require_http_methods(["POST"])
 def get_product_details_api(request):
@@ -51,6 +53,8 @@ def get_product_details_api(request):
     except Exception as e:
         logger.error(f"Error in get_product_details_api: {e}")
         return JsonResponse({'error': 'خطای داخلی سرور'}, status=500)
+
+
 
 def is_widget_request(request):
     """تشخیص درخواست ویجت"""
@@ -97,6 +101,7 @@ def get_or_create_conversation(request, conversation_id=None, widget_mode=False)
     
     # حالت ۳: اولین بازدید از ویجت یا صفحه کامل (ایجاد مکالمه کاملا جدید)
     return new_conversation(request, widget_mode)
+
 
 def new_conversation(request, widget_mode=False):
     """ایجاد یک مکالمه جدید"""
@@ -253,44 +258,3 @@ def delete_chat_view(request, conversation_id):
     
     return redirect(reverse('ai_assistant:chat_view'))
 
-
-@login_required
-@require_http_methods(["POST"])
-def ai_compare_view(request):
-    """
-    یک ویو اختصاصی برای دکمه مقایسه هوشمند در صفحه مقایسه.
-    """
-    try:
-        data = json.loads(request.body)
-        product_ids = data.get('product_ids', [])
-
-        if not product_ids or len(product_ids) < 2:
-            return JsonResponse({'error': 'حداقل به دو محصول برای مقایسه نیاز است.'}, status=400)
-        
-        products = Product.objects.filter(id__in=product_ids).prefetch_related('product_features__feature')
-        
-        # ساخت یک رشته متنی حاوی تمام مشخصات محصولات برای ارسال به LLM
-        product_details_string = ""
-        for p in products:
-            product_details_string += f"--- Product ID: {p.id} ---\n"
-            product_details_string += f"Name: {p.product_name}\n"
-            product_details_string += f"Price: {p.price}\n"
-            for pf in p.product_features.all():
-                product_details_string += f"{pf.feature.feature_name}: {pf.value}\n"
-            product_details_string += "\n"
-
-        def stream_response():
-            # ساخت پرامپت نهایی با اطلاعات محصولات
-            final_prompt = comparison_prompt.format(product_details=product_details_string)
-            
-            # فراخوانی مستقیم LLM بدون نیاز به ایجنت
-            response_stream = llm.stream(final_prompt)
-            
-            for chunk in response_stream:
-                yield chunk.content
-
-        return StreamingHttpResponse(stream_response(), content_type="text/plain; charset=utf-8")
-
-    except Exception as e:
-        logger.error(f"Error in ai_compare_view: {e}")
-        return JsonResponse({'error': 'خطای داخلی سرور در هنگام تحلیل هوشمند.'}, status=500)

@@ -13,7 +13,6 @@ urlpatterns = [
     path('new-chat/', views.new_chat_view, name='new_chat_view'),
     path('delete-chat/<uuid:conversation_id>/', views.delete_chat_view, name='delete_chat_view'),
     path('api/get_product_details/', views.get_product_details_api, name='get_product_details_api'),
-    path('ai-compare/', views.ai_compare_view, name='ai_compare_view'),
 
 
 ]   

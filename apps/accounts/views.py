@@ -275,28 +275,11 @@ class UserPanelView(LoginRequiredMixin,View):
         return render(request,"accounts_app/userpanel.html",{"user_info":user_info})
 #----------------------------------------------------------------------------------------------------
            
-from django.db.models.functions import Coalesce
-from django.db.models import Sum, F, ExpressionWrapper, DecimalField, Value
 
-#@login_required
-#def show_last_orders(request):
-#   orders =Order.objects.filter(customer_id=request.user.id).order_by('-register_date')[:4]
-#   return render(request,"accounts_app/partials/show_last_orders.html",{'orders':orders})
 @login_required
 def show_last_orders(request):
-    # محاسبه قیمت کل هر سفارش با در نظر گرفتن تخفیف در کوئری دیتابیس
-    orders = Order.objects.filter(customer_id=request.user.id).annotate(
-        # ابتدا جمع قیمت آیتم‌ها را محاسبه می‌کنیم (subtotal)
-        subtotal=Coalesce(Sum(F('orders_details1__price') * F('orders_details1__qty')), Value(0))
-    ).annotate(
-        # سپس تخفیف را روی subtotal اعمال می‌کنیم
-        total_price=ExpressionWrapper(
-            F('subtotal') * (1 - F('discount') / 100.0),
-            output_field=DecimalField()
-        )
-    ).order_by('-register_date')[:4]
-
-    return render(request, "accounts_app/partials/show_last_orders.html", {'orders': orders})
+    orders =Order.objects.filter(customer_id=request.user.id).order_by('-register_date')[:4]
+    return render(request,"accounts_app/partials/show_last_orders.html",{'orders':orders})
 
 #----------------------------------------------------------------------------------------------------
 

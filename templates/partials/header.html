@@ -28,12 +28,8 @@
         <div class="site-header__middle container">
             <div class="site-header__logo">
                 <a href="{% url 'main:index' %}">
-                    
-                    <img src="{{media_url}}/images/logo2.png" alt="Ayco Logo" 
-     style="width: 110px; height: 60px; object-fit: contain; transition: all 0.3s ease;"
-     onmouseover="this.style.transform='scale(1.05)'" 
-     onmouseout="this.style.transform='scale(1)'"
-     class="modern-logo">
+                    {% comment %} <img src="{{media_url}}/images/logo.png" alt=""> {% endcomment %}
+                    <img src="{{media_url}}/images/logo3.png" alt="Ayco Logo"style="width: 100px; height: 70px; border-radius:none; ">
                 </a>
             </div>
             <div class="site-header__search">
@@ -56,7 +52,7 @@
             </div>
             <div class="site-header__phone">
                 <div class="site-header__phone-title">پشتیبانی</div>
-                <div class="site-header__phone-number"><span class="ltr_text">041376</span></div>
+                <div class="site-header__phone-number"><span class="ltr_text">04137645522</span></div>
             </div>
         </div>
         <!-- .topbar / end -->

@@ -32,9 +32,9 @@ SINGLE_WORD_TERMS = {
     'ایسوس': 'asus', 'اسوس': 'asus', 'دل': 'dell', 'اچپی': 'hp', 'ایسر': 'acer', 'ایصر': 'acer',
     'لنوو': 'lenovo', 'اپل': 'apple', 'مایکروسافت': 'microsoft', 'سرفیس': 'surface',
     'ام اس ای': 'msi', 'سامسونگ': 'samsung', 'سامسنگ': 'samsunge', 'گیگابایت': 'gigabyte',
-    'انر': 'honor', 'ریلمی': 'realme', 'الجی': 'lg', 'فوجیتسو': 'fujitsu', 'تکنو': 'tecno',
+    'آنر': 'honor', 'ریلمی': 'realme', 'الجی': 'lg', 'فوجیتسو': 'fujitsu', 'تکنو': 'tecno',
     'اینفینیکس': 'infinix', 'وینگز': 'wings', 'اولتیموس': 'ultimus', 'پرایمبوک': 'primebook',
-    'ایبال': 'iball', 'زبرونیکس': 'zebronics', 'چووی': 'chuwi', 'جیو': 'jio', 'اویتا': 'avita',
+    'آیبال': 'iball', 'زبرونیکس': 'zebronics', 'چووی': 'chuwi', 'جیو': 'jio', 'اویتا': 'avita',
     'واکر': 'walker', 'ای اکس ال': 'axl',
     
     # --- Technical & General Terms ---
@@ -43,71 +43,6 @@ SINGLE_WORD_TERMS = {
     'کرومبوک': 'chromebook', 'لپتاپ': 'laptop', 'لبتاب': 'laptop',
     'گیمینگ': 'gaming', 'بازی': 'gaming', 'دانشجویی': 'student', 'اداری': 'office',
     'ارزان': 'budget', 'اقتصادی': 'budget', 'حرفه': 'professional',
- # --- ایسوس (Asus) ---
-    'تاف': 'tuf', 'راگ': 'rog', 'ویووبوک': 'vivobook','ویوو بوک': 'vivobook','ویوبوک': 'vivobook','ویو بوک': 'vivobook', 'زنبوک': 'zenbook',
-    'ار او جی': 'rog', 'ویو بوک': 'vivobook', 'زن بوک': 'zenbook',
-    'ایسوس روگ': 'rog', 'ایسوس تاف': 'tuf', 'ایسوس زنبوک': 'zenbook',
-    
-    # --- لنوو (Lenovo) ---
-    'ثینک پد': 'thinkpad', 'ثینک‌پد': 'thinkpad', 'ایدیا پد': 'ideapad',
-    'ایدیاپد': 'ideapad', 'لژیون': 'legion', 'لیجن': 'legion',
-    'یوگا': 'yoga', 'یوگا بوک': 'yogabook', 'یوگا‌بوک': 'yogabook',
-    'لنوو ثینک پد': 'thinkpad', 'لنوو لژیون': 'legion',
-    'لنوو یوگا': 'yoga', 'لنوو ایدیا پد': 'ideapad',
-    
-    # --- اچ پی (HP) ---
-    'اچ پی': 'hp', 'اچ‌پی': 'hp', 'اچ بی': 'hp',
-    'پاویلیون': 'pavilion', 'پاولین': 'pavilion', 'پاولیون': 'pavilion',
-    'املت': 'elitebook', 'الایت بوک': 'elitebook', 'الیت بوک': 'elitebook',
-    'پرولیانت': 'proliant', 'پرولینت': 'proliant', 'زیروک': 'zerobook',
-    'زیروبوک': 'zerobook', 'زیرو بوک': 'zerobook', 'اسپکتر': 'spectre',
-    'اسپکتری': 'spectre', 'اسپکٹر': 'spectre', 'انوی': 'envy',
-    'انوی‌بوک': 'envy', 'انوی بوک': 'envy', 'اومیان': 'omen',
-    'اچ پی پاویلیون': 'pavilion', 'اچ پی املت': 'elitebook',
-    'اچ پی اسپکتر': 'spectre', 'اچ پی انوی': 'envy', 'اچ پی اومیان': 'omen',
-    
-    # --- ایسر (Acer) ---
-    'ایسر': 'acer', 'ایصر': 'acer', 'ایسِر': 'acer',
-    'اسپایر': 'aspire', 'اسپایرِ': 'aspire', 'اسپیر': 'aspire',
-    'پرداتور': 'predator', 'پردیتور': 'predator', 'شکاری': 'predator',
-    'هلیوس': 'helios', 'هلیوس‌': 'helios', 'هلیوس‌': 'helios',
-    'نایترو': 'nitro', 'نایترو‌': 'nitro', 'نیترو': 'nitro',
-    'سوئیفت': 'swift', 'سویفت': 'swift', 'سویفت‌': 'swift',
-    'ایسر اسپایر': 'aspire', 'ایسر پرداتور': 'predator',
-    'ایسر نایترو': 'nitro', 'ایسر هلیوس': 'helios',
-    
-    # --- دل (Dell) ---
-    'دل': 'dell', 'دلّ': 'dell',
-    'ایکس پی اس': 'xps', 'ایکس‌پی‌اس': 'xps', 'ایکس.پی.اس': 'xps',
-    'اینسپایرون': 'inspiron', 'اینسپیرون': 'inspiron', 'اینسپیرن': 'inspiron',
-    'لتیتیود': 'latitude', 'لتی تیود': 'latitude', 'لتی‌تیود': 'latitude',
-    'النویر': 'alienware', 'الین ویر': 'alienware', 'الین‌ویر': 'alienware',
-    'پرسیژن': 'precision', 'پرسیژِن': 'precision', 'پرسیژن‌': 'precision',
-    'وسترو': 'vostro', 'واسترو': 'vostro', 'واسترو‌': 'vostro',
-    'جی سیریز': 'g series', 'جی سری': 'g series', 'جی‌سری': 'g series',
-    'دل ایکس پی اس': 'xps', 'دل النویر': 'alienware',
-    'دل اینسپایرون': 'inspiron', 'دل لتیتیود': 'latitude',
-    
-    # --- اپل (Apple) ---
-    'مک بوک': 'macbook', 'مک‌بوک': 'macbook', 'مکبوک‌': 'macbook',
-    'مک‌بوک‌ایر': 'macbook air', 'مک بوک ایر': 'macbook air',
-    'مک‌بوک‌پرو': 'macbook pro', 'مک بوک پرو': 'macbook pro',
-    'مک بوک ایر': 'macbook air', 'مک بوک پرو': 'macbook pro',
-    
-    # --- سایر برندها ---
-    'سرفیس': 'surface', 'سرفیس‌بوک': 'surface book', 
-    'سرفیس بوک': 'surface book', 'سرفیس‌لپتاپ': 'surface laptop',
-    'سرفیس لپتاپ': 'surface laptop', 'سرفیس‌پرو': 'surface pro',
-    'سرفیس پرو': 'surface pro',
-    
-    'راژر': 'razer', 'ریزر': 'razer', 'ریزر بلید': 'razer blade',
-    'راژر بلید': 'razer blade',
-    
-    'ام اس ای': 'msi', 'ام‌اس‌ای': 'msi', 'ام.اس.ای': 'msi',
-    'جی اف سیکس': 'gf63', 'جی‌اف‌۶۳': 'gf63', 'جی.اف.۶۳': 'gf63',
-    
-    'سامسونگ گالکسی بوک': 'galaxy book', 'گالکسی بوک': 'galaxy book',
-    'گالکسی‌بوک': 'galaxy book',
 }
 
 # We need a clear list of just the brand names for the specificity check.
@@ -129,12 +64,12 @@ BRAND_NAMES = {
 PERSIAN_BRAND_NAMES = {
     'ایسوس', 'اسوس', 'دل', 'اچپی', 'اچ پی', 'ایسر', 'ایصر',
     'لنوو', 'اپل', 'مایکروسافت', 'سرفیس', 'ام اس ای', 'سامسونگ',
-    'سامسنگ', 'گیگابایت', 'انر', 'ریلمی', 'الجی', 'ال جی',
+    'سامسنگ', 'گیگابایت', 'آنر', 'ریلمی', 'الجی', 'ال جی',
     'فوجیتسو',
     # --- Exclusive Series (Persian) ---
     'ویوبوک', 'زنبوک', 'تاف', 'راگ',
     'ایکس پی اس', 'اینسپایرون',
-    'ثینکپد', 'ایدیاپد', 'یوگا',
+    'ثینکپد', 'آیدیاپد', 'یوگا',
     'مکبوک',
 }
 
@@ -253,9 +188,9 @@ class SearchResultsView(View):
 # #     'ایسوس': 'asus', 'اسوس': 'asus', 'دل': 'dell', 'اچپی': 'hp', 'ایسر': 'acer', 'ایصر': 'acer',
 # #     'لنوو': 'lenovo', 'اپل': 'apple', 'مایکروسافت': 'microsoft', 'سرفیس': 'surface',
 # #     'ام اس ای': 'msi', 'سامسونگ': 'samsung', 'سامسنگ': 'samsunge', 'گیگابایت': 'gigabyte',
-# #     'انر': 'honor', 'ریلمی': 'realme', 'الجی': 'lg', 'فوجیتسو': 'fujitsu', 'تکنو': 'tecno',
+# #     'آنر': 'honor', 'ریلمی': 'realme', 'الجی': 'lg', 'فوجیتسو': 'fujitsu', 'تکنو': 'tecno',
 # #     'اینفینیکس': 'infinix', 'وینگز': 'wings', 'اولتیموس': 'ultimus', 'پرایمبوک': 'primebook',
-# #     'ایبال': 'iball', 'زبرونیکس': 'zebronics', 'چووی': 'chuwi', 'جیو': 'jio', 'اویتا': 'avita',
+# #     'آیبال': 'iball', 'زبرونیکس': 'zebronics', 'چووی': 'chuwi', 'جیو': 'jio', 'اویتا': 'avita',
 # #     'واکر': 'walker', 'ای اکس ال': 'axl',
     
 # #     # --- Technical & General Terms ---
@@ -285,12 +220,12 @@ class SearchResultsView(View):
 # # PERSIAN_BRAND_NAMES = {
 # #     'ایسوس', 'اسوس', 'دل', 'اچپی', 'اچ پی', 'ایسر', 'ایصر',
 # #     'لنوو', 'اپل', 'مایکروسافت', 'سرفیس', 'ام اس ای', 'سامسونگ',
-# #     'سامسنگ', 'گیگابایت', 'انر', 'ریلمی', 'الجی', 'ال جی',
+# #     'سامسنگ', 'گیگابایت', 'آنر', 'ریلمی', 'الجی', 'ال جی',
 # #     'فوجیتسو',
 # #     # --- Exclusive Series (Persian) ---
 # #     'ویوبوک', 'زنبوک', 'تاف', 'راگ',
 # #     'ایکس پی اس', 'اینسپایرون',
-# #     'ثینکپد', 'ایدیاپد', 'یوگا',
+# #     'ثینکپد', 'آیدیاپد', 'یوگا',
 # #     'مکبوک',
 # # }
 

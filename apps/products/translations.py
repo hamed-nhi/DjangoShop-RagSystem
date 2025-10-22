@@ -19,13 +19,14 @@ FEATURE_NAME_TRANSLATIONS = {
     'year_of_warranty': 'سال گارانتی',
     'category': 'کاربری',
     'cpu_model':'مدل پردازنده',
-    
+    'False': 'خیر',
+    'True': 'بله',
 }
 
 FEATURE_VALUE_TRANSLATIONS = {
     'intel': 'اینتل', 'amd': 'ای‌ام‌دی', 'apple': 'اپل', 'nvidia': 'انویدیا',
     'integrated': 'یکپارچه', 'dedicated': 'مجزا',
-     False: 'خیر', True: 'بله',
+    'False': 'خیر', 'True': 'بله',
     'ssd': 'SSD', 'hdd': 'HDD', 'no secondary storage': 'ندارد',
     'windows': 'ویندوز', 'mac': 'مک', 'dos': 'داس', 'other': 'سایر',
     'ubuntu': 'اوبونتو', 'mainstream': 'عمومی', 'gaming': 'گیمینگ',
