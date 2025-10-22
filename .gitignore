@@ -7,3 +7,10 @@ apps/product/management
 staticfiles
 ai_data__pycache__/
 *.pyc
+.env
+configure_meili*.py
+reindex_meilisearch.py
+utils.py
+py.txt
+media/
+ai_data/
