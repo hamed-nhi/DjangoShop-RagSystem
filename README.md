@@ -1,202 +1,251 @@
-# 🛍️ DjangoShop RAG System | سامانه فروشگاه هوشمند جنگو (دستیار خرید مبتنی بر هوش مصنوعی)
+# 🛍️ DjangoShop RAG System
+**An Intelligent E-commerce Platform for Laptops with an AI Shopping Assistant based on LLM & RAG**
 
-A **modern, intelligent e-commerce platform** built with the **Django framework**, designed for laptop and accessory sales.  
-This project integrates **Large Language Models (LLMs)**, **Retrieval-Augmented Generation (RAG)**, and **hybrid search technologies** (FAISS + Meilisearch) to provide users with **AI-driven shopping guidance**, smart recommendations, and natural-language-based product search.
-
----
-
-## 🚀 Key Features
-
-- **🧠 AI Shopping Assistant** — Intelligent chatbot powered by LLM + LangChain  
-- **🔍 Hybrid Search System** — Combines FAISS (semantic search) and Meilisearch (keyword search)  
-- **💬 Real-time Streaming Chat** — Token-by-token chat streaming for natural AI conversations  
-- **🛒 Full E-commerce Functionality** — User authentication, cart, checkout, orders, reviews  
-- **⚙️ Admin Panel** — Complete product, order, and user management with Django Admin  
-- **📦 Product Comparison System** — Compare multiple products in real-time  
-- **📱 Responsive UI** — Built with HTML, CSS, Bootstrap, and JavaScript  
-- **🧩 Modular Architecture** — Clean separation of concerns for scalability and maintainability  
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python Version](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://www.python.org/)
+[![Django Version](https://img.shields.io/badge/Django-4.0%2B-success.svg)](https://www.djangoproject.com/)
+[![Project Status](https://img.shields.io/badge/status-completed-green.svg)]()
 
 ---
 
-## 🧰 Tech Stack
+A **modern, intelligent e-commerce platform** built with the **Django framework**, designed for laptop and accessory sales. This project integrates a sophisticated **AI Shopping Assistant** that allows users to search, compare, and add products to their cart using **natural language**.
 
-| Category | Technologies |
-|-----------|--------------|
-| **Backend** | Django, Django REST Framework (DRF), Python |
-| **Frontend** | HTML, CSS, Bootstrap, JavaScript, AJAX |
-| **Database** | PostgreSQL |
-| **Search** | FAISS (semantic vector search), Meilisearch (keyword search) |
-| **AI/ML** | LangChain, OpenAI API, Local Embedding Models (Sentence-Transformers) |
-| **Caching / Queues** | Redis |
-| **Architecture** | Multi-layered (Presentation, Business Logic, Data Access, AI Layer) |
-| **Deployment Ready** | Easily containerizable with Docker (optional) |
-
----
-
-## 🧠 AI & RAG Overview
-
-The system leverages **LangChain** to orchestrate LLM interactions and **RAG (Retrieval-Augmented Generation)** to enhance accuracy and contextuality.
-
-- **LLM Core:** Processes user requests and generates natural responses.  
-- **Retriever:** Hybrid mechanism combining:
-  - `FAISS` for **semantic vector search**
-  - `Meilisearch` for **keyword-based ranking**
-- **Prompt Engineering:** Carefully designed rules and persona for the “AI Laptop Sales Assistant.”
-- **Local Embeddings:** Uses multilingual Sentence-Transformers (`paraphrase-multilingual-MiniLM-L12-v2`) for private, cost-free inference.
-
----
-
-## 🏗️ System Architecture
-
-DjangoShop-RagSystem/
-├── Shop/ # Django project configuration
-├── apps/
-│ ├── accounts/ # Authentication and user management
-│ ├── products/ # Product catalog and filtering
-│ ├── orders/ # Cart, checkout, and order processing
-│ ├── ai_assistant/ # Core AI and RAG system (LLM integration)
-│ ├── search/ # Hybrid FAISS + Meilisearch integration
-│ └── c_s_f/ # Comments, scoring, favorites
-├── templates/ # HTML templates
-├── static/ # JS, CSS, images
-└── media/ # Uploaded product images
-
+The core of this project is built on a **Retrieval-Augmented Generation (RAG)** architecture and a powerful **Hybrid Search** system, combining **FAISS** (for semantic vector search) and **Meilisearch** (for fast, typo-tolerant keyword search) to deliver the most accurate and relevant results.
 
 ---
 
 ## 📸 Screenshots
 
-### 🏠 Home Page  
-*(Insert your screenshot here — e.g. `screenshots/home.png`)*
+| Home Page | Product Listing Page |
+| :---: | :---: |
+| ![Home Page](screenshots/homepage.png) | ![Product Page](screenshots/products-page.png) |
+| **AI Assistant (Widget)** | **AI Assistant (Full Page)** |
+| ![AI Assistant Widget](screenshots/widget-chatbot.png) | ![AI Assistant Chat](screenshots/chatbot.png) |
+| **Product Comparison** | **User Account Page** |
+| ![Product Comparison](screenshots/compare-product.png) | ![User Account Page](screenshots/account-page.png) |
+---
 
-### 🤖 AI Chat Assistant  
-*(Insert your screenshot here — e.g. `screenshots/chat.png`)*
+## 🚀 Key Features
 
-### 🔎 Product Search  
-*(Insert your screenshot here — e.g. `screenshots/search.png`)*
+-   **🧠 AI Shopping Assistant ("Hushyar")**: An intelligent agent powered by LangChain capable of understanding conversational context, answering complex queries, providing recommendations, and executing actions.
+-   **🔍 Hybrid Search System**: Merges semantic search (Vector Search) with **FAISS** to understand *intent* and keyword search with **Meilisearch** for *precision* and typo tolerance.
+-   **💬 Real-time Streaming Chat**: AI responses are streamed token-by-token using Django's `StreamingHttpResponse` for a natural and live chat experience.
+-   **🛒 Full E-commerce Functionality**:
+    -   Complete user authentication (registration, login, user profile).
+    -   Shopping cart and checkout process.
+    -   Order history and management.
+    -   Product review and scoring system.
+    -   Favorites / Wishlist functionality.
+-   **⚙️ Powerful Admin Panel**: Full management of products, categories, brands, orders, and users via the built-in Django Admin.
+-   **📦 Product Comparison System**: Ability to add products to a comparison list and view a side-by-side feature table.
+-   **📱 Responsive UI**: Built with HTML, CSS, Bootstrap, and JavaScript (AJAX) to work seamlessly on desktop and mobile devices.
+-   **🧩 Modular Architecture**: Clean Separation of Concerns (SoC) using distinct Django apps for high scalability and maintainability.
 
 ---
 
-## ⚙️ Installation & Setup
+## 🧰 Tech Stack & Rationale
 
-### 🧾 Prerequisites
-- Python 3.8+
-- Django 4.0+
-- PostgreSQL
-- Redis
-- Meilisearch server running locally or remotely
+| Category | Technologies Used |
+| :--- | :--- |
+| **Backend** | Django, Django REST Framework (DRF), Python |
+| **Frontend** | HTML, CSS, Bootstrap, JavaScript, AJAX |
+| **Database** | PostgreSQL |
+| **AI Orchestration** | LangChain |
+| **Search (Hybrid)** | **FAISS** (Semantic), **Meilisearch** (Keyword) |
+| **AI Models** | LLM (e.g., OpenAI API), Local Embeddings (Sentence-Transformers) |
+| **Architecture** | Multi-layered (Presentation, Business Logic, Data Access, AI Layer) |
 
 ---
 
-### 📥 Installation Steps
+### Why This Tech Stack?
 
-1. **Clone the repository**
-   ```
-   git clone https://github.com/hamed-nhi/DjangoShop-RagSystem.git
-   cd DjangoShop-RagSystem
-Create a virtual environment
+-   **Django & PostgreSQL**: Chosen for stability, security, scalability, and the rich ecosystem (ORM, Admin Panel), forming the robust core of the e-commerce platform.
+-   **LangChain**: Acts as the "nervous system" of the AI assistant. It allows us to build a true **Agent**, equip it with "Tools", and orchestrate the complex RAG logic.
+-   **Meilisearch (Keyword Search)**:
+    -   **Lightning Fast**: Delivers results in milliseconds.
+    -   **Typo Tolerance**: Its most significant advantage. If a user searches for "Laptob," Meilisearch intelligently returns results for "Laptop," which is critical for a good user experience.
+    -   **Excellent Persian Support**: Optimized for Persian language out-of-the-box.
+-   **FAISS (Semantic Search)**:
+    -   **Local Execution**: Unlike cloud Vector DBs, Faiss is a library and runs locally. This means **zero cost** and **complete data privacy**.
+    -   **High Speed**: Written in C++, it's highly optimized for similarity search among millions of vectors.
+-   **Local Embedding Model**:
+    -   Uses `paraphrase-multilingual-MiniLM-L12-v2`.
+    -   **Privacy & Cost**: By running the model locally, no product data is sent to external APIs for embedding, and there are no per-token embedding costs.
 
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
-Install dependencies
+---
 
+## 🧠 AI & RAG Deep Dive
 
-pip install -r requirements.txt
-Set up environment variables
+The innovative core of this project is the AI assistant "Hushyar". This is not just a simple RAG implementation; it's an intelligent **Agent** with advanced capabilities.
 
-cp .env.example .env
-# Then edit .env with your own credentials
-Example .env:
+### 1. Weighted Hybrid Retriever
+We use a weighted **RRF (Reciprocal Rank Fusion)** algorithm. In an e-commerce store, an exact model name match (keyword) is often more important than general semantic similarity. Therefore, **Meilisearch** results are given more weight (`MEILI_WEIGHT = 2.0`) than **FAISS** results (`FAISS_WEIGHT = 1.0`) to ensure exact matches always rank higher.
 
-env
-DEBUG=True
-SECRET_KEY=your-secret-key
-DATABASE_URL=postgresql://user:password@localhost:5432/djangoshop
-REDIS_URL=redis://localhost:6379
-MEILISEARCH_URL=http://localhost:7700
-OPENAI_API_KEY=your-openai-api-key
-Run database migrations
+### 2. Advanced Prompt Engineering
+A detailed system prompt was engineered for "Hushyar" that defines its:
+-   **Persona**: Defines it as an "expert and polite sales assistant".
+-   **Rules of Engagement**: Instructs it on handling ambiguous queries (e.g., by asking for "budget" or "use case") and how to analyze prices.
+-   **Tool-Based Behavior**: Instructed to *analyze* tool outputs, not just list them (e.g., "explain that 16GB of RAM is great for multitasking").
+-   **Output Formatting**: Strict rules for formatting product lists to be parsed by the frontend.
 
+### 3. LangChain Agent Tools
+"Hushyar" is equipped with custom `@tool`s to interact with the store:
 
-python manage.py migrate
-Start the development server
+-   `search_products(query, brand, price_min, price_max)`: Invokes the hybrid search with dynamic filters.
+-   `get_product_details(product_id)`: Fetches full specifications for a single product from the database.
+-   `compare_products(product_ids: List[int])`: Takes a list of IDs and dynamically generates a full comparison table in **Markdown** format.
+-   `add_to_cart(product_id)`: **(Advanced)** This tool uses a custom Middleware to access the current user's `request` object and adds the product directly to their session-based cart.
 
-
-python manage.py runserver
-
-### 🤖 How the AI Assistant Works
-
-### 🤖 How the AI Assistant Works
+### 4. AI Flow Architecture
 
 ```mermaid
 flowchart TD
-    A[💬 User interacts via chat page or widget] --> B[🔍 Preprocessing & Embedding using local model]
-    B --> C[🧠 Hybrid Retriever combines FAISS + Meilisearch]
-    C --> D[📄 Retrieve relevant product data and context]
-    D --> E[⚙️ LangChain orchestrates LLM call with context]
-    E --> F[🗣️ LLM generates natural-language response]
-    F --> G[💡 Stream token-by-token response to frontend]
-    G --> H[🎯 User receives AI-powered answer & recommendations]
+    A["💬 User sends message (Widget or Full Page)"] --> B["API: /chat/ View"]
+    B --> C{Widget or Full Page Request?}
+    C --> D["Retrieve or Create Conversation from DB"]
+    D --> E["Prepare Chat History"]
+    E --> F["🧠 Invoke LangChain Agent"]
+    F -- "1️⃣ Query" --> G["🔍 Hybrid Retriever (RRF)"]
+    G -- "→ FAISS" --> H["Vector DB (Semantic)"]
+    G -- "→ Meilisearch" --> I["Keyword DB (Typo-Tolerant)"]
+    I & H --> G
+    G -- "2️⃣ Context" --> F
+    F -- "3️⃣ (Optional)" --> J["🛠️ Call Tool (e.g. compare_products, add_to_cart)"]
+    J -- "4️⃣ Tool Output" --> F
+    F -- "5️⃣" --> K["🤖 LLM Generates Final Response"]
+    K --> L["⚡ Stream Response (Token-by-Token) to User"]
+    L --> M["🗂️ Save User & AI Messages to DB"]
+
 ```
 
-1- User interacts through the chat widget or chat page.
 
-2- User query → pre-processed and embedded using a local embedding model.
+### 🏗️ System Architecture
+```bash
 
-3- Hybrid retriever fetches relevant product data using FAISS + Meilisearch.
+DjangoShop-RagSystem/
+├── Shop/                 # Core Django project config and settings
+├── apps/
+│   ├── accounts/         # User authentication, registration, and profiles
+│   ├── products/         # Product catalog, brands, categories, filtering
+│   ├── orders/           # Shopping cart, checkout, and order processing
+│   ├── ai_assistant/     # The AI core: Agent, Tools, RAG, and chat logic
+│   ├── c_s_f/            # Comments, Scoring, Favorites
+│   └── warehouse/        # Inventory and stock management
+├── templates/            # HTML files using Django Template Engine
+├── static/               # CSS, JS, Bootstrap, and images
+└── media/                # User-uploaded product images
+```
 
-4- Retrieved context is passed to the LLM via LangChain.
 
-5- he LLM generates a natural-language answer with suggestions and explanations.
 
-6- Responses stream token-by-token to the frontend for a live chat experience.
 
-## 🧩 Example Use Cases
-💬 “Find me a gaming laptop with RTX 4060 and at least 16GB RAM.”
+### ⚙️ Installation & Setup
+## 🧾 Prerequisites
+Python 3.8+ 
 
-🔍 “Compare Asus TUF F15 with HP Victus 15.”
+PostgreSQL  (Create an empty database)
 
-💡 “Suggest laptops under 50 million toman for programming.”
+Meilisearch (The Meilisearch server must be running. Install Guide) 
 
-🧾 “Add Lenovo IdeaPad 5 to my cart.”
+# 📥 Installation Steps
+1. Clone the repository
 
-💻 Development Notes
-Streaming Responses: Implemented with Django’s StreamingHttpResponse for real-time LLM output.
+```bash
 
-Prompt Engineering: Defines assistant persona, tone, and safety constraints.
+git clone [https://github.com/hamed-nhi/DjangoShop-RagSystem.git](https://github.com/hamed-nhi/DjangoShop-RagSystem.git)
+cd DjangoShop-RagSystem
+Create and activate a virtual environment
+```
+```bash
 
-Custom Tools: LangChain tools for searching, comparison, cart updates, and product details retrieval.
+python -m venv venv
+# Linux/macOS
+source venv/bin/activate
+# Windows
+venv\Scripts\activate
+```
+2. Install dependencies
+   ```bash
+   pip install -r requirements.txt
+   ```
+3. Set up environment variables Rename .env.example to .env:
 
-Secure by Design: No external API calls for embedding; full privacy control.
+```bash
+
+cp .env.example .env
+```
+Then, edit the .env file with your credentials:
+
+```codesnippet
+DEBUG=True
+SECRET_KEY=your-django-secret-key
+
+# PostgreSQL Database URL
+DATABASE_URL=postgresql://USER:PASSWORD@HOST:PORT/DB_NAME
+
+# Meilisearch Config
+MEILISEARCH_URL=http://localhost:7700
+MEILISEARCH_MASTER_KEY=your-meilisearch-api-key
+
+# Language Model API Key
+OPENAI_API_KEY=your-openai-api-key
+Run database migrations
+```
+```bash
+
+
+python manage.py migrate
+```
+Index data into search engines (You must first load data, e.g., via the admin panel or a custom script ) To index your product data into Meilisearch and Faiss, you may need to use custom management commands:
+
+
+
+```bash
+# (Note: These are examples; you may need to create these commands)
+python manage.py index_products_meili
+python manage.py index_products_faiss
+```
+
+
+Run the development server
+
+
+
+```bash
+
+python manage.py runserver
+```
+The site is now available at http://127.0.0.1:8000.
+
+💡 Example AI Use Cases
+💬 "Hi, I'm looking for a gaming laptop under 90 million Toman." OR say it in persian
+
+🔍 "Compare the Asus TUF F15 with the HP Victus 15 for me."
+
+💡 "What do you recommend for programming and university work? My budget is low."
+
+🧾 "Is the Lenovo IdeaPad 5 in stock? Add it to my cart."
+
 
 ### 👥 Contributing
-Contributions are welcome!
-To contribute:
+Contributions are welcome! To contribute:
 
-Fork the repository
+Fork the repository.
 
-Create your feature branch:
+Create your feature branch (git checkout -b feature/AmazingFeature).
 
+Commit your changes (git commit -m "Add AmazingFeature").
 
+Push to your branch (git push origin feature/AmazingFeature).
 
-git checkout -b feature/AmazingFeature
-Commit your changes:
+Open a Pull Request.
 
+### 📜 License
+This project is licensed under the MIT License. See the LICENSE file for details.
 
+### 📞 Contact
+Hamed Nahali 
 
-git commit -m "Add AmazingFeature"
-Push to your branch:
-
-
-
-git push origin feature/AmazingFeature
-Open a Pull Request
-
-## 📜 License
-This project is licensed under the MIT License.
-See the LICENSE file for details.
-
-## 📞 Contact
-Hamed Nahali
 GitHub Profile
-📧 For collaboration or questions, feel free to reach out via GitHub Issues.
+
+For collaboration or questions, please open an Issue on GitHub.
