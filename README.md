@@ -246,11 +246,6 @@ This project is licensed under the MIT License. See the `LICENSE` file for detai
 
 ---
 
-## 📜 License
-This project is licensed under the MIT License. See the `LICENSE` file for details.
-
----
-
 ## 📞 Contact
 
 **Hamed Nahali**
