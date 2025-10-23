@@ -246,11 +246,16 @@ This project is licensed under the MIT License. See the `LICENSE` file for detai
 
 ---
 
+## 📜 License
+This project is licensed under the MIT License. See the `LICENSE` file for details.
+
+---
+
 ## 📞 Contact
 
-**Hamed Nahali Khezrloo**
+**Hamed Nahali**
 
 -   **GitHub Profile:** [github.com/hamed-nhi](https://github.com/hamed-nhi)
--   **Telegram:** [@hamed](https://t.me/hamed_ayco)
+-   **Telegram:** [@hamed_ayco](https://t.me/hamed_ayco)
 
 For collaboration or questions, please feel free to [open an Issue on this repository](https://github.com/hamed-nhi/DjangoShop-RagSystem/issues).
