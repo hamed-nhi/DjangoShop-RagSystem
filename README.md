@@ -1,4 +1,5 @@
-# 🛍️ DjangoShop RAG System
+# 🛍️ Laptop Store with AI Assistant(LLM + RAG Arch)
+
 **An Intelligent E-commerce Platform for Laptops with an AI Shopping Assistant based on LLM & RAG**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -240,12 +241,16 @@ Push to your branch (git push origin feature/AmazingFeature).
 
 Open a Pull Request.
 
-### 📜 License
-This project is licensed under the MIT License. See the LICENSE file for details.
+## 📜 License
+This project is licensed under the MIT License. See the `LICENSE` file for details.
 
-### 📞 Contact
-Hamed Nahali 
+---
 
-GitHub Profile
+## 📞 Contact
 
-For collaboration or questions, please open an Issue on GitHub.
+**Hamed Nahali Khezrloo**
+
+-   **GitHub Profile:** [github.com/hamed-nhi](https://github.com/hamed-nhi)
+-   **Telegram:** [@hamed](https://t.me/hamed_ayco)
+
+For collaboration or questions, please feel free to [open an Issue on this repository](https://github.com/hamed-nhi/DjangoShop-RagSystem/issues).
